@@ -32,13 +32,14 @@ Makes invisible space weather phenomena audible and aesthetically meaningful —
 - [x] Build foundation: JUCE 8.0.4 CMake project builds VST3 + Standalone on Linux; CI matrix covers all 3 OSes — Phase 1
 - [x] DataFetcher: polls NOAA SWPC, SpaceWeatherState with null handling + last-valid cache, 8/8 unit tests — Phase 2
 - [x] SynthParamMapper: pure function SpaceWeatherState→SynthParams, hybrid mapping, 7/7 unit tests, v2-safe — Phase 3
+- [x] AdditiveEngine: two-layer oscillator bank + Interpolator, wired to PluginProcessor, ~0.33ms/block — Phase 4
 
 ### Active (In Progress)
 None yet.
 
 ### Planned (Next)
 
-- [ ] Phase 4: AdditiveEngine + Interpolator — two-layer oscillator bank, glide, ≤5% CPU
+- [ ] Phase 5: VisualRenderer — abstract/artistic JUCE Component, ~30fps, SynthParams-driven
 
 ### Out of Scope
 

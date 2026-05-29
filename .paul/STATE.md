@@ -5,26 +5,26 @@
 See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Phase 4 — AdditiveEngine + Interpolator (two-layer oscillator bank, glide)
+**Current focus:** Phase 5 — VisualRenderer (abstract/artistic JUCE Component, ~30fps, SynthParams-driven)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 4 of 8 (AdditiveEngine + Interpolator) — Planning
-Plan: 04-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/04-additiveengine/04-01-PLAN.md
+Phase: 5 of 8 (VisualRenderer) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 4 complete; Interpolator + OscillatorBank + AdditiveEngine; 15/15 tests
 
 Progress:
-- Milestone: [███░░░░░░░] 37%
-- Phase 4: [░░░░░░░░░░] 0%
+- Milestone: [████░░░░░░] 50%
+- Phase 5: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 04-01 created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for Phase 5]
 ```
 
 ## Accumulated Context
@@ -38,7 +38,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 | JUCE 8.0.4 via FetchContent GIT_SHALLOW=TRUE | Phase 1 | All subsequent phases use JUCE 8 API; CI first run ~5min, subsequent runs fast |
 | JUCE_USE_CURL platform-conditional (Linux=1+libcurl, macOS/Windows=0) | Phase 2 spike | CMakeLists.txt updated; CURL::libcurl linked on Linux; native stacks on macOS/Win |
 | SynthParamMapper no JUCE dependency — pure C++/cmath | Phase 3 | Compiles in any context; thread-safe by design |
-| l2_amplitude raw (no layer_balance crossfade in mapper) | Phase 3 | AdditiveEngine applies constant-power crossfade in Phase 4 |
+| l2_amplitude raw (no layer_balance crossfade in mapper) | Phase 3 | AdditiveEngine applies constant-power crossfade ✓ done |
+| Control-rate architecture in processBlock() | Phase 4 | ~100Hz sub-blocking; applyParams() not on audio thread |
 | JUCE::URL probe must launch from constructor, not prepareToPlay | Phase 2 spike | Audio device may never init in WSL2/headless — DataFetcher must start its own thread unconditionally |
 | Fallback: empty readEntireTextStream → source="cached", increment data_age_s | Phase 2 spike | No exception from JUCE on failure; silent empty string — DataFetcher checks isEmpty() |
 | AU not in CI — code signing deferred to Phase 7 | Phase 1 | CI validates VST3+Standalone; AU validated manually in Phase 7 |
@@ -60,8 +61,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 4` — AdditiveEngine + Interpolator
-Resume context: SynthParams in src/SynthParams.h. UserParams in src/UserParams.h. Two oscillator banks (L1=solar wind, L2=Kp). Control-rate slew (glide time param). CPU target ≤5% at 32 partials/layer.
+Next action: `/paul:plan 5` — VisualRenderer
+Resume context: SynthParams in src/SynthParams.h. Visual metaphor decision required at plan start (Lissajous / particles / spectral envelope / geometric). Lock-free handoff from audio thread. Timer 30fps.
 
 ---
 *STATE.md — Updated after every significant action*

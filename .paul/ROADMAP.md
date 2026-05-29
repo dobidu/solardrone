@@ -8,7 +8,7 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 **v1.0 Initial Release** (v1.0.0)
 Status: In progress
-Phases: 3 of 8 complete
+Phases: 4 of 8 complete
 
 ## Phases
 
@@ -17,7 +17,7 @@ Phases: 3 of 8 complete
 | 1 | Foundation | 1 | ✅ Complete | 2026-05-29 |
 | 2 | DataFetcher | 2 | ✅ Complete | 2026-05-29 |
 | 3 | SynthParamMapper | 1 | ✅ Complete | 2026-05-29 |
-| 4 | AdditiveEngine + Interpolator | TBD | Not started | - |
+| 4 | AdditiveEngine + Interpolator | 1 | ✅ Complete | 2026-05-29 |
 | 5 | VisualRenderer | TBD | Not started | - |
 | 6 | Integration + Full UI | TBD | Not started | - |
 | 7 | Cross-platform Validation | TBD | Not started | - |
@@ -99,7 +99,7 @@ Phases: 3 of 8 complete
 - CPU profiling: ≤5% at 32 partials/layer (44.1kHz/512); add lookup-table oscillators if needed
 
 **Plans:**
-- [ ] 04-01: OscillatorBank + Interpolator + processBlock + CPU profiling
+- [x] 04-01: OscillatorBank + Interpolator + processBlock + CPU profiling
 
 ---
 
