@@ -34,6 +34,9 @@ target_sources(SolarDrone PRIVATE
     src/PluginEditor.cpp
     src/DataFetcher.cpp
     src/SynthParamMapper.cpp
+    src/Interpolator.cpp
+    src/OscillatorBank.cpp
+    src/AdditiveEngine.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

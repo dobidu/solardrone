@@ -1,5 +1,7 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "AdditiveEngine.h"
+#include "SynthParamMapper.h"
 
 class SolarDroneAudioProcessor : public juce::AudioProcessor {
 public:
@@ -29,5 +31,7 @@ public:
     void setStateInformation(const void*, int) override {}
 
 private:
+    AdditiveEngine engine;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };

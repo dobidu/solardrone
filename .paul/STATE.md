@@ -10,10 +10,10 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 4 of 8 (AdditiveEngine + Interpolator) — Not started
-Plan: None yet
-Status: Ready to plan
-Last activity: 2026-05-29 — Phase 3 complete; SynthParamMapper pure fn; 15/15 tests; v2-safe
+Phase: 4 of 8 (AdditiveEngine + Interpolator) — Planning
+Plan: 04-01 created, awaiting approval
+Status: PLAN created, ready for APPLY
+Last activity: 2026-05-29 — Created .paul/phases/04-additiveengine/04-01-PLAN.md
 
 Progress:
 - Milestone: [███░░░░░░░] 37%
@@ -24,7 +24,7 @@ Progress:
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ✓        ✓     [Loop complete — ready for Phase 4]
+  ✓        ○        ○     [Plan 04-01 created, awaiting approval]
 ```
 
 ## Accumulated Context
