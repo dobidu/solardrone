@@ -33,6 +33,7 @@ target_sources(SolarDrone PRIVATE
     src/PluginProcessor.cpp
     src/PluginEditor.cpp
     src/DataFetcher.cpp
+    src/SynthParamMapper.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC
@@ -68,7 +69,9 @@ juce_add_console_app(SolarDrone_Tests
 target_sources(SolarDrone_Tests PRIVATE
     tests/Main.cpp
     tests/DataFetcherTests.cpp
+    tests/SynthParamMapperTests.cpp
     src/DataFetcher.cpp
+    src/SynthParamMapper.cpp
 )
 
 target_include_directories(SolarDrone_Tests PRIVATE src)
