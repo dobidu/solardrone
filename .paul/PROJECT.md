@@ -13,8 +13,8 @@ Makes invisible space weather phenomena audible and aesthetically meaningful —
 | Attribute | Value |
 |-----------|-------|
 | Type | Application |
-| Version | 0.0.0 |
-| Status | Initializing |
+| Version | 0.1.0 |
+| Status | In Development |
 | Last Updated | 2026-05-29 |
 
 ## Requirements
