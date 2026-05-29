@@ -2,29 +2,29 @@
 
 ## Project Reference
 
-See: .paul/PROJECT.md (updated 2026-05-29)
+See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Project initialized — ready for Phase 1 planning
+**Current focus:** Phase 2 — DataFetcher (spike first, then implementation)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 1 of 8 (Foundation) — Planning
-Plan: 01-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/01-foundation/01-01-PLAN.md
+Phase: 2 of 8 (DataFetcher) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 1 complete; JUCE 8.0.4 builds; standalone verified; graphify baseline committed
 
 Progress:
-- Milestone: [░░░░░░░░░░] 0%
-- Phase 1: [░░░░░░░░░░] 0%
+- Milestone: [█░░░░░░░░░] 12%
+- Phase 2: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for next PLAN]
 ```
 
 ## Accumulated Context
@@ -35,9 +35,9 @@ PLAN ──▶ APPLY ──▶ UNIFY
 |----------|-------|--------|
 | SynthParamMapper as canonical product (`SpaceWeatherState → SynthParams`) | Init | AdditiveEngine + VisualRenderer are independent renderizações; v2 extensibility preserved |
 | Hybrid mapping (linear base + Bz/Kp non-linear activations) | Init | Aesthetic quality over data fidelity; quiet = sparse, storm = dense/tense |
-| Configurable glide time 30s–5min (default 2min) | Init | Suits studio and 24h installation contexts |
-| HTTP sandbox accepted as v1 limitation (no companion app) | Init | Documented in README; last-known-state fallback in plugin |
-| CMake over Projucer | Init | CI-friendly |
+| JUCE 8.0.4 via FetchContent GIT_SHALLOW=TRUE | Phase 1 | All subsequent phases use JUCE 8 API; CI first run ~5min, subsequent runs fast |
+| JUCE_USE_CURL=0 until Phase 2 spike | Phase 1 | Phase 2 spike must decide HTTP approach before enabling network in plugin context |
+| AU not in CI — code signing deferred to Phase 7 | Phase 1 | CI validates VST3+Standalone; AU validated manually in Phase 7 |
 
 ### Deferred Issues
 
@@ -50,14 +50,14 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 | Blocker | Impact | Resolution Path |
 |---------|--------|-----------------|
-| HTTP sandbox in Logic Pro / Pro Tools (unverified) | Plugin may not fetch live data in some hosts | Phase 2 spike (02-99) resolves |
+| HTTP sandbox in Logic Pro / Pro Tools (unverified) | Plugin may not fetch live data in some hosts | **Phase 2 spike (02-99) resolves — must run before main plan** |
 
 ## Session Continuity
 
 Last session: 2026-05-29
-Stopped at: Plan 01-01 created
-Next action: Review `.paul/phases/01-foundation/01-01-PLAN.md`, then run `/paul:apply`
-Resume context: Plan is self-contained; JUCE 8 FetchContent, 3 tasks (CMake/stubs, CI matrix, graphify)
+Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
+Next action: `/paul:plan 2` — **run `--quick-fix` first for spike 02-99 (HTTP in plugin context), then main plan**
+Resume context: Spike question: does JUCE::URL work in VST3 background thread in Logic Pro / Reaper / Ableton? See .paul/ROADMAP.md Phase 2.
 
 ---
 *STATE.md — Updated after every significant action*

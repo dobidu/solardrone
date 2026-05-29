@@ -8,13 +8,13 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 **v1.0 Initial Release** (v1.0.0)
 Status: In progress
-Phases: 0 of 8 complete
+Phases: 1 of 8 complete
 
 ## Phases
 
 | Phase | Name | Plans | Status | Completed |
 |-------|------|-------|--------|-----------|
-| 1 | Foundation | 1 | Planning | - |
+| 1 | Foundation | 1 | ✅ Complete | 2026-05-29 |
 | 2 | DataFetcher | TBD | Not started | - |
 | 3 | SynthParamMapper | TBD | Not started | - |
 | 4 | AdditiveEngine + Interpolator | TBD | Not started | - |
@@ -39,7 +39,7 @@ Phases: 0 of 8 complete
 - GitHub Actions CI matrix skeleton
 
 **Plans:**
-- [ ] 01-01: CMake project, stub AudioProcessor, verify builds on all 3 OSes, CI skeleton, graphify
+- [x] 01-01: CMake project, stub AudioProcessor, verify builds on all 3 OSes, CI skeleton, graphify
 
 ---
 
@@ -189,4 +189,4 @@ Phases: 0 of 8 complete
 
 ---
 *Roadmap created: 2026-05-29*
-*Last updated: 2026-05-29*
+*Last updated: 2026-05-29 — Phase 1 complete*

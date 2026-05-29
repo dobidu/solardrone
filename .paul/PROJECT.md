@@ -28,14 +28,15 @@ Makes invisible space weather phenomena audible and aesthetically meaningful —
 - **Full UI**: status indicator, drone on/off, volume, glide time, dynamics, panorama, harmony controls — all exposed as DAW-automatable parameters
 
 ### Validated (Shipped)
-None yet.
+
+- [x] Build foundation: JUCE 8.0.4 CMake project builds VST3 + Standalone on Linux; CI matrix covers all 3 OSes — Phase 1
 
 ### Active (In Progress)
 None yet.
 
 ### Planned (Next)
 
-- [ ] Phase 1: Foundation — JUCE CMake project building on all 3 OSes
+- [ ] Phase 2: DataFetcher — NOAA SWPC polling, SpaceWeatherState, null handling (spike first)
 
 ### Out of Scope
 
@@ -87,6 +88,8 @@ Data source is NOAA SWPC public JSON API (no auth). HTTP requests run on a backg
 | Configurable glide time (30s–5min) | User controls how fast drone evolves; suits both studio and installation contexts | 2026-05-29 | Active |
 | No companion app for sandboxed hosts | Scope boundary; documented limitation acceptable for v1 | 2026-05-29 | Active |
 | CMake over Projucer | CI-friendly; standard for modern JUCE projects | 2026-05-29 | Active |
+| JUCE 8.0.4 (FetchContent, GIT_SHALLOW=TRUE) | Latest stable at init; better CMake support than 7.x | 2026-05-29 | Active |
+| JUCE_USE_CURL=0 until Phase 2 spike | HTTP approach decided in spike before enabling network | 2026-05-29 | Active |
 
 ## Success Metrics
 
@@ -118,4 +121,4 @@ Data source is NOAA SWPC public JSON API (no auth). HTTP requests run on a backg
 
 ---
 *PROJECT.md — Updated when requirements or context change*
-*Last updated: 2026-05-29*
+*Last updated: 2026-05-29 after Phase 1*

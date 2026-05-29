@@ -1,14 +1,14 @@
 {
   "name": "SolarDrone",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "milestone": {
     "name": "v1.0 Initial Release",
     "version": "1.0.0",
-    "status": "not_started"
+    "status": "in_progress"
   },
   "phase": {
-    "number": 0,
-    "name": "None",
+    "number": 2,
+    "name": "DataFetcher",
     "status": "not_started"
   },
   "loop": {
