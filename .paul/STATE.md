@@ -10,10 +10,10 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 2 of 8 (DataFetcher) — Spike complete, ready for main plan
-Plan: 02-99 unified
-Status: Ready to plan (main)
-Last activity: 2026-05-29 — Spike 02-99 complete; HTTP OK verified; JUCE_USE_CURL fixed; decisions in STATE.md
+Phase: 2 of 8 (DataFetcher) — Planning
+Plan: 02-01 created, awaiting approval
+Status: PLAN created, ready for APPLY
+Last activity: 2026-05-29 — Created .paul/phases/02-datafetcher/02-01-PLAN.md
 
 Progress:
 - Milestone: [█░░░░░░░░░] 12%
@@ -24,7 +24,7 @@ Progress:
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ✓        ✓     [Spike 02-99 closed — ready for /paul:plan 2]
+  ✓        ○        ○     [Plan 02-01 created, awaiting approval]
 ```
 
 ## Accumulated Context

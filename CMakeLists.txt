@@ -32,6 +32,7 @@ juce_add_plugin(SolarDrone
 target_sources(SolarDrone PRIVATE
     src/PluginProcessor.cpp
     src/PluginEditor.cpp
+    src/DataFetcher.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC
@@ -57,4 +58,31 @@ target_link_libraries(SolarDrone
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
+)
+
+# ── Unit test binary ──────────────────────────────────────────────────────────
+juce_add_console_app(SolarDrone_Tests
+    PRODUCT_NAME "SolarDroneTests"
+)
+
+target_sources(SolarDrone_Tests PRIVATE
+    tests/Main.cpp
+    tests/DataFetcherTests.cpp
+    src/DataFetcher.cpp
+)
+
+target_include_directories(SolarDrone_Tests PRIVATE src)
+
+target_compile_definitions(SolarDrone_Tests PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0
+    JUCE_DISPLAY_SPLASH_SCREEN=0
+)
+
+target_link_libraries(SolarDrone_Tests PRIVATE
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_warning_flags
 )
