@@ -1,0 +1,74 @@
+{
+  "/mnt/d/temp/paul_class/project/src/PluginProcessor.h": {
+    "mtime": 1780080728.0,
+    "hash": "c5631e1366813c8d36ba80579bee997e"
+  },
+  "/mnt/d/temp/paul_class/project/src/PluginProcessor.cpp": {
+    "mtime": 1780080734.0,
+    "hash": "e8555e6b852d5682b6029cc9e977247b"
+  },
+  "/mnt/d/temp/paul_class/project/src/PluginEditor.h": {
+    "mtime": 1780080742.0,
+    "hash": "d464180b31b9b8e4783492d8b67bad6b"
+  },
+  "/mnt/d/temp/paul_class/project/src/PluginEditor.cpp": {
+    "mtime": 1780080746.0,
+    "hash": "d9dcce3ac81f9cf679f81a91a9ccea73"
+  },
+  "/mnt/d/temp/paul_class/project/PROJECT.md": {
+    "mtime": 1780079720.0,
+    "hash": "a171d37be557a0701ad832878bb8fb06"
+  },
+  "/mnt/d/temp/paul_class/project/ROADMAP.md": {
+    "mtime": 1780079866.0,
+    "hash": "ff86c0958c9b1e73f7633336843fc858"
+  },
+  "/mnt/d/temp/paul_class/project/ACCEPTANCE.md": {
+    "mtime": 1780079930.0,
+    "hash": "6cc0466bb6a33efc6c81fdef0705c8a9"
+  },
+  "/mnt/d/temp/paul_class/project/USAGE.md": {
+    "mtime": 1780079978.0,
+    "hash": "2ecaf27b1039fc3393cdaadb1bb4700c"
+  },
+  "/mnt/d/temp/paul_class/project/CMakeLists.txt": {
+    "mtime": 1780080716.0,
+    "hash": "7392c2587133d5a50abe8125ed46ff15"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/README.md": {
+    "mtime": 1780078432.0,
+    "hash": "d98226ff0d53da233de5a740c8dd91bb"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/facilitator-prompt.md": {
+    "mtime": 1780078708.0,
+    "hash": "5f0ec68e4c7af07c6c802da58d7e0697"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/SKILL.md": {
+    "mtime": 1780078432.0,
+    "hash": "96f89ac3185e0487765943f12cb3e025"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/playbook.md": {
+    "mtime": 1780078432.0,
+    "hash": "6e5f62a38717135bc5647dbeca2d488f"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/templates.md": {
+    "mtime": 1780078432.0,
+    "hash": "76561141f2365cfdea1d053c57f9c749"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/geotick-example/ACCEPTANCE.md": {
+    "mtime": 1780078432.0,
+    "hash": "50be01d829d4e8b08e87492b903f477c"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/geotick-example/PROJECT.md": {
+    "mtime": 1780078432.0,
+    "hash": "2bb73eeecaea6b445c62b032e44a86ab"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/geotick-example/ROADMAP.md": {
+    "mtime": 1780078432.0,
+    "hash": "90da8fc5009e593ce45266a954756904"
+  },
+  "/mnt/d/temp/paul_class/project/facilitator/skill/project-scaffolder/references/geotick-example/USAGE.md": {
+    "mtime": 1780078432.0,
+    "hash": "a835ebf8206cdfc86faafd49059ce759"
+  }
+}

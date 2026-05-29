@@ -1,0 +1,12 @@
+build/
+.cache/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.user
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo

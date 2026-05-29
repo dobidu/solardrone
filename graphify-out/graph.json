@@ -1,0 +1,1182 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "core_data_pipeline",
+        "label": "Core Data-to-Sound Pipeline",
+        "nodes": [
+          "project_datafetcher",
+          "project_synthparammapper",
+          "project_interpolator",
+          "project_additiveengine",
+          "project_visualrenderer"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.95,
+        "source_file": "PROJECT.md"
+      },
+      {
+        "id": "paul_toolchain_artifacts",
+        "label": "PAUL Toolchain Artifact Generators",
+        "nodes": [
+          "facilitator_prompt_phases",
+          "skill_md_project_scaffolder",
+          "playbook_md_question_banks",
+          "templates_md_artifact_structures"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.95,
+        "source_file": "facilitator/README.md"
+      },
+      {
+        "id": "geotick_reference_bundle",
+        "label": "GeoTick Reference Example Bundle",
+        "nodes": [
+          "geotick_project_utc_grid_api",
+          "geotick_roadmap_phases",
+          "geotick_acceptance_criteria",
+          "geotick_usage_guide"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.95,
+        "source_file": "facilitator/skill/project-scaffolder/SKILL.md"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "PluginProcessor.h",
+      "file_type": "code",
+      "source_file": "PluginProcessor.h",
+      "source_location": "L1",
+      "id": "pluginprocessor_h",
+      "community": 2,
+      "norm_label": "pluginprocessor.h"
+    },
+    {
+      "label": "SolarDroneAudioProcessor()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L4",
+      "id": "src_pluginprocessor_solardroneaudioprocessor",
+      "community": 2,
+      "norm_label": "solardroneaudioprocessor()"
+    },
+    {
+      "label": "PluginProcessor.cpp",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L1",
+      "id": "pluginprocessor_cpp",
+      "community": 2,
+      "norm_label": "pluginprocessor.cpp"
+    },
+    {
+      "label": "prepareToPlay()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L11",
+      "id": "src_pluginprocessor_preparetoplay",
+      "community": 2,
+      "norm_label": "preparetoplay()"
+    },
+    {
+      "label": "releaseResources()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L12",
+      "id": "src_pluginprocessor_releaseresources",
+      "community": 2,
+      "norm_label": "releaseresources()"
+    },
+    {
+      "label": "processBlock()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L14",
+      "id": "src_pluginprocessor_processblock",
+      "community": 2,
+      "norm_label": "processblock()"
+    },
+    {
+      "label": "createEditor()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L20",
+      "id": "src_pluginprocessor_createeditor",
+      "community": 2,
+      "norm_label": "createeditor()"
+    },
+    {
+      "label": "createPluginFilter()",
+      "file_type": "code",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L24",
+      "id": "src_pluginprocessor_createpluginfilter",
+      "community": 2,
+      "norm_label": "createpluginfilter()"
+    },
+    {
+      "label": "PluginEditor.h",
+      "file_type": "code",
+      "source_file": "PluginEditor.h",
+      "source_location": "L1",
+      "id": "plugineditor_h",
+      "community": 4,
+      "norm_label": "plugineditor.h"
+    },
+    {
+      "label": "SolarDroneAudioProcessorEditor()",
+      "file_type": "code",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L3",
+      "id": "src_plugineditor_solardroneaudioprocessoreditor",
+      "community": 4,
+      "norm_label": "solardroneaudioprocessoreditor()"
+    },
+    {
+      "label": "PluginEditor.cpp",
+      "file_type": "code",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L1",
+      "id": "plugineditor_cpp",
+      "community": 4,
+      "norm_label": "plugineditor.cpp"
+    },
+    {
+      "label": "paint()",
+      "file_type": "code",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L12",
+      "id": "src_plugineditor_paint",
+      "community": 4,
+      "norm_label": "paint()"
+    },
+    {
+      "label": "resized()",
+      "file_type": "code",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L20",
+      "id": "src_plugineditor_resized",
+      "community": 4,
+      "norm_label": "resized()"
+    },
+    {
+      "label": "SolarDroneAudioProcessor",
+      "file_type": "code",
+      "source_file": "src/PluginProcessor.h",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "pluginprocessor_h_solardroneaudioprocessor",
+      "community": 0,
+      "norm_label": "solardroneaudioprocessor"
+    },
+    {
+      "label": "SolarDroneAudioProcessorEditor",
+      "file_type": "code",
+      "source_file": "src/PluginEditor.h",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "plugineditor_h_solardroneaudioprocessoreditor",
+      "community": 0,
+      "norm_label": "solardroneaudioprocessoreditor"
+    },
+    {
+      "label": "createPluginFilter",
+      "file_type": "code",
+      "source_file": "src/PluginProcessor.cpp",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "pluginprocessor_cpp_createpluginfilter",
+      "community": 0,
+      "norm_label": "createpluginfilter"
+    },
+    {
+      "label": "DataFetcher",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_datafetcher",
+      "community": 1,
+      "norm_label": "datafetcher"
+    },
+    {
+      "label": "SynthParamMapper",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_synthparammapper",
+      "community": 5,
+      "norm_label": "synthparammapper"
+    },
+    {
+      "label": "Interpolator",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_interpolator",
+      "community": 0,
+      "norm_label": "interpolator"
+    },
+    {
+      "label": "AdditiveEngine",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_additiveengine",
+      "community": 0,
+      "norm_label": "additiveengine"
+    },
+    {
+      "label": "VisualRenderer",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_visualrenderer",
+      "community": 0,
+      "norm_label": "visualrenderer"
+    },
+    {
+      "label": "SpaceWeatherState",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_spaceweatherstate",
+      "community": 1,
+      "norm_label": "spaceweatherstate"
+    },
+    {
+      "label": "SynthParams",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_synthparams",
+      "community": 0,
+      "norm_label": "synthparams"
+    },
+    {
+      "label": "UserParams",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_userparams",
+      "community": 5,
+      "norm_label": "userparams"
+    },
+    {
+      "label": "NOAA SWPC API",
+      "file_type": "rationale",
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "project_noaa_swpc",
+      "community": 1,
+      "norm_label": "noaa swpc api"
+    },
+    {
+      "label": "Phase 02 \u2014 DataFetcher",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_datafetcher_phase",
+      "community": 1,
+      "norm_label": "phase 02 \u2014 datafetcher"
+    },
+    {
+      "label": "Phase 03 \u2014 SynthParamMapper",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_synthparammapper_phase",
+      "community": 5,
+      "norm_label": "phase 03 \u2014 synthparammapper"
+    },
+    {
+      "label": "Phase 04 \u2014 AdditiveEngine + Interpolator",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_additiveengine_phase",
+      "community": 0,
+      "norm_label": "phase 04 \u2014 additiveengine + interpolator"
+    },
+    {
+      "label": "Phase 05 \u2014 VisualRenderer",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_visualrenderer_phase",
+      "community": 0,
+      "norm_label": "phase 05 \u2014 visualrenderer"
+    },
+    {
+      "label": "Phase 06 \u2014 Integration + Full UI",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_integration_phase",
+      "community": 0,
+      "norm_label": "phase 06 \u2014 integration + full ui"
+    },
+    {
+      "label": "Phase 07 \u2014 Cross-platform validation",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_crossplatform_phase",
+      "community": 6,
+      "norm_label": "phase 07 \u2014 cross-platform validation"
+    },
+    {
+      "label": "Phase 08 \u2014 Docs + Release",
+      "file_type": "document",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_docs_release_phase",
+      "community": 7,
+      "norm_label": "phase 08 \u2014 docs + release"
+    },
+    {
+      "label": "Phase 02 HTTP Spike (02-99)",
+      "file_type": "rationale",
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "roadmap_http_spike",
+      "community": 1,
+      "norm_label": "phase 02 http spike (02-99)"
+    },
+    {
+      "label": "DataFetcher Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "acceptance_ac_datafetcher",
+      "community": 1,
+      "norm_label": "datafetcher acceptance criteria"
+    },
+    {
+      "label": "SynthParamMapper Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "acceptance_ac_synthparammapper",
+      "community": 5,
+      "norm_label": "synthparammapper acceptance criteria"
+    },
+    {
+      "label": "AdditiveEngine Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "acceptance_ac_additiveengine",
+      "community": 0,
+      "norm_label": "additiveengine acceptance criteria"
+    },
+    {
+      "label": "Toolchain Setup Guide",
+      "file_type": "document",
+      "source_file": "USAGE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "usage_toolchain",
+      "community": 1,
+      "norm_label": "toolchain setup guide"
+    },
+    {
+      "label": "SolarDrone CMake Plugin Target",
+      "file_type": "code",
+      "source_file": "CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "cmakelists_solardrone_plugin",
+      "community": 0,
+      "norm_label": "solardrone cmake plugin target"
+    },
+    {
+      "label": "Project Scaffolder Facilitator",
+      "file_type": "document",
+      "source_file": "facilitator/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "facilitator_readme_scaffolder",
+      "community": 3,
+      "norm_label": "project scaffolder facilitator"
+    },
+    {
+      "label": "Facilitator Prompt Phases",
+      "file_type": "document",
+      "source_file": "facilitator/facilitator-prompt.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "facilitator_prompt_phases",
+      "community": 3,
+      "norm_label": "facilitator prompt phases"
+    },
+    {
+      "label": "Project Scaffolder Skill",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "skill_md_project_scaffolder",
+      "community": 3,
+      "norm_label": "project scaffolder skill"
+    },
+    {
+      "label": "Scaffolder Playbook Question Banks",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/references/playbook.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "playbook_md_question_banks",
+      "community": 3,
+      "norm_label": "scaffolder playbook question banks"
+    },
+    {
+      "label": "Artifact Templates",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/references/templates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "templates_md_artifact_structures",
+      "community": 3,
+      "norm_label": "artifact templates"
+    },
+    {
+      "label": "GeoTick UTC Grid API",
+      "file_type": "rationale",
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "geotick_project_utc_grid_api",
+      "community": 3,
+      "norm_label": "geotick utc grid api"
+    },
+    {
+      "label": "GeoTick GPS Bridge",
+      "file_type": "rationale",
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/PROJECT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "geotick_project_gps_bridge",
+      "community": 1,
+      "norm_label": "geotick gps bridge"
+    },
+    {
+      "label": "GeoTick Roadmap Phases",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/ROADMAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "geotick_roadmap_phases",
+      "community": 1,
+      "norm_label": "geotick roadmap phases"
+    },
+    {
+      "label": "GeoTick Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/ACCEPTANCE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "geotick_acceptance_criteria",
+      "community": 3,
+      "norm_label": "geotick acceptance criteria"
+    },
+    {
+      "label": "GeoTick Usage Guide",
+      "file_type": "document",
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/USAGE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "geotick_usage_guide",
+      "community": 1,
+      "norm_label": "geotick usage guide"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.h",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "pluginprocessor_h",
+      "target": "src_pluginprocessor_solardroneaudioprocessor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_solardroneaudioprocessor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_preparetoplay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_releaseresources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_processblock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_createeditor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginProcessor.cpp",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp",
+      "target": "src_pluginprocessor_createpluginfilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginEditor.h",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "plugineditor_h",
+      "target": "src_plugineditor_solardroneaudioprocessoreditor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "plugineditor_cpp",
+      "target": "src_plugineditor_solardroneaudioprocessoreditor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "plugineditor_cpp",
+      "target": "src_plugineditor_paint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "PluginEditor.cpp",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "plugineditor_cpp",
+      "target": "src_plugineditor_resized",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/PluginProcessor.cpp",
+      "source_location": "createEditor()",
+      "weight": 1.0,
+      "source": "pluginprocessor_h_solardroneaudioprocessor",
+      "target": "plugineditor_h_solardroneaudioprocessoreditor"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/PluginProcessor.cpp",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "pluginprocessor_cpp_createpluginfilter",
+      "target": "pluginprocessor_h_solardroneaudioprocessor"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "src/PluginProcessor.h",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "pluginprocessor_h_solardroneaudioprocessor",
+      "target": "project_additiveengine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cmakelists_solardrone_plugin",
+      "target": "pluginprocessor_h_solardroneaudioprocessor"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cmakelists_solardrone_plugin",
+      "target": "plugineditor_h_solardroneaudioprocessoreditor"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_datafetcher",
+      "target": "project_spaceweatherstate"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_datafetcher",
+      "target": "project_noaa_swpc"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_datafetcher_phase",
+      "target": "project_datafetcher"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_integration_phase",
+      "target": "project_datafetcher"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_datafetcher",
+      "target": "geotick_project_gps_bridge"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_synthparammapper",
+      "target": "project_spaceweatherstate"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_synthparammapper",
+      "target": "project_userparams"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_synthparammapper",
+      "target": "project_synthparams"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_synthparammapper_phase",
+      "target": "project_synthparammapper"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_integration_phase",
+      "target": "project_synthparammapper"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_synthparammapper",
+      "target": "geotick_project_utc_grid_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_interpolator",
+      "target": "project_synthparams"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_additiveengine_phase",
+      "target": "project_interpolator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_integration_phase",
+      "target": "project_interpolator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_additiveengine",
+      "target": "project_synthparams"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_additiveengine_phase",
+      "target": "project_additiveengine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_integration_phase",
+      "target": "project_additiveengine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROJECT.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "project_visualrenderer",
+      "target": "project_synthparams"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_visualrenderer_phase",
+      "target": "project_visualrenderer"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_integration_phase",
+      "target": "project_visualrenderer"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "roadmap_http_spike",
+      "target": "roadmap_datafetcher_phase"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "acceptance_ac_datafetcher",
+      "target": "roadmap_datafetcher_phase"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "USAGE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "usage_toolchain",
+      "target": "roadmap_datafetcher_phase"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "acceptance_ac_synthparammapper",
+      "target": "roadmap_synthparammapper_phase"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ACCEPTANCE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "acceptance_ac_additiveengine",
+      "target": "roadmap_additiveengine_phase"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "facilitator_readme_scaffolder",
+      "target": "facilitator_prompt_phases"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "facilitator_readme_scaffolder",
+      "target": "skill_md_project_scaffolder"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/SKILL.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "skill_md_project_scaffolder",
+      "target": "playbook_md_question_banks"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/SKILL.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "skill_md_project_scaffolder",
+      "target": "templates_md_artifact_structures"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/SKILL.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "skill_md_project_scaffolder",
+      "target": "geotick_project_utc_grid_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/references/templates.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "templates_md_artifact_structures",
+      "target": "geotick_project_utc_grid_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "geotick_roadmap_phases",
+      "target": "geotick_project_utc_grid_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/ACCEPTANCE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "geotick_acceptance_criteria",
+      "target": "geotick_project_utc_grid_api"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/ROADMAP.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "geotick_roadmap_phases",
+      "target": "geotick_project_gps_bridge"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "facilitator/skill/project-scaffolder/references/geotick-example/USAGE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "geotick_usage_guide",
+      "target": "geotick_roadmap_phases"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "core_data_pipeline",
+      "label": "Core Data-to-Sound Pipeline",
+      "nodes": [
+        "project_datafetcher",
+        "project_synthparammapper",
+        "project_interpolator",
+        "project_additiveengine",
+        "project_visualrenderer"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "PROJECT.md"
+    },
+    {
+      "id": "paul_toolchain_artifacts",
+      "label": "PAUL Toolchain Artifact Generators",
+      "nodes": [
+        "facilitator_prompt_phases",
+        "skill_md_project_scaffolder",
+        "playbook_md_question_banks",
+        "templates_md_artifact_structures"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "facilitator/README.md"
+    },
+    {
+      "id": "geotick_reference_bundle",
+      "label": "GeoTick Reference Example Bundle",
+      "nodes": [
+        "geotick_project_utc_grid_api",
+        "geotick_roadmap_phases",
+        "geotick_acceptance_criteria",
+        "geotick_usage_guide"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "facilitator/skill/project-scaffolder/SKILL.md"
+    }
+  ]
+}
