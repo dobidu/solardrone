@@ -10,10 +10,10 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 2 of 8 (DataFetcher) — Spike
-Plan: 02-99 created, awaiting apply
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/02-datafetcher/02-99-PLAN.md
+Phase: 2 of 8 (DataFetcher) — Spike complete, ready for main plan
+Plan: 02-99 unified
+Status: Ready to plan (main)
+Last activity: 2026-05-29 — Spike 02-99 complete; HTTP OK verified; JUCE_USE_CURL fixed; decisions in STATE.md
 
 Progress:
 - Milestone: [█░░░░░░░░░] 12%
@@ -24,7 +24,7 @@ Progress:
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Spike plan created, awaiting apply]
+  ✓        ✓        ✓     [Spike 02-99 closed — ready for /paul:plan 2]
 ```
 
 ## Accumulated Context
@@ -36,7 +36,9 @@ PLAN ──▶ APPLY ──▶ UNIFY
 | SynthParamMapper as canonical product (`SpaceWeatherState → SynthParams`) | Init | AdditiveEngine + VisualRenderer are independent renderizações; v2 extensibility preserved |
 | Hybrid mapping (linear base + Bz/Kp non-linear activations) | Init | Aesthetic quality over data fidelity; quiet = sparse, storm = dense/tense |
 | JUCE 8.0.4 via FetchContent GIT_SHALLOW=TRUE | Phase 1 | All subsequent phases use JUCE 8 API; CI first run ~5min, subsequent runs fast |
-| JUCE_USE_CURL=0 until Phase 2 spike | Phase 1 | Phase 2 spike must decide HTTP approach before enabling network in plugin context |
+| JUCE_USE_CURL platform-conditional (Linux=1+libcurl, macOS/Windows=0) | Phase 2 spike | CMakeLists.txt updated; CURL::libcurl linked on Linux; native stacks on macOS/Win |
+| JUCE::URL probe must launch from constructor, not prepareToPlay | Phase 2 spike | Audio device may never init in WSL2/headless — DataFetcher must start its own thread unconditionally |
+| Fallback: empty readEntireTextStream → source="cached", increment data_age_s | Phase 2 spike | No exception from JUCE on failure; silent empty string — DataFetcher checks isEmpty() |
 | AU not in CI — code signing deferred to Phase 7 | Phase 1 | CI validates VST3+Standalone; AU validated manually in Phase 7 |
 
 ### Deferred Issues
@@ -50,14 +52,14 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 | Blocker | Impact | Resolution Path |
 |---------|--------|-----------------|
-| HTTP sandbox in Logic Pro / Pro Tools (unverified) | Plugin may not fetch live data in some hosts | **Phase 2 spike (02-99) resolves — must run before main plan** |
+| Logic Pro / Ableton macOS sandbox blocks HTTP silently | Plugin uses last-known state in those hosts | ✅ Resolved by spike — fallback implemented in DataFetcher; documented in README |
 
 ## Session Continuity
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 2` — **run `--quick-fix` first for spike 02-99 (HTTP in plugin context), then main plan**
-Resume context: Spike question: does JUCE::URL work in VST3 background thread in Logic Pro / Reaper / Ableton? See .paul/ROADMAP.md Phase 2.
+Next action: `/paul:plan 2` — main DataFetcher implementation (spike complete, decisions in STATE.md)
+Resume context: JUCE::URL works (HTTP OK verified). JUCE_USE_CURL platform-conditional already in CMakeLists.txt. DataFetcher launches thread from constructor; isEmpty() check for fallback.
 
 ---
 *STATE.md — Updated after every significant action*
