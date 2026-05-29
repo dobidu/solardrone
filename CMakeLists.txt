@@ -37,6 +37,7 @@ target_sources(SolarDrone PRIVATE
     src/Interpolator.cpp
     src/OscillatorBank.cpp
     src/AdditiveEngine.cpp
+    src/VisualRenderer.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

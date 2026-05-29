@@ -30,6 +30,8 @@ public:
     void getStateInformation(juce::MemoryBlock&) override {}
     void setStateInformation(const void*, int) override {}
 
+    SynthParams getCurrentSynthParams() const;
+
 private:
     AdditiveEngine engine;
 

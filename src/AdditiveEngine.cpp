@@ -44,8 +44,15 @@ void AdditiveEngine::processBlock(juce::AudioBuffer<float>& buffer) {
     }
 }
 
+SynthParams AdditiveEngine::getSmoothedParams() const {
+    juce::ScopedLock sl(smoothedLock);
+    return smoothed;
+}
+
 void AdditiveEngine::updateControlRate() {
-    smoothed = interp.getSmoothed();
+    auto s = interp.getSmoothed();
+    { juce::ScopedLock sl(smoothedLock); smoothed = s; }
+    const auto& smoothed = s;
 
     // Constant-power layer balance crossfade
     const float angle = userParams.layer_balance

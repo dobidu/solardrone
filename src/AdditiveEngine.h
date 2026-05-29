@@ -12,12 +12,16 @@ public:
     void setUserParams(const UserParams& params);
     void processBlock(juce::AudioBuffer<float>& buffer);
 
+    SynthParams getSmoothedParams() const;
+
 private:
     void updateControlRate();
 
     OscillatorBank l1Bank, l2Bank;
     Interpolator   interp;
     UserParams     userParams;
+
+    mutable juce::CriticalSection smoothedLock;
     SynthParams    smoothed;
 
     int controlCounter = 0;

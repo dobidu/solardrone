@@ -9,4 +9,9 @@ struct UserParams {
     HarmonyMode harmony_mode       = HarmonyMode::just;
     int   l1_l2_interval_semitones = 7;       // default: perfect 5th
     float glide_time_secs          = 120.0f;  // 30-300s interpolation
+
+    // Visual layer blend weights (0=off, 1=full)
+    float visual_lissajous = 0.7f;
+    float visual_particles = 0.7f;
+    float visual_spectral  = 0.7f;
 };

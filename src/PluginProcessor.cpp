@@ -26,6 +26,10 @@ void SolarDroneAudioProcessor::processBlock(
     engine.processBlock(buffer);
 }
 
+SynthParams SolarDroneAudioProcessor::getCurrentSynthParams() const {
+    return engine.getSmoothedParams();
+}
+
 juce::AudioProcessorEditor* SolarDroneAudioProcessor::createEditor() {
     return new SolarDroneAudioProcessorEditor(*this);
 }
