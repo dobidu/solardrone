@@ -5,26 +5,26 @@
 See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Phase 2 — DataFetcher (spike first, then implementation)
+**Current focus:** Phase 3 — SynthParamMapper (pure function SpaceWeatherState → SynthParams)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 2 of 8 (DataFetcher) — Planning
-Plan: 02-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/02-datafetcher/02-01-PLAN.md
+Phase: 3 of 8 (SynthParamMapper) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 2 complete; DataFetcher + SpaceWeatherState; 8/8 unit tests
 
 Progress:
-- Milestone: [█░░░░░░░░░] 12%
-- Phase 2: [░░░░░░░░░░] 0%
+- Milestone: [██░░░░░░░░] 25%
+- Phase 3: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 02-01 created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for Phase 3]
 ```
 
 ## Accumulated Context
@@ -58,8 +58,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 2` — main DataFetcher implementation (spike complete, decisions in STATE.md)
-Resume context: JUCE::URL works (HTTP OK verified). JUCE_USE_CURL platform-conditional already in CMakeLists.txt. DataFetcher launches thread from constructor; isEmpty() check for fallback.
+Next action: `/paul:plan 3` — SynthParamMapper (pure function, hybrid mapping, unit tests)
+Resume context: SpaceWeatherState struct in src/SpaceWeatherState.h. SynthParams struct to define. Linear base + non-linear activations (Bz ≤-10nT, Kp ≥6). v2 readiness review at end.
 
 ---
 *STATE.md — Updated after every significant action*

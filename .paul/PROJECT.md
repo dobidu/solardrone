@@ -30,13 +30,14 @@ Makes invisible space weather phenomena audible and aesthetically meaningful —
 ### Validated (Shipped)
 
 - [x] Build foundation: JUCE 8.0.4 CMake project builds VST3 + Standalone on Linux; CI matrix covers all 3 OSes — Phase 1
+- [x] DataFetcher: polls NOAA SWPC, SpaceWeatherState with null handling + last-valid cache, 8/8 unit tests — Phase 2
 
 ### Active (In Progress)
 None yet.
 
 ### Planned (Next)
 
-- [ ] Phase 2: DataFetcher — NOAA SWPC polling, SpaceWeatherState, null handling (spike first)
+- [ ] Phase 3: SynthParamMapper — pure function SpaceWeatherState → SynthParams, hybrid mapping
 
 ### Out of Scope
 
@@ -121,4 +122,4 @@ Data source is NOAA SWPC public JSON API (no auth). HTTP requests run on a backg
 
 ---
 *PROJECT.md — Updated when requirements or context change*
-*Last updated: 2026-05-29 after Phase 1*
+*Last updated: 2026-05-29 after Phase 2*

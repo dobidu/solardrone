@@ -8,14 +8,14 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 **v1.0 Initial Release** (v1.0.0)
 Status: In progress
-Phases: 1 of 8 complete
+Phases: 2 of 8 complete
 
 ## Phases
 
 | Phase | Name | Plans | Status | Completed |
 |-------|------|-------|--------|-----------|
 | 1 | Foundation | 1 | ✅ Complete | 2026-05-29 |
-| 2 | DataFetcher | TBD | Not started | - |
+| 2 | DataFetcher | 2 | ✅ Complete | 2026-05-29 |
 | 3 | SynthParamMapper | TBD | Not started | - |
 | 4 | AdditiveEngine + Interpolator | TBD | Not started | - |
 | 5 | VisualRenderer | TBD | Not started | - |
@@ -60,8 +60,8 @@ Phases: 1 of 8 complete
 - Unit tests with fixture JSONs (quiet day, storm day, all-null fields)
 
 **Plans:**
-- [ ] 02-99: Spike — HTTP in plugin context (research)
-- [ ] 02-01: DataFetcher implementation + unit tests
+- [x] 02-99: Spike — HTTP in plugin context (research)
+- [x] 02-01: DataFetcher implementation + unit tests
 
 ---
 
