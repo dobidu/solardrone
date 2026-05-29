@@ -36,10 +36,18 @@ target_sources(SolarDrone PRIVATE
 
 target_compile_definitions(SolarDrone PUBLIC
     JUCE_WEB_BROWSER=0
-    JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
 )
+
+# Linux needs libcurl for JUCE::URL; macOS/Windows use native stacks
+if(UNIX AND NOT APPLE)
+    find_package(CURL REQUIRED)
+    target_compile_definitions(SolarDrone PUBLIC JUCE_USE_CURL=1)
+    target_link_libraries(SolarDrone PRIVATE CURL::libcurl)
+else()
+    target_compile_definitions(SolarDrone PUBLIC JUCE_USE_CURL=0)
+endif()
 
 target_link_libraries(SolarDrone
     PRIVATE

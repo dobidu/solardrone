@@ -9,6 +9,7 @@ SolarDroneAudioProcessor::SolarDroneAudioProcessor()
 SolarDroneAudioProcessor::~SolarDroneAudioProcessor() {}
 
 void SolarDroneAudioProcessor::prepareToPlay(double, int) {}
+
 void SolarDroneAudioProcessor::releaseResources() {}
 
 void SolarDroneAudioProcessor::processBlock(
