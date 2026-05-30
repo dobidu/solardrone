@@ -2,34 +2,41 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
 #include "VisualRenderer.h"
+#include "SunDisc.h"
+#include "ColourScheme.h"
 
-class SolarDroneAudioProcessorEditor : public juce::AudioProcessorEditor {
+class SolarDroneAudioProcessorEditor
+    : public juce::AudioProcessorEditor
+    , public juce::Timer
+{
 public:
     explicit SolarDroneAudioProcessorEditor(SolarDroneAudioProcessor&);
     ~SolarDroneAudioProcessorEditor() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
+    void timerCallback() override;
 
 private:
     SolarDroneAudioProcessor& processorRef;
-    VisualRenderer visualRenderer;
+    VisualRenderer  visualRenderer;
+    SunDisc         sunDisc;
+    float           currentKp = 0.f;
 
-    // Existing controls
-    juce::Slider       slVolume, slGlide, slDynamics, slBalance, slSpread;
+    // ── Right-panel controls ──────────────────────────────────────────────
+    juce::Slider       slGlide, slDynamics, slBalance, slSpread;
     juce::Slider       slInterval, slVisLiss, slVisPart, slVisSpec;
-    juce::ToggleButton btnDroneOn;
     juce::ComboBox     cmbHarmony;
-    juce::Label        lblVolume, lblGlide, lblDynamics, lblBalance, lblSpread;
+    juce::Label        lblGlide, lblDynamics, lblBalance, lblSpread;
     juce::Label        lblInterval, lblVisLiss, lblVisPart, lblVisSpec;
 
-    // Beat Repeater controls
+    // ── Bottom strip — Repeater ───────────────────────────────────────────
     juce::Slider       slRepBPM, slRepFeedback, slRepWet;
     juce::ComboBox     cmbRepBars;
     juce::ToggleButton btnRepOn;
     juce::Label        lblRepBPM, lblRepFeedback, lblRepWet, lblRepBars;
 
-    // Chopper controls
+    // ── Bottom strip — Chopper ────────────────────────────────────────────
     juce::Slider       slChopRate, slChopDepth;
     juce::ComboBox     cmbChopShape, cmbChopDiv;
     juce::ToggleButton btnChopOn, btnChopSync;
@@ -39,19 +46,17 @@ private:
     using ButtonAttachment   = juce::AudioProcessorValueTreeState::ButtonAttachment;
     using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
 
-    // Existing attachments
-    std::unique_ptr<SliderAttachment>    attVolume, attGlide, attDynamics;
-    std::unique_ptr<SliderAttachment>    attBalance, attSpread, attInterval;
-    std::unique_ptr<SliderAttachment>    attVisLiss, attVisPart, attVisSpec;
-    std::unique_ptr<ButtonAttachment>    attDroneOn;
+    // Right panel
+    std::unique_ptr<SliderAttachment>    attGlide, attDynamics, attBalance, attSpread;
+    std::unique_ptr<SliderAttachment>    attInterval, attVisLiss, attVisPart, attVisSpec;
     std::unique_ptr<ComboBoxAttachment>  attHarmony;
 
-    // Repeater attachments
+    // Repeater
     std::unique_ptr<SliderAttachment>    attRepBPM, attRepFeedback, attRepWet;
     std::unique_ptr<ComboBoxAttachment>  attRepBars;
     std::unique_ptr<ButtonAttachment>    attRepOn;
 
-    // Chopper attachments
+    // Chopper
     std::unique_ptr<SliderAttachment>    attChopRate, attChopDepth;
     std::unique_ptr<ComboBoxAttachment>  attChopShape, attChopDiv;
     std::unique_ptr<ButtonAttachment>    attChopOn, attChopSync;

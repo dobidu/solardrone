@@ -10,7 +10,8 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Milestone: v2.1 — Rhythmic Modulation ✅ COMPLETE
+Milestone: v2.2 — UI/UX Overhaul (in progress)
+Phase: v2.2.1 — Layout Foundation (planning)
 Phase: v2.1.2 (Chopper + UI) — complete
 Plan: unified
 Status: MILESTONE COMPLETE — ready for v2.2
