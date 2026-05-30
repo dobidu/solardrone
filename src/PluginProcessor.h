@@ -29,16 +29,20 @@ public:
     const juce::String getProgramName(int) override { return {}; }
     void changeProgramName(int, const juce::String&) override {}
 
-    void getStateInformation(juce::MemoryBlock&) override {}
-    void setStateInformation(const void*, int) override {}
+    void getStateInformation(juce::MemoryBlock& destData) override;
+    void setStateInformation(const void* data, int sizeInBytes) override;
 
     SynthParams         getCurrentSynthParams() const;
     SpaceWeatherState   getLatestSpaceWeatherState() const;
 
+    juce::AudioProcessorValueTreeState apvts;
+
 private:
-    DataFetcher   fetcher;
-    UserParams    userParams;
-    juce::String  lastTimestamp;
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    DataFetcher    fetcher;
+    UserParams     userParams;
+    juce::String   lastTimestamp;
     AdditiveEngine engine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
