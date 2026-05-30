@@ -26,6 +26,7 @@ private:
     LoopLength loopLen     = LoopLength::Bar4th;
 
     std::vector<float> ringL, ringR;
-    int  writePos   = 0;
-    int  bufferSize = 0;
+    int   writePos           = 0;
+    int   bufferSize         = 0;
+    float currentBeatPeriodF = 22050.0f;  // smoothed — avoids crackle on BPM change
 };

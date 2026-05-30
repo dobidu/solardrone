@@ -40,6 +40,7 @@ target_sources(SolarDrone PRIVATE
     src/VisualRenderer.cpp
     src/TempoTracker.cpp
     src/BeatRepeater.cpp
+    src/Chopper.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

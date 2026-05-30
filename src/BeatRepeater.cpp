@@ -3,12 +3,12 @@
 
 void BeatRepeater::prepare(double sr, int /*maxBlockSize*/) {
     sampleRate = sr;
-    // Max 2 bars at 30 BPM: 8 beats * (sr * 60 / 30) samples/beat
     const int maxSamples = (int)(sr * 60.0 / 30.0 * 8.0) + 1024;
     ringL.assign((size_t)maxSamples, 0.0f);
     ringR.assign((size_t)maxSamples, 0.0f);
-    bufferSize = maxSamples;
-    writePos   = 0;
+    bufferSize       = maxSamples;
+    writePos         = 0;
+    currentBeatPeriodF = (float)beatPeriod;
 }
 
 void BeatRepeater::setEnabled(bool e)              { enabled  = e; }
@@ -31,6 +31,10 @@ int BeatRepeater::loopLengthSamples() const {
 
 void BeatRepeater::process(juce::AudioBuffer<float>& buffer) {
     if (bufferSize == 0) return;
+
+    // Smooth BPM transitions to avoid crackle (alpha ~0.2 per block ≈ 250ms convergence)
+    currentBeatPeriodF += 0.2f * ((float)beatPeriod - currentBeatPeriodF);
+    beatPeriod = std::max(1, (int)(currentBeatPeriodF + 0.5f));
 
     const int n    = buffer.getNumSamples();
     const int nCh  = buffer.getNumChannels();

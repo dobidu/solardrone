@@ -6,6 +6,7 @@
 #include "UserParams.h"
 #include "TempoTracker.h"
 #include "BeatRepeater.h"
+#include "Chopper.h"
 
 class SolarDroneAudioProcessor : public juce::AudioProcessor {
 public:
@@ -48,6 +49,7 @@ private:
     AdditiveEngine engine;
     TempoTracker   tempoTracker;
     BeatRepeater   beatRepeater;
+    Chopper        chopper;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };

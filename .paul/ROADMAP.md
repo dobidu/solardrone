@@ -192,6 +192,30 @@ Phases: 8 of 8 complete
 
 **v2.1 target:** Beat Repeater + Chopper layered over the drone, with shared BPM sync (MIDI clock from host OR internal BPM parameter, auto-detect).
 
+## Milestone v2.2 — UI/UX Overhaul
+
+**v2.2 target:** Complete redesign of the interface. Goal: innovative, comprehensive, intuitive. Move away from flat horizontal sliders toward a visual-first, spatially meaningful layout. Space weather data front and center. Controls feel like an instrument, not a settings panel.
+
+### Phase v2.2 — UI/UX Overhaul
+
+**Design directions to explore (decide at phase start):**
+- **Radial layout**: circular instrument centered on the visual. Drone controls orbit the visual.
+- **Space-themed skeuomorphism**: gauges/meters that look like mission control panels. Solar wind as a moving waveform. Kp as a magnetometer needle.
+- **Data-first**: real-time numeric displays prominent (velocity, Bz, Kp, BPM). Controls secondary.
+- **Touch-friendly**: large targets, minimal clutter — suitable for installation context.
+
+**Scope (minimum for v2.2):**
+- New layout architecture (Component hierarchy redesign)
+- Visual feedback on every parameter (value labels, color coding by range)
+- Status panel: velocity + Bz + Kp as styled gauges, not just text
+- Contextual labels explaining when params are active ("Glide: affects transitions", "Dynamics: scales during Kp events")
+- Repeater + Chopper visualized as waveform/pattern strip
+- Accessibility: keyboard navigation, sufficient contrast
+
+**Spike likely:** visual design decision before implementation.
+
+---
+
 ## Phases — v2.1
 
 ### Phase v2.1.1 — Beat Repeater

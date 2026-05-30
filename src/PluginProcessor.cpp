@@ -42,6 +42,22 @@ SolarDroneAudioProcessor::createParameterLayout() {
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "repeater_wet",      "Repeater Wet",   0.0f, 1.0f, 0.7f));
 
+    // Chopper
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "chopper_on",    "Chopper On",    false));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "chopper_rate",  "Chopper Rate",  0.1f, 20.0f, 4.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "chopper_depth", "Chopper Depth", 0.0f, 1.0f,  1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        "chopper_shape", "Chopper Shape",
+        juce::StringArray{"Sine","Square","Saw"}, 1));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "chopper_sync",  "Chopper Sync",  true));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        "chopper_div",   "Chopper Div",
+        juce::StringArray{"1/16","1/8","1/4","1/2","1 bar"}, 2));
+
     return { params.begin(), params.end() };
 }
 
@@ -59,6 +75,7 @@ void SolarDroneAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     engine.prepare(sampleRate, samplesPerBlock);
     tempoTracker.prepare(sampleRate);
     beatRepeater.prepare(sampleRate, samplesPerBlock);
+    chopper.prepare(sampleRate);
 }
 
 void SolarDroneAudioProcessor::releaseResources() {}
@@ -104,9 +121,21 @@ void SolarDroneAudioProcessor::processBlock(
     const bool droneOn = *apvts.getRawParameterValue("drone_on") > 0.5f;
     const float volume = *apvts.getRawParameterValue("volume");
 
+    // Chopper params
+    static const float divBeats[] = {0.25f, 0.5f, 1.0f, 2.0f, 4.0f};
+    const int divIdx = std::min((int)*apvts.getRawParameterValue("chopper_div"), 4);
+    const bool chopSync = *apvts.getRawParameterValue("chopper_sync") > 0.5f;
+    chopper.setEnabled(*apvts.getRawParameterValue("chopper_on") > 0.5f);
+    chopper.setDepth(*apvts.getRawParameterValue("chopper_depth"));
+    chopper.setShape((Chopper::Shape)(int)*apvts.getRawParameterValue("chopper_shape"));
+    chopper.setBPMSync(chopSync, tempoTracker.getCurrentBPM(), divBeats[divIdx]);
+    if (!chopSync)
+        chopper.setRate(*apvts.getRawParameterValue("chopper_rate"));
+
     if (droneOn) {
         engine.processBlock(buffer);
         beatRepeater.process(buffer);
+        chopper.process(buffer);
         buffer.applyGain(volume);
     } else {
         buffer.clear();
