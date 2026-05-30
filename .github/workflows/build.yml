@@ -39,5 +39,17 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build (Standalone + VST3)
-        run: cmake --build build --config Release --target SolarDrone_Standalone SolarDrone_VST3
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Run unit tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          TEST_BIN=$(find build -path "*/SolarDroneTests" \
+            ! -path "*/juce-src/*" | head -1)
+          if [ -n "$TEST_BIN" ]; then
+            echo "Running: $TEST_BIN"
+            $TEST_BIN
+          else
+            echo "SolarDroneTests not found — skipping"
+          fi
