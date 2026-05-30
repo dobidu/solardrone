@@ -33,13 +33,14 @@ Makes invisible space weather phenomena audible and aesthetically meaningful —
 - [x] DataFetcher: polls NOAA SWPC, SpaceWeatherState with null handling + last-valid cache, 8/8 unit tests — Phase 2
 - [x] SynthParamMapper: pure function SpaceWeatherState→SynthParams, hybrid mapping, 7/7 unit tests, v2-safe — Phase 3
 - [x] AdditiveEngine: two-layer oscillator bank + Interpolator, wired to PluginProcessor, ~0.33ms/block — Phase 4
+- [x] VisualRenderer: Lissajous + particles + spectral, 3 blend weights, 30fps, human-verified — Phase 5
 
 ### Active (In Progress)
 None yet.
 
 ### Planned (Next)
 
-- [ ] Phase 5: VisualRenderer — abstract/artistic JUCE Component, ~30fps, SynthParams-driven
+- [ ] Phase 6: Integration + Full UI — DataFetcher→engine pipeline live, APVTS, all UI controls
 
 ### Out of Scope
 

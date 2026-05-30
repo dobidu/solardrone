@@ -5,26 +5,26 @@
 See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Phase 5 — VisualRenderer (abstract/artistic JUCE Component, ~30fps, SynthParams-driven)
+**Current focus:** Phase 6 — Integration + Full UI (DataFetcher→engine pipeline, APVTS, UI controls)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 5 of 8 (VisualRenderer) — Planning
-Plan: 05-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/05-visualrenderer/05-01-PLAN.md
+Phase: 6 of 8 (Integration + Full UI) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 5 complete; 3-layer visual approved; 15/15 tests
 
 Progress:
-- Milestone: [████░░░░░░] 50%
-- Phase 5: [░░░░░░░░░░] 0%
+- Milestone: [█████░░░░░] 62%
+- Phase 6: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 05-01 created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for Phase 6]
 ```
 
 ## Accumulated Context
@@ -61,8 +61,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 5` — VisualRenderer
-Resume context: SynthParams in src/SynthParams.h. Visual metaphor decision required at plan start (Lissajous / particles / spectral envelope / geometric). Lock-free handoff from audio thread. Timer 30fps.
+Next action: `/paul:plan 6` — two plans: 06-01 (DataFetcher→engine wiring) + 06-02 (APVTS + full UI)
+Resume context: DataFetcher in src/DataFetcher.h. SynthParamMapper pure fn. Engine in AdditiveEngine. VisualRenderer polls via getCurrentSynthParams(). APVTS for DAW parameters.
 
 ---
 *STATE.md — Updated after every significant action*

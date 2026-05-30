@@ -8,7 +8,7 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 **v1.0 Initial Release** (v1.0.0)
 Status: In progress
-Phases: 4 of 8 complete
+Phases: 5 of 8 complete
 
 ## Phases
 
@@ -18,7 +18,7 @@ Phases: 4 of 8 complete
 | 2 | DataFetcher | 2 | ✅ Complete | 2026-05-29 |
 | 3 | SynthParamMapper | 1 | ✅ Complete | 2026-05-29 |
 | 4 | AdditiveEngine + Interpolator | 1 | ✅ Complete | 2026-05-29 |
-| 5 | VisualRenderer | TBD | Not started | - |
+| 5 | VisualRenderer | 1 | ✅ Complete | 2026-05-29 |
 | 6 | Integration + Full UI | TBD | Not started | - |
 | 7 | Cross-platform Validation | TBD | Not started | - |
 | 8 | Docs + Release | TBD | Not started | - |
@@ -118,7 +118,7 @@ Phases: 4 of 8 complete
 - Test in standalone window and plugin window
 
 **Plans:**
-- [ ] 05-01: Visual metaphor decision + VisualRenderer implementation + thread-safety verification
+- [x] 05-01: Visual metaphor decision (Lissajous+particles+spectral) + VisualRenderer + checkpoint approved
 
 ---
 
