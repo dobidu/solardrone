@@ -1,14 +1,14 @@
 {
   "name": "SolarDrone",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "milestone": {
     "name": "v1.0 Initial Release",
     "version": "1.0.0",
     "status": "in_progress"
   },
   "phase": {
-    "number": 7,
-    "name": "Cross-platform Validation",
+    "number": 8,
+    "name": "Docs + Release",
     "status": "not_started"
   },
   "loop": {

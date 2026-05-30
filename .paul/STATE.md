@@ -5,26 +5,26 @@
 See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Phase 7 — Cross-platform Validation (VST3 in Reaper, AU in Logic Pro, CI matrix, macOS signing)
+**Current focus:** Phase 8 — Docs + Release (DESIGN.md, git tag v1.0.0, GitHub release)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 7 of 8 (Cross-platform Validation) — Planning
-Plan: 07-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/07-validation/07-01-PLAN.md
+Phase: 8 of 8 (Docs + Release) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 7 complete; CI+README done; pending manual host validation
 
 Progress:
-- Milestone: [██████░░░░] 75%
-- Phase 7: [░░░░░░░░░░] 0%
+- Milestone: [███████░░░] 87%
+- Phase 8: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 07-01 created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for Phase 8]
 ```
 
 ## Accumulated Context
@@ -61,8 +61,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 7` — Cross-platform Validation
-Resume context: VST3 in Reaper (Win+Linux), AU in Logic Pro (macOS). 11 APVTS params verify in automation lanes. CI matrix GitHub Actions. macOS AU code signing.
+Next action: `/paul:plan 8` — Docs + Release
+Resume context: DESIGN.md = architecture for contributors. git tag v1.0.0 + Release build. Demo recording instructions (user needs audio device). GitHub release steps.
 
 ---
 *STATE.md — Updated after every significant action*
