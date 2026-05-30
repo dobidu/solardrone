@@ -223,9 +223,12 @@ void VisualRenderer::paint(juce::Graphics& g) {
         default:
             sourceStr = "default"; statusCol = juce::Colours::grey;      break;
     }
+    juce::String bzSign = (state.bz_gsm >= 0.0f) ? "+" : "";
     juce::String statusText = sourceStr
-        + "  Kp " + juce::String(state.kp, 1)
-        + "  age " + juce::String(state.data_age_s) + "s";
+        + "  v=" + juce::String((int)state.velocity) + "km/s"
+        + "  Bz=" + bzSign + juce::String(state.bz_gsm, 1)
+        + "  Kp=" + juce::String(state.kp, 1)
+        + "  age=" + juce::String(state.data_age_s) + "s";
 
     g.setFont(10.0f);
     g.setColour(statusCol.withAlpha(0.75f));

@@ -188,6 +188,31 @@ Phases: 8 of 8 complete
 
 **Future ecosystem (not roadmapped):** OSC output; binaural/Ambisonics; web companion; mobile port.
 
+## Phases — v2.1 (registered, rhythmic modulation)
+
+### Phase v2.1.1 — Beat Repeater
+
+**Goal:** Buffer the drone signal and repeat rhythmically, creating stutter/loop effects synchronized to a BPM parameter.
+
+**Scope:**
+- Ring buffer of configurable size (up to 2 bars at given BPM)
+- Read head loops through buffer at rhythmic subdivision (1/16 to 2 bars)
+- Parameters: BPM (30–300), loop length, feedback (0–1), wet/dry
+- Inserts between AdditiveEngine output and volume stage in processBlock()
+
+**Spike likely:** verify real-time buffer read/write without audio dropout at various buffer sizes.
+
+### Phase v2.1.2 — Chopper (Rhythmic Gate)
+
+**Goal:** Apply rhythmic amplitude gating (tremolo/gate) to the drone at musical rates.
+
+**Scope:**
+- LFO applied to amplitude post-engine
+- Shapes: sine, square, sawtooth
+- Parameters: rate (free Hz 0.1–20 OR BPM-sync), depth (0–1), shape
+- BPM sync shared with Beat Repeater if both active
+- Inserts in same stage as Beat Repeater (chainable)
+
 ---
 *Roadmap created: 2026-05-29*
 *Last updated: 2026-05-29 — Phase 1 complete*

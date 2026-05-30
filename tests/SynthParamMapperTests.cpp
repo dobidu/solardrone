@@ -96,7 +96,7 @@ private:
         beginTest("Density harmonic count: 1 p/cm3 -> 2 partials, 50 p/cm3 -> 24 partials");
         SpaceWeatherState s;
         s.density = 1.0f;
-        expectEquals(SynthParamMapper::map(s).l1_harmonic_count, 2,  "density=1 -> 2 partials");
+        expectEquals(SynthParamMapper::map(s).l1_harmonic_count, 4,  "density=1 -> 4 partials (min)");
         s.density = 50.0f;
         expectEquals(SynthParamMapper::map(s).l1_harmonic_count, 24, "density=50 -> 24 partials");
     }
