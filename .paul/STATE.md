@@ -10,21 +10,21 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 8 of 8 (Docs + Release) — Planning
-Plan: 08-01 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/08-release/08-01-PLAN.md
+Phase: 8 of 8 (Docs + Release) — ✅ Complete
+Plan: 08-01 unified
+Status: MILESTONE COMPLETE — v1.0.0 tagged
+Last activity: 2026-05-29 — Phase 8 complete; DESIGN.md; v1.0.0 tag; 5.3MB Release binary
 
 Progress:
-- Milestone: [███████░░░] 87%
-- Phase 8: [░░░░░░░░░░] 0%
+- Milestone: [██████████] 100%
+- v1.0.0: ✅ COMPLETE
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 08-01 created, awaiting approval]
+  ✓        ✓        ✓     [v1.0.0 MILESTONE COMPLETE]
 ```
 
 ## Accumulated Context
