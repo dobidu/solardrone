@@ -10,14 +10,14 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Milestone: v2.1 — Rhythmic Modulation
-Phase: v2.1.1 (BeatRepeater + BPM Sync) — Not started
-Plan: None yet
-Status: Ready to plan
-Last activity: 2026-05-30 — v1.0.0 complete; starting v2.1
+Milestone: v2.1 — Rhythmic Modulation ✅ COMPLETE
+Phase: v2.1.2 (Chopper + UI) — complete
+Plan: unified
+Status: MILESTONE COMPLETE — ready for v2.2
+Last activity: 2026-05-30 — v2.1.2 checkpoint approved; BeatRepeater+Chopper+UI shipped
 
 Progress:
-- Milestone v2.1: [░░░░░░░░░░] 0%
+- Milestone v2.1: [██████████] 100%
 
 ## Loop Position
 
