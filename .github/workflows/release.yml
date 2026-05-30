@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to upload artifacts to (e.g. v1.0.0)'
+        description: 'Release tag (e.g. v1.0.0)'
         required: true
         default: 'v1.0.0'
 
@@ -48,8 +48,7 @@ jobs:
       - name: Package (Linux)
         if: runner.os == 'Linux'
         run: |
-          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
-          TAG=${TAG#refs/tags/}
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
           cd build/SolarDrone_artefacts/Release
           cp Standalone/SolarDrone \
              ../../../SolarDrone-${TAG}-linux-x86_64-standalone
@@ -61,8 +60,7 @@ jobs:
       - name: Package (macOS)
         if: runner.os == 'macOS'
         run: |
-          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
-          TAG=${TAG#refs/tags/}
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
           cd build/SolarDrone_artefacts/Release
           zip -r ../../../SolarDrone-${TAG}-macos-standalone.zip \
              Standalone/SolarDrone.app/
@@ -78,8 +76,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $tag = "${{ github.ref_name }}${{ github.event.inputs.tag }}".TrimStart('refs/tags/')
-          # JUCE Release artifacts path (works with both single and multi-config)
+          $tag = "${{ github.event.inputs.tag || github.ref_name }}"
           $base = "build/SolarDrone_artefacts/Release"
           if (-not (Test-Path $base)) { $base = "build/SolarDrone_artefacts" }
           Compress-Archive -Force `
@@ -115,8 +112,7 @@ jobs:
 
       - name: Upload to GitHub Release
         run: |
-          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
-          TAG=${TAG#refs/tags/}
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
           gh release upload "${TAG}" \
             SolarDrone-*.zip SolarDrone-*.tar.gz SolarDrone-*-standalone \
             --repo ${{ github.repository }} \
