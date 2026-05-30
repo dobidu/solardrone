@@ -33,7 +33,7 @@ jobs:
             libxrender-dev \
             libglu1-mesa-dev \
             mesa-common-dev \
-            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
             libcurl4-openssl-dev
 
       - name: Configure CMake

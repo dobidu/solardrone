@@ -36,7 +36,7 @@ cmake --build build
 sudo apt-get install -y \
   libasound2-dev libfreetype6-dev libx11-dev libxcomposite-dev \
   libxext-dev libxinerama-dev libxrandr-dev libxrender-dev \
-  libglu1-mesa-dev mesa-common-dev libwebkit2gtk-4.0-dev \
+  libglu1-mesa-dev mesa-common-dev libwebkit2gtk-4.1-dev \
   libcurl4-openssl-dev
 ```
 
