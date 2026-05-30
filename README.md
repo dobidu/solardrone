@@ -62,10 +62,14 @@ open build/SolarDrone_artefacts/Release/Standalone/SolarDrone.app
 .\build\Release\SolarDrone_artefacts\Standalone\SolarDrone.exe
 ```
 
-> **Windows SmartScreen warning**: the binary is not Authenticode-signed. Windows will block it on first run. To allow:
-> 1. Right-click the `.exe` → **Properties** → check **Unblock** → OK, or
-> 2. Run in PowerShell: `Unblock-File -Path .\SolarDrone.exe`, or
-> 3. In the SmartScreen dialog: click **More info** → **Run anyway**.
+> **Windows — build from source required**: Windows Smart App Control blocks unsigned binaries downloaded from the internet. Build locally instead:
+> ```cmd
+> git config --global --add safe.directory *
+> cmake -B build -DCMAKE_BUILD_TYPE=Release
+> cmake --build build --config Release
+> .\build\SolarDrone_artefacts\Release\Standalone\SolarDrone.exe
+> ```
+> The `safe.directory *` is needed once because the project may contain directories created by WSL2/Linux tools.
 
 The app opens a 600×480 window: animated visual fills the top 400px, controls at the bottom. The status overlay (top-right) shows `default  Kp 0.0  age 0s` on launch.
 
@@ -132,7 +136,7 @@ cmake --build build --target SolarDrone_Tests
 
 **ALSA warnings on Linux/WSL2**: `open /dev/snd/seq failed` messages are non-fatal. JUCE handles missing ALSA devices gracefully; audio output uses the available device.
 
-**Windows SmartScreen**: binaries are not Authenticode-signed. Right-click `.exe` → Properties → **Unblock**, or run `Unblock-File -Path .\SolarDrone.exe` in PowerShell. Alternatively, click **More info → Run anyway** in the SmartScreen dialog.
+**Windows Smart App Control**: blocks unsigned binaries downloaded from the internet — no bypass available. Build from source locally (see Quick Start); locally-compiled binaries are not subject to Smart App Control.
 
 **AU code signing (macOS)**: unsigned AU builds require Gatekeeper to be disabled or the binary to be signed with an Apple Developer ID. For development use: `sudo spctl --master-disable` or use the VST3 format instead.
 
