@@ -5,26 +5,26 @@
 See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 
 **Core value:** Makes space weather audible and aesthetically meaningful — educational tool and artistic installation material
-**Current focus:** Phase 6 — Integration + Full UI (DataFetcher→engine pipeline, APVTS, UI controls)
+**Current focus:** Phase 7 — Cross-platform Validation (VST3 in Reaper, AU in Logic Pro, CI matrix, macOS signing)
 
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 6 of 8 (Integration + Full UI) — Planning
-Plan: 06-02 created, awaiting approval
-Status: PLAN created, ready for APPLY
-Last activity: 2026-05-29 — Created .paul/phases/06-integration/06-02-PLAN.md
+Phase: 7 of 8 (Cross-platform Validation) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-29 — Phase 6 complete; APVTS+UI wired; full pipeline live; 15/15 tests
 
 Progress:
-- Milestone: [█████░░░░░] 62%
-- Phase 6: [░░░░░░░░░░] 0%
+- Milestone: [██████░░░░] 75%
+- Phase 7: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ○        ○     [Plan 06-01 created, awaiting approval]
+  ✓        ✓        ✓     [Loop complete — ready for Phase 7]
 ```
 
 ## Accumulated Context
@@ -61,8 +61,8 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 Last session: 2026-05-29
 Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 6` — two plans: 06-01 (DataFetcher→engine wiring) + 06-02 (APVTS + full UI)
-Resume context: DataFetcher in src/DataFetcher.h. SynthParamMapper pure fn. Engine in AdditiveEngine. VisualRenderer polls via getCurrentSynthParams(). APVTS for DAW parameters.
+Next action: `/paul:plan 7` — Cross-platform Validation
+Resume context: VST3 in Reaper (Win+Linux), AU in Logic Pro (macOS). 11 APVTS params verify in automation lanes. CI matrix GitHub Actions. macOS AU code signing.
 
 ---
 *STATE.md — Updated after every significant action*

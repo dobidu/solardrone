@@ -8,7 +8,7 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 **v1.0 Initial Release** (v1.0.0)
 Status: In progress
-Phases: 5 of 8 complete
+Phases: 6 of 8 complete
 
 ## Phases
 
@@ -19,7 +19,7 @@ Phases: 5 of 8 complete
 | 3 | SynthParamMapper | 1 | ✅ Complete | 2026-05-29 |
 | 4 | AdditiveEngine + Interpolator | 1 | ✅ Complete | 2026-05-29 |
 | 5 | VisualRenderer | 1 | ✅ Complete | 2026-05-29 |
-| 6 | Integration + Full UI | TBD | Not started | - |
+| 6 | Integration + Full UI | 2 | ✅ Complete | 2026-05-29 |
 | 7 | Cross-platform Validation | TBD | Not started | - |
 | 8 | Docs + Release | TBD | Not started | - |
 
@@ -136,7 +136,8 @@ Phases: 5 of 8 complete
 - End-to-end smoke test: cold start → fetch → sound + visual + all controls functional
 
 **Plans:**
-- [ ] 06-01: Component wiring, full UI, AudioProcessorParameter exposure, smoke test
+- [x] 06-01: DataFetcher→engine pipeline wired, status overlay
+- [x] 06-02: APVTS 11 params, controls panel, state save/restore, checkpoint approved
 
 ---
 
