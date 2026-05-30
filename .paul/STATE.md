@@ -10,21 +10,21 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 8 of 8 (Docs + Release) — ✅ Complete
-Plan: 08-01 unified
-Status: MILESTONE COMPLETE — v1.0.0 tagged
-Last activity: 2026-05-29 — Phase 8 complete; DESIGN.md; v1.0.0 tag; 5.3MB Release binary
+Milestone: v2.1 — Rhythmic Modulation
+Phase: v2.1.1 (BeatRepeater + BPM Sync) — Not started
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-05-30 — v1.0.0 complete; starting v2.1
 
 Progress:
-- Milestone: [██████████] 100%
-- v1.0.0: ✅ COMPLETE
+- Milestone v2.1: [░░░░░░░░░░] 0%
 
 ## Loop Position
 
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ✓        ✓     [v1.0.0 MILESTONE COMPLETE]
+  ✓        ○        ○     [v2.1.1 plan created, awaiting APPLY]
 ```
 
 ## Accumulated Context

@@ -188,7 +188,11 @@ Phases: 8 of 8 complete
 
 **Future ecosystem (not roadmapped):** OSC output; binaural/Ambisonics; web companion; mobile port.
 
-## Phases — v2.1 (registered, rhythmic modulation)
+## Milestone v2.1 — Rhythmic Modulation
+
+**v2.1 target:** Beat Repeater + Chopper layered over the drone, with shared BPM sync (MIDI clock from host OR internal BPM parameter, auto-detect).
+
+## Phases — v2.1
 
 ### Phase v2.1.1 — Beat Repeater
 

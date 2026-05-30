@@ -22,7 +22,7 @@ juce_add_plugin(SolarDrone
     PRODUCT_NAME "SolarDrone"
     PLUGIN_MANUFACTURER_NAME "SolarDrone"
     IS_SYNTH FALSE
-    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
@@ -38,6 +38,8 @@ target_sources(SolarDrone PRIVATE
     src/OscillatorBank.cpp
     src/AdditiveEngine.cpp
     src/VisualRenderer.cpp
+    src/TempoTracker.cpp
+    src/BeatRepeater.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

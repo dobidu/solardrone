@@ -29,6 +29,19 @@ SolarDroneAudioProcessor::createParameterLayout() {
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "vis_spectral",   "Visual Spectral",   0.0f, 1.0f,   0.7f));
 
+    // Beat Repeater
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "repeater_on",       "Repeater On",    false));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "repeater_bpm",      "Repeater BPM",   30.0f, 300.0f, 120.0f));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        "repeater_bars",     "Loop Length",
+        juce::StringArray{"1/16","1/8","1/4","1/2","1 bar","2 bars"}, 2));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "repeater_feedback", "Feedback",       0.0f, 1.0f, 0.5f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "repeater_wet",      "Repeater Wet",   0.0f, 1.0f, 0.7f));
+
     return { params.begin(), params.end() };
 }
 
@@ -44,12 +57,14 @@ SolarDroneAudioProcessor::~SolarDroneAudioProcessor() {}
 
 void SolarDroneAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     engine.prepare(sampleRate, samplesPerBlock);
+    tempoTracker.prepare(sampleRate);
+    beatRepeater.prepare(sampleRate, samplesPerBlock);
 }
 
 void SolarDroneAudioProcessor::releaseResources() {}
 
 void SolarDroneAudioProcessor::processBlock(
-    juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+    juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
     // Read APVTS params into UserParams
     userParams.dynamics_range            = *apvts.getRawParameterValue("dynamics_range");
@@ -73,11 +88,25 @@ void SolarDroneAudioProcessor::processBlock(
         engine.setSynthParams(SynthParamMapper::map(state, userParams));
     }
 
+    // Tempo tracking (MIDI clock + internal BPM fallback)
+    tempoTracker.setInternalBPM(*apvts.getRawParameterValue("repeater_bpm"));
+    tempoTracker.process(midi, buffer.getNumSamples());
+
+    // Beat Repeater params
+    const int beatPeriod = (int)(getSampleRate() * 60.0 / tempoTracker.getCurrentBPM());
+    beatRepeater.setBeatPeriodSamples(beatPeriod);
+    beatRepeater.setEnabled(*apvts.getRawParameterValue("repeater_on") > 0.5f);
+    beatRepeater.setLoopLength(
+        (BeatRepeater::LoopLength)(int)*apvts.getRawParameterValue("repeater_bars"));
+    beatRepeater.setFeedback(*apvts.getRawParameterValue("repeater_feedback"));
+    beatRepeater.setWet(*apvts.getRawParameterValue("repeater_wet"));
+
     const bool droneOn = *apvts.getRawParameterValue("drone_on") > 0.5f;
     const float volume = *apvts.getRawParameterValue("volume");
 
     if (droneOn) {
         engine.processBlock(buffer);
+        beatRepeater.process(buffer);
         buffer.applyGain(volume);
     } else {
         buffer.clear();

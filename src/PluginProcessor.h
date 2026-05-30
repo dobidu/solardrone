@@ -4,6 +4,8 @@
 #include "SynthParamMapper.h"
 #include "DataFetcher.h"
 #include "UserParams.h"
+#include "TempoTracker.h"
+#include "BeatRepeater.h"
 
 class SolarDroneAudioProcessor : public juce::AudioProcessor {
 public:
@@ -44,6 +46,8 @@ private:
     UserParams     userParams;
     juce::String   lastTimestamp;
     AdditiveEngine engine;
+    TempoTracker   tempoTracker;
+    BeatRepeater   beatRepeater;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };
