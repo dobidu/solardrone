@@ -23,7 +23,7 @@ void VisualRenderer::setSynthParams(const SynthParams& p, const UserParams& u) {
 }
 
 void VisualRenderer::timerCallback() {
-    // Poll processor for latest smoothed params + weather state for status
+    // Poll processor for latest smoothed params + weather state
     if (processor != nullptr) {
         auto p = processor->getCurrentSynthParams();
         UserParams u;
@@ -32,6 +32,15 @@ void VisualRenderer::timerCallback() {
             juce::ScopedLock sl(paramsLock);
             cachedWeatherState = processor->getLatestSpaceWeatherState();
         }
+
+        // Freeze edge detection
+        const bool nowFrozen =
+            *processor->apvts.getRawParameterValue("freeze_on") > 0.5f;
+        if (nowFrozen && !wasFreeze) {
+            frozenSnapshot = createComponentSnapshot(getLocalBounds(), 1.0f);
+        }
+        wasFreeze = nowFrozen;
+        frozen    = nowFrozen;
     }
 
     // Compute delta time
@@ -208,6 +217,18 @@ void VisualRenderer::paint(juce::Graphics& g) {
     if (u.visual_spectral   > 0.01f) drawSpectral(g,  p, u.visual_spectral);
     if (u.visual_particles  > 0.01f) drawParticles(g, p, u.visual_particles);
     if (u.visual_lissajous  > 0.01f) drawLissajous(g, p, u.visual_lissajous);
+
+    // Freeze ghost overlay — drawn before status text
+    if (frozen && frozenSnapshot.isValid()) {
+        g.setOpacity(0.25f);
+        g.drawImage(frozenSnapshot, getLocalBounds().toFloat());
+        g.setOpacity(1.0f);
+        g.setFont(10.0f);
+        g.setColour(juce::Colours::cyan.withAlpha(0.75f));
+        g.drawText("FROZEN",
+                   getLocalBounds().reduced(8).removeFromTop(18),
+                   juce::Justification::topLeft, false);
+    }
 
     // Status overlay — drawn last so it appears above all visual layers
     SpaceWeatherState state;

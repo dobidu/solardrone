@@ -53,4 +53,9 @@ private:
     // Cached for status overlay — updated in timerCallback()
     SpaceWeatherState cachedWeatherState;
 
+    // Freeze ghost overlay
+    bool        frozen       = false;
+    bool        wasFreeze    = false;
+    juce::Image frozenSnapshot;
+
 };

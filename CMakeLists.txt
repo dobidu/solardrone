@@ -42,6 +42,7 @@ target_sources(SolarDrone PRIVATE
     src/BeatRepeater.cpp
     src/Chopper.cpp
     src/SunDisc.cpp
+    src/MacroOrb.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

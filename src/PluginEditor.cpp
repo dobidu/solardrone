@@ -26,6 +26,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     , processorRef(p)
     , visualRenderer(&p)
     , sunDisc(p.apvts)
+    , macroOrb(p.apvts)
 {
     // ── Right-panel sliders ────────────────────────────────────────────────
     mkSlider(slGlide,    lblGlide,    "Glide",  this);
@@ -107,6 +108,13 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attChopOn      = std::make_unique<ButtonAttachment>(apvts, "chopper_on",   btnChopOn);
     attChopSync    = std::make_unique<ButtonAttachment>(apvts, "chopper_sync", btnChopSync);
 
+    // Freeze button
+    btnFreeze.setButtonText("FREEZE");
+    btnFreeze.setColour(juce::ToggleButton::textColourId, juce::Colours::cyan);
+    addAndMakeVisible(btnFreeze);
+    attFreeze = std::make_unique<ButtonAttachment>(apvts, "freeze_on", btnFreeze);
+
+    addAndMakeVisible(macroOrb);
     addAndMakeVisible(visualRenderer);
     addAndMakeVisible(sunDisc);
 
@@ -123,6 +131,7 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
     if (kp != currentKp) {
         currentKp = kp;
         sunDisc.setKp(kp);
+        macroOrb.setKp(kp);
         repaint();
     }
 }
@@ -168,8 +177,9 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
 void SolarDroneAudioProcessorEditor::resized() {
     // ── Visual zone ───────────────────────────────────────────────────────
     visualRenderer.setBounds(0, 0, 580, 520);
-    // Sun-disc: centered on visual
     sunDisc.setBounds(220, 190, 140, 140);
+    // Freeze button — overlaid top-right of visual
+    btnFreeze.setBounds(468, 6, 100, 22);
 
     // ── Right panel ───────────────────────────────────────────────────────
     const int rx = 590, lh = 12, sh = 16, pad = 4, rw = 300;
@@ -181,28 +191,31 @@ void SolarDroneAudioProcessorEditor::resized() {
     slInterval.setBounds( rx + 88, 20 + lh, rw - 88, sh);
 
     // Row 1: Glide + Dynamics
-    int y = 58;
-    lblGlide.setBounds(   rx,        y, colW, lh);
-    slGlide.setBounds(    rx,        y + lh, colW, sh);
+    int y = 54;
+    lblGlide.setBounds(   rx,              y, colW, lh);
+    slGlide.setBounds(    rx,              y + lh, colW, sh);
     lblDynamics.setBounds(rx + colW + pad, y, colW, lh);
     slDynamics.setBounds( rx + colW + pad, y + lh, colW, sh);
 
     // Row 2: Balance + Spread
-    y = 98;
+    y = 88;
     lblBalance.setBounds(rx,              y, colW, lh);
     slBalance.setBounds( rx,              y + lh, colW, sh);
     lblSpread.setBounds( rx + colW + pad, y, colW, lh);
     slSpread.setBounds(  rx + colW + pad, y + lh, colW, sh);
 
-    // Row 3-5: Visual blends
-    y = 138;
+    // Row 3: Visual blends
+    y = 122;
     lblVisLiss.setBounds(rx,              y, colW, lh);
     slVisLiss.setBounds( rx,              y + lh, colW, sh);
     lblVisPart.setBounds(rx + colW + pad, y, colW, lh);
     slVisPart.setBounds( rx + colW + pad, y + lh, colW, sh);
-    y = 178;
+    y = 155;
     lblVisSpec.setBounds(rx, y, colW, lh);
     slVisSpec.setBounds( rx, y + lh, colW, sh);
+
+    // MacroOrb — bottom of right panel, centered
+    macroOrb.setBounds(rx + 30, 195, 240, 240);
 
     // ── Bottom strip ──────────────────────────────────────────────────────
     const int sy = 524, sbh = 18, slbh = 12;

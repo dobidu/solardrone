@@ -4,6 +4,7 @@
 #include "VisualRenderer.h"
 #include "SunDisc.h"
 #include "ColourScheme.h"
+#include "MacroOrb.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -21,7 +22,10 @@ private:
     SolarDroneAudioProcessor& processorRef;
     VisualRenderer  visualRenderer;
     SunDisc         sunDisc;
+    MacroOrb        macroOrb;
     float           currentKp = 0.f;
+
+    juce::ToggleButton btnFreeze;
 
     // ── Right-panel controls ──────────────────────────────────────────────
     juce::Slider       slGlide, slDynamics, slBalance, slSpread;
@@ -60,6 +64,7 @@ private:
     std::unique_ptr<SliderAttachment>    attChopRate, attChopDepth;
     std::unique_ptr<ComboBoxAttachment>  attChopShape, attChopDiv;
     std::unique_ptr<ButtonAttachment>    attChopOn, attChopSync;
+    std::unique_ptr<ButtonAttachment>    attFreeze;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessorEditor)
 };

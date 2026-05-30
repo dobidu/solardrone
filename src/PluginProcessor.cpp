@@ -57,6 +57,8 @@ SolarDroneAudioProcessor::createParameterLayout() {
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "chopper_div",   "Chopper Div",
         juce::StringArray{"1/16","1/8","1/4","1/2","1 bar"}, 2));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "freeze_on",     "Freeze",        false));
 
     return { params.begin(), params.end() };
 }
@@ -98,11 +100,14 @@ void SolarDroneAudioProcessor::processBlock(
 
     engine.setUserParams(userParams);
 
-    // Poll DataFetcher — only re-map on new NOAA data
-    auto state = fetcher.getState();
-    if (state.timestamp != lastTimestamp) {
-        lastTimestamp = state.timestamp;
-        engine.setSynthParams(SynthParamMapper::map(state, userParams));
+    // Poll DataFetcher — skip when frozen
+    const bool frozen = *apvts.getRawParameterValue("freeze_on") > 0.5f;
+    if (!frozen) {
+        auto state = fetcher.getState();
+        if (state.timestamp != lastTimestamp) {
+            lastTimestamp = state.timestamp;
+            engine.setSynthParams(SynthParamMapper::map(state, userParams));
+        }
     }
 
     // Tempo tracking (MIDI clock + internal BPM fallback)
