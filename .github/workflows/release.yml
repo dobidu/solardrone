@@ -1,0 +1,125 @@
+name: Release Binaries
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to upload artifacts to (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-x86_64
+          - os: macos-latest
+            platform: macos
+          - os: windows-latest
+            platform: windows-x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2-dev libfreetype6-dev libx11-dev libxcomposite-dev \
+            libxext-dev libxinerama-dev libxrandr-dev libxrender-dev \
+            libglu1-mesa-dev mesa-common-dev libwebkit2gtk-4.1-dev \
+            libcurl4-openssl-dev
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      # ── Linux ──────────────────────────────────────────────────────────────
+      - name: Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
+          TAG=${TAG#refs/tags/}
+          cd build/SolarDrone_artefacts/Release
+          cp Standalone/SolarDrone \
+             ../../../SolarDrone-${TAG}-linux-x86_64-standalone
+          tar -czf \
+             ../../../SolarDrone-${TAG}-linux-x86_64-vst3.tar.gz \
+             VST3/SolarDrone.vst3/
+
+      # ── macOS ──────────────────────────────────────────────────────────────
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
+          TAG=${TAG#refs/tags/}
+          cd build/SolarDrone_artefacts/Release
+          zip -r ../../../SolarDrone-${TAG}-macos-standalone.zip \
+             Standalone/SolarDrone.app/
+          zip -r ../../../SolarDrone-${TAG}-macos-vst3.zip \
+             VST3/SolarDrone.vst3/
+          if [ -d "AU/SolarDrone.component" ]; then
+            zip -r ../../../SolarDrone-${TAG}-macos-au-unsigned.zip \
+               AU/SolarDrone.component/
+          fi
+
+      # ── Windows ────────────────────────────────────────────────────────────
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}${{ github.event.inputs.tag }}".TrimStart('refs/tags/')
+          # JUCE Release artifacts path (works with both single and multi-config)
+          $base = "build/SolarDrone_artefacts/Release"
+          if (-not (Test-Path $base)) { $base = "build/SolarDrone_artefacts" }
+          Compress-Archive -Force `
+            -Path "$base/Standalone/SolarDrone.exe" `
+            -DestinationPath "SolarDrone-${tag}-windows-x86_64-standalone.zip"
+          Compress-Archive -Force `
+            -Path "$base/VST3/SolarDrone.vst3" `
+            -DestinationPath "SolarDrone-${tag}-windows-x86_64-vst3.zip"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: solardrone-${{ matrix.platform }}
+          path: |
+            SolarDrone-*.zip
+            SolarDrone-*.tar.gz
+            SolarDrone-*-standalone
+          if-no-files-found: warn
+
+  upload-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -lh
+
+      - name: Upload to GitHub Release
+        run: |
+          TAG=${{ github.ref_name }}${{ github.event.inputs.tag }}
+          TAG=${TAG#refs/tags/}
+          gh release upload "${TAG}" \
+            SolarDrone-*.zip SolarDrone-*.tar.gz SolarDrone-*-standalone \
+            --repo ${{ github.repository }} \
+            --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
