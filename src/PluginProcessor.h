@@ -2,6 +2,8 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "AdditiveEngine.h"
 #include "SynthParamMapper.h"
+#include "DataFetcher.h"
+#include "UserParams.h"
 
 class SolarDroneAudioProcessor : public juce::AudioProcessor {
 public:
@@ -30,9 +32,13 @@ public:
     void getStateInformation(juce::MemoryBlock&) override {}
     void setStateInformation(const void*, int) override {}
 
-    SynthParams getCurrentSynthParams() const;
+    SynthParams         getCurrentSynthParams() const;
+    SpaceWeatherState   getLatestSpaceWeatherState() const;
 
 private:
+    DataFetcher   fetcher;
+    UserParams    userParams;
+    juce::String  lastTimestamp;
     AdditiveEngine engine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)

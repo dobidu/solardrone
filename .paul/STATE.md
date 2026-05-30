@@ -10,10 +10,10 @@ See: .paul/PROJECT.md (updated 2026-05-29 after Phase 1)
 ## Current Position
 
 Milestone: v1.0 Initial Release (v1.0.0)
-Phase: 6 of 8 (Integration + Full UI) — Not started
-Plan: None yet
-Status: Ready to plan
-Last activity: 2026-05-29 — Phase 5 complete; 3-layer visual approved; 15/15 tests
+Phase: 6 of 8 (Integration + Full UI) — Planning
+Plan: 06-01 created, awaiting approval
+Status: PLAN created, ready for APPLY
+Last activity: 2026-05-29 — Created .paul/phases/06-integration/06-01-PLAN.md
 
 Progress:
 - Milestone: [█████░░░░░] 62%
@@ -24,7 +24,7 @@ Progress:
 Current loop state:
 ```
 PLAN ──▶ APPLY ──▶ UNIFY
-  ✓        ✓        ✓     [Loop complete — ready for Phase 6]
+  ✓        ○        ○     [Plan 06-01 created, awaiting approval]
 ```
 
 ## Accumulated Context

@@ -3,6 +3,7 @@
 #include <vector>
 #include "SynthParams.h"
 #include "UserParams.h"
+#include "SpaceWeatherState.h"
 
 class SolarDroneAudioProcessor;  // forward declaration — avoid circular include
 
@@ -48,4 +49,8 @@ private:
     // ── Processor reference for polling ──────────────────────────────────
     SolarDroneAudioProcessor* processor = nullptr;
     juce::int64 lastFrameMs = 0;
+
+    // Cached for status overlay — updated in timerCallback()
+    SpaceWeatherState cachedWeatherState;
+
 };

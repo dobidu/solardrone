@@ -1,5 +1,6 @@
 #include "VisualRenderer.h"
 #include "PluginProcessor.h"
+#include "SpaceWeatherState.h"
 #include <cmath>
 #include <algorithm>
 
@@ -22,11 +23,15 @@ void VisualRenderer::setSynthParams(const SynthParams& p, const UserParams& u) {
 }
 
 void VisualRenderer::timerCallback() {
-    // Poll processor for latest smoothed params
+    // Poll processor for latest smoothed params + weather state for status
     if (processor != nullptr) {
         auto p = processor->getCurrentSynthParams();
-        UserParams u;  // defaults — Phase 6 wires full UserParams
+        UserParams u;
         setSynthParams(p, u);
+        {
+            juce::ScopedLock sl(paramsLock);
+            cachedWeatherState = processor->getLatestSpaceWeatherState();
+        }
     }
 
     // Compute delta time
@@ -203,4 +208,33 @@ void VisualRenderer::paint(juce::Graphics& g) {
     if (u.visual_spectral   > 0.01f) drawSpectral(g,  p, u.visual_spectral);
     if (u.visual_particles  > 0.01f) drawParticles(g, p, u.visual_particles);
     if (u.visual_lissajous  > 0.01f) drawLissajous(g, p, u.visual_lissajous);
+
+    // Status overlay — drawn last so it appears above all visual layers
+    SpaceWeatherState state;
+    { juce::ScopedLock sl(paramsLock); state = cachedWeatherState; }
+
+    juce::String sourceStr;
+    juce::Colour statusCol;
+    switch (state.source) {
+        case SpaceWeatherState::Source::live:
+            sourceStr = "live";    statusCol = juce::Colours::limegreen; break;
+        case SpaceWeatherState::Source::cached:
+            sourceStr = "cached";  statusCol = juce::Colours::yellow;    break;
+        default:
+            sourceStr = "default"; statusCol = juce::Colours::grey;      break;
+    }
+    juce::String statusText = sourceStr
+        + "  Kp " + juce::String(state.kp, 1)
+        + "  age " + juce::String(state.data_age_s) + "s";
+
+    g.setFont(10.0f);
+    g.setColour(statusCol.withAlpha(0.75f));
+    g.drawText(statusText,
+               getLocalBounds().reduced(8).removeFromTop(18),
+               juce::Justification::topRight, false);
+
+    g.setColour(juce::Colours::white.withAlpha(0.35f));
+    g.setFont(11.0f);
+    g.drawText("SolarDrone", getLocalBounds().reduced(8),
+               juce::Justification::topLeft, false);
 }
