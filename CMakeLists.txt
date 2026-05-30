@@ -43,6 +43,7 @@ target_sources(SolarDrone PRIVATE
     src/Chopper.cpp
     src/SunDisc.cpp
     src/MacroOrb.cpp
+    src/ProbDensityDial.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

@@ -1,6 +1,7 @@
 #include "VisualRenderer.h"
 #include "PluginProcessor.h"
 #include "SpaceWeatherState.h"
+#include "ColourScheme.h"
 #include <cmath>
 #include <algorithm>
 
@@ -31,6 +32,8 @@ void VisualRenderer::timerCallback() {
         {
             juce::ScopedLock sl(paramsLock);
             cachedWeatherState = processor->getLatestSpaceWeatherState();
+            bzHistory[bzHistoryIdx % 120] = cachedWeatherState.bz_gsm;
+            ++bzHistoryIdx;
         }
 
         // Freeze edge detection
@@ -217,6 +220,64 @@ void VisualRenderer::paint(juce::Graphics& g) {
     if (u.visual_spectral   > 0.01f) drawSpectral(g,  p, u.visual_spectral);
     if (u.visual_particles  > 0.01f) drawParticles(g, p, u.visual_particles);
     if (u.visual_lissajous  > 0.01f) drawLissajous(g, p, u.visual_lissajous);
+
+    // Read cached weather state once for data-layer elements
+    SpaceWeatherState ws;
+    { juce::ScopedLock sl(paramsLock); ws = cachedWeatherState; }
+
+    // ── Degraded-signal texture ───────────────────────────────────────────
+    {
+        const int age = ws.data_age_s;
+        if (age > 60) {
+            const float deg = juce::jlimit(0.f, 1.f, (age - 60) / 180.f);
+            g.setColour(juce::Colours::black.withAlpha(deg * 0.32f));
+            for (int sy = 0; sy < getHeight(); sy += 3)
+                g.drawHorizontalLine(sy, 0.f, (float)getWidth());
+        }
+    }
+
+    // ── Bz spark-line (bottom 8px of visual) ─────────────────────────────
+    {
+        const float sparkH = 8.f, sparkY = (float)getHeight() - sparkH - 1.f;
+        const float sparkW = (float)getWidth();
+        g.setColour(juce::Colours::black.withAlpha(0.55f));
+        g.fillRect(0.f, sparkY, sparkW, sparkH);
+        juce::Path sparkPath;
+        const int nS = 120;
+        for (int i = 0; i < nS; ++i) {
+            const int idx  = (bzHistoryIdx - nS + i + 120) % 120;
+            const float bz = bzHistory[idx];
+            const float x  = sparkW * i / (float)nS;
+            const float n  = juce::jlimit(-1.f, 1.f, bz / 30.f);
+            const float y  = sparkY + sparkH * 0.5f - n * sparkH * 0.42f;
+            if (i == 0) sparkPath.startNewSubPath(x, y);
+            else        sparkPath.lineTo(x, y);
+        }
+        const float latestBz = bzHistory[(bzHistoryIdx - 1 + 120) % 120];
+        g.setColour(latestBz < 0
+            ? juce::Colours::orangered.withAlpha(0.8f)
+            : ColourScheme::kpToAccent(ws.kp).withAlpha(0.65f));
+        g.strokePath(sparkPath, juce::PathStrokeType(1.2f));
+    }
+
+    // ── Kp severity badge (9 squares, above spark-line) ──────────────────
+    {
+        const float sqSz = 10.f, sqGap = 2.f;
+        const float badgeW = 9 * (sqSz + sqGap);
+        float bx = (float)getWidth() - badgeW - 4.f;
+        const float by = (float)getHeight() - 23.f;
+        for (int i = 0; i < 9; ++i) {
+            const bool lit = (float)(i + 1) <= ws.kp;
+            juce::Colour sqCol;
+            if      (i < 3) sqCol = juce::Colours::limegreen;
+            else if (i < 5) sqCol = juce::Colours::yellow;
+            else if (i < 7) sqCol = juce::Colours::orange;
+            else            sqCol = juce::Colours::red;
+            g.setColour(lit ? sqCol.withAlpha(0.85f) : sqCol.withAlpha(0.12f));
+            g.fillRect(bx, by, sqSz, sqSz);
+            bx += sqSz + sqGap;
+        }
+    }
 
     // Freeze ghost overlay — drawn before status text
     if (frozen && frozenSnapshot.isValid()) {

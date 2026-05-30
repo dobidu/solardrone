@@ -27,6 +27,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     , visualRenderer(&p)
     , sunDisc(p.apvts)
     , macroOrb(p.apvts)
+    , probDial(p.apvts)
 {
     // ── Right-panel sliders ────────────────────────────────────────────────
     mkSlider(slGlide,    lblGlide,    "Glide",  this);
@@ -114,6 +115,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(btnFreeze);
     attFreeze = std::make_unique<ButtonAttachment>(apvts, "freeze_on", btnFreeze);
 
+    addAndMakeVisible(probDial);
     addAndMakeVisible(macroOrb);
     addAndMakeVisible(visualRenderer);
     addAndMakeVisible(sunDisc);
@@ -132,6 +134,7 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
         currentKp = kp;
         sunDisc.setKp(kp);
         macroOrb.setKp(kp);
+        probDial.setKp(kp);
         repaint();
     }
 }
@@ -223,9 +226,13 @@ void SolarDroneAudioProcessorEditor::resized() {
     // Repeater (left half, x=8 to x=445)
     int bx = 8;
     const int btnW = 42, comboW = 56;
+    const int dialSz = 58;
     btnRepOn.setBounds(bx, sy + slbh, btnW, sbh);      bx += btnW + 2;
-    lblRepBars.setBounds(bx, sy, comboW, slbh);
-    cmbRepBars.setBounds(bx, sy + slbh, comboW, sbh);  bx += comboW + 2;
+    // ProbDensityDial replaces cmbRepBars visually
+    probDial.setBounds(bx, sy - 2, dialSz, dialSz);   bx += dialSz + 2;
+    // Keep cmbRepBars small (loop length still needed)
+    lblRepBars.setBounds(bx, sy, 36, slbh);
+    cmbRepBars.setBounds(bx, sy + slbh, 36, sbh);  bx += 38;
     const int repSlW = (437 - bx) / 3;
     lblRepBPM.setBounds(     bx,               sy, repSlW, slbh);
     slRepBPM.setBounds(      bx,               sy + slbh, repSlW, sbh);  bx += repSlW + 2;

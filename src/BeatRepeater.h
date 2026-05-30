@@ -12,6 +12,7 @@ public:
     void setFeedback(float f);
     void setWet(float w);
     void setBeatPeriodSamples(int samples);
+    void setDensity(float d);
 
     void process(juce::AudioBuffer<float>& buffer);
 
@@ -28,5 +29,8 @@ private:
     std::vector<float> ringL, ringR;
     int   writePos           = 0;
     int   bufferSize         = 0;
-    float currentBeatPeriodF = 22050.0f;  // smoothed — avoids crackle on BPM change
+    float currentBeatPeriodF = 22050.0f;
+    float density        = 1.0f;
+    bool  cycleActive    = true;
+    int   samplesIntoLoop = 0;
 };

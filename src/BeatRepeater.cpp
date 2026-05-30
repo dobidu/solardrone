@@ -16,6 +16,7 @@ void BeatRepeater::setLoopLength(LoopLength l)     { loopLen  = l; }
 void BeatRepeater::setFeedback(float f)            { feedback = std::max(0.0f, std::min(0.99f, f)); }
 void BeatRepeater::setWet(float w)                 { wet      = std::max(0.0f, std::min(1.0f, w)); }
 void BeatRepeater::setBeatPeriodSamples(int s)     { beatPeriod = std::max(1, s); }
+void BeatRepeater::setDensity(float d)             { density = std::max(0.0f, std::min(1.0f, d)); }
 
 int BeatRepeater::loopLengthSamples() const {
     switch (loopLen) {
@@ -46,19 +47,27 @@ void BeatRepeater::process(juce::AudioBuffer<float>& buffer) {
     const int loopLen = std::min(loopLengthSamples(), bufferSize - 1);
 
     for (int i = 0; i < n; ++i) {
+        // Roll density die at each loop cycle boundary
+        if (samplesIntoLoop >= loopLen) {
+            samplesIntoLoop = 0;
+            cycleActive = (density >= 0.99f ||
+                juce::Random::getSystemRandom().nextFloat() < density);
+        }
+
         const int readPos = (writePos - loopLen + bufferSize) % bufferSize;
         const float loopedL = ringL[(size_t)readPos];
         const float loopedR = ringR[(size_t)readPos];
 
-        // Always write into ring buffer (so enabling from silence has content)
         ringL[(size_t)writePos] = dryL[i] + loopedL * feedback;
         ringR[(size_t)writePos] = dryR[i] + loopedR * feedback;
 
         if (enabled) {
-            outL[i] = dryL[i] * (1.0f - wet) + loopedL * wet;
-            outR[i] = dryR[i] * (1.0f - wet) + loopedR * wet;
+            const float effectiveWet = cycleActive ? wet : 0.0f;
+            outL[i] = dryL[i] * (1.0f - effectiveWet) + loopedL * effectiveWet;
+            outR[i] = dryR[i] * (1.0f - effectiveWet) + loopedR * effectiveWet;
         }
 
         writePos = (writePos + 1) % bufferSize;
+        ++samplesIntoLoop;
     }
 }

@@ -58,4 +58,8 @@ private:
     bool        wasFreeze    = false;
     juce::Image frozenSnapshot;
 
+    // Bz history for spark-line
+    float bzHistory[120] = {};
+    int   bzHistoryIdx   = 0;
+
 };

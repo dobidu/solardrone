@@ -57,6 +57,8 @@ SolarDroneAudioProcessor::createParameterLayout() {
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "chopper_div",   "Chopper Div",
         juce::StringArray{"1/16","1/8","1/4","1/2","1 bar"}, 2));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "repeater_density", "Repeat Density", 0.0f, 1.0f, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
         "freeze_on",     "Freeze",        false));
 
@@ -122,6 +124,7 @@ void SolarDroneAudioProcessor::processBlock(
         (BeatRepeater::LoopLength)(int)*apvts.getRawParameterValue("repeater_bars"));
     beatRepeater.setFeedback(*apvts.getRawParameterValue("repeater_feedback"));
     beatRepeater.setWet(*apvts.getRawParameterValue("repeater_wet"));
+    beatRepeater.setDensity(*apvts.getRawParameterValue("repeater_density"));
 
     const bool droneOn = *apvts.getRawParameterValue("drone_on") > 0.5f;
     const float volume = *apvts.getRawParameterValue("volume");

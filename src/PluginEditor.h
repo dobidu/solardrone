@@ -5,6 +5,7 @@
 #include "SunDisc.h"
 #include "ColourScheme.h"
 #include "MacroOrb.h"
+#include "ProbDensityDial.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -23,6 +24,7 @@ private:
     VisualRenderer  visualRenderer;
     SunDisc         sunDisc;
     MacroOrb        macroOrb;
+    ProbDensityDial probDial;
     float           currentKp = 0.f;
 
     juce::ToggleButton btnFreeze;
