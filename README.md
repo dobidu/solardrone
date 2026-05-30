@@ -62,6 +62,11 @@ open build/SolarDrone_artefacts/Release/Standalone/SolarDrone.app
 .\build\Release\SolarDrone_artefacts\Standalone\SolarDrone.exe
 ```
 
+> **Windows SmartScreen warning**: the binary is not Authenticode-signed. Windows will block it on first run. To allow:
+> 1. Right-click the `.exe` → **Properties** → check **Unblock** → OK, or
+> 2. Run in PowerShell: `Unblock-File -Path .\SolarDrone.exe`, or
+> 3. In the SmartScreen dialog: click **More info** → **Run anyway**.
+
 The app opens a 600×480 window: animated visual fills the top 400px, controls at the bottom. The status overlay (top-right) shows `default  Kp 0.0  age 0s` on launch.
 
 After ~30 seconds, a live NOAA fetch completes and the overlay changes to `live  Kp X.X  age 0s` (green). The drone pitch and harmonic content shift to reflect actual solar wind conditions.
@@ -126,6 +131,8 @@ cmake --build build --target SolarDrone_Tests
 **First fetch latency**: NOAA data arrives ~30 seconds after cold start. The drone plays with default values (velocity = 450 km/s, Kp = 0) until the first successful fetch.
 
 **ALSA warnings on Linux/WSL2**: `open /dev/snd/seq failed` messages are non-fatal. JUCE handles missing ALSA devices gracefully; audio output uses the available device.
+
+**Windows SmartScreen**: binaries are not Authenticode-signed. Right-click `.exe` → Properties → **Unblock**, or run `Unblock-File -Path .\SolarDrone.exe` in PowerShell. Alternatively, click **More info → Run anyway** in the SmartScreen dialog.
 
 **AU code signing (macOS)**: unsigned AU builds require Gatekeeper to be disabled or the binary to be signed with an Apple Developer ID. For development use: `sudo spctl --master-disable` or use the VST3 format instead.
 
