@@ -23,6 +23,7 @@ juce_add_plugin(SolarDrone
     PLUGIN_MANUFACTURER_NAME "SolarDrone"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT TRUE
+    NEEDS_MIDI_OUTPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
@@ -47,6 +48,7 @@ target_sources(SolarDrone PRIVATE
     src/MappingCurveDisplay.cpp
     src/OutputEQ.cpp
     src/SpatialDisplay.cpp
+    src/OSCMIDIBridge.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC
@@ -68,6 +70,7 @@ target_link_libraries(SolarDrone
     PRIVATE
         juce::juce_audio_utils
         juce::juce_dsp
+        juce::juce_osc
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

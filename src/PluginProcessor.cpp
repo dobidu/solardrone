@@ -92,6 +92,13 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "l3_azimuth",   "L3 Azimuth",   -90.f, 90.f, -30.f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "l3_elevation", "L3 Elevation", -45.f, 45.f,  30.f));
+    // OSC/MIDI output
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "osc_enabled",     "OSC Output",    false));
+    params.push_back(std::make_unique<juce::AudioParameterInt>(
+        "osc_port",        "OSC Port",      1024, 65535, 9000));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "midi_cc_enabled", "MIDI CC Out",   false));
 
     return { params.begin(), params.end() };
 }
@@ -160,14 +167,12 @@ void SolarDroneAudioProcessor::processBlock(
     engine.setUserParams(userParams);
 
     // L3 flare burst
-    {
-        const float flareSens = *apvts.getRawParameterValue("flare_sensitivity");
-        const auto& sw = fetcher.getState();
-        float flareLevel = 0.0f;
-        if (sw.x_ray_flux >= 1e-5f)
-            flareLevel = std::min(1.0f, (std::log10(sw.x_ray_flux) + 5.0f) / 2.0f);
-        engine.setFlareLevel(flareLevel, flareSens);
-    }
+    const float flareSens = *apvts.getRawParameterValue("flare_sensitivity");
+    const auto& sw = fetcher.getState();
+    float flareLevel = 0.0f;
+    if (sw.x_ray_flux >= 1e-5f)
+        flareLevel = std::min(1.0f, (std::log10(sw.x_ray_flux) + 5.0f) / 2.0f);
+    engine.setFlareLevel(flareLevel, flareSens);
 
     // Poll DataFetcher — skip when frozen
     const bool frozen = *apvts.getRawParameterValue("freeze_on") > 0.5f;
@@ -224,6 +229,15 @@ void SolarDroneAudioProcessor::processBlock(
         outputEq.setMidPeak(  *apvts.getRawParameterValue("eq_mid"));
         outputEq.setHighShelf(*apvts.getRawParameterValue("eq_high"));
         outputEq.process(buffer);
+
+        // OSC/MIDI bridge (throttled internally to 100ms)
+        oscMidiBridge.setOSCEnabled(*apvts.getRawParameterValue("osc_enabled") > 0.5f,
+                                    (int)*apvts.getRawParameterValue("osc_port"));
+        oscMidiBridge.setMIDIEnabled(*apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
+        oscMidiBridge.send(engine.getSmoothedParams(), fetcher.getState(),
+                           flareLevel,
+                           smoothedVolume.getCurrentValue(),
+                           smoothedBalance.getCurrentValue());
     } else {
         buffer.clear();
     }

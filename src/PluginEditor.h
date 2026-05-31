@@ -76,5 +76,13 @@ private:
     std::unique_ptr<ButtonAttachment>    attFreeze;
     std::unique_ptr<SliderAttachment>    attMapVelLo, attMapVelHi, attMapBzThresh, attMapKpDens;
 
+    // OSC/MIDI
+    juce::ToggleButton btnOSC, btnMIDICC;
+    juce::Slider       slOSCPort;
+    juce::Label        lblOSCPort;
+    std::unique_ptr<ButtonAttachment>  attOSC, attMIDICC;
+    std::unique_ptr<SliderAttachment>  attOSCPort;
+    float oscActivityAlpha = 0.f;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessorEditor)
 };

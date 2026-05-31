@@ -127,6 +127,21 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attMapKpDens   = std::make_unique<SliderAttachment>(apvts, "map_kp_dens",  slMapKpDens);
     addAndMakeVisible(mappingDisplay);
 
+    // OSC/MIDI controls
+    btnOSC.setButtonText("OSC");
+    btnOSC.setColour(juce::ToggleButton::textColourId, juce::Colours::cyan);
+    addAndMakeVisible(btnOSC);
+    btnMIDICC.setButtonText("MIDI");
+    btnMIDICC.setColour(juce::ToggleButton::textColourId, juce::Colours::plum);
+    addAndMakeVisible(btnMIDICC);
+    mkSlider(slOSCPort, lblOSCPort, "Port", this);
+    slOSCPort.setTextBoxStyle(juce::Slider::TextBoxRight, false, 45, 16);
+    slOSCPort.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    slOSCPort.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    attOSC     = std::make_unique<ButtonAttachment>(apvts, "osc_enabled",     btnOSC);
+    attMIDICC  = std::make_unique<ButtonAttachment>(apvts, "midi_cc_enabled", btnMIDICC);
+    attOSCPort = std::make_unique<SliderAttachment>(apvts, "osc_port",        slOSCPort);
+
     addAndMakeVisible(spatialDisplay);
     addAndMakeVisible(probDial);
     addAndMakeVisible(macroOrb);
@@ -157,6 +172,11 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
         sunDisc.setFlareLevel(fl);
         spatialDisplay.setFlareLevel(fl);
+        // Activity indicator
+        if (processorRef.isOSCRecentlySent())
+            oscActivityAlpha = 1.0f;
+        else
+            oscActivityAlpha = std::max(0.f, oscActivityAlpha - 0.15f);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,
@@ -207,6 +227,16 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.setFont(10.0f);
     g.setColour(accent.withAlpha(0.4f));
     g.drawText("PARAMETERS", 590, 4, 300, 12, juce::Justification::left, false);
+
+    // OSC/MIDI activity indicator dot
+    if (oscActivityAlpha > 0.01f) {
+        g.setColour(juce::Colours::cyan.withAlpha(oscActivityAlpha));
+        g.fillEllipse(882, 502, 6, 6);
+    }
+    // OSC/MIDI section label
+    g.setFont(8.0f);
+    g.setColour(accent.withAlpha(0.4f));
+    g.drawText("OSC / MIDI", 590, 487, 60, 12, juce::Justification::left, false);
 }
 
 void SolarDroneAudioProcessorEditor::resized() {
@@ -266,7 +296,13 @@ void SolarDroneAudioProcessorEditor::resized() {
     slMapKpDens.setBounds(   rx + 3*mSlW, mY+lh, mSlW, sh);
 
     // MacroOrb (compact, y=385)
-    macroOrb.setBounds(rx + 30, 385, 240, 130);
+    macroOrb.setBounds(rx + 30, 385, 240, 110);
+
+    // OSC/MIDI section (y=500)
+    btnOSC.setBounds(   rx,       500, 44, 18);
+    slOSCPort.setBounds(rx + 48,  500, 130, 18);
+    lblOSCPort.setBounds(rx + 48, 487, 130, 12);
+    btnMIDICC.setBounds(rx + 182, 500, 52, 18);
 
     // ── Bottom strip (120px, y=520-640) ──────────────────────────────────
     // Two rows: label row (y=538, 14px) + control row (y=554, 22px)
