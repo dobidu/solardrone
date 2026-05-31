@@ -66,15 +66,17 @@ void MappingCurveDisplay::paint(juce::Graphics& g) {
     };
 
     // vel → pitch
-    drawCurve(g, makeRect(0,0), "vel→pitch",
+    drawCurve(g, makeRect(0,0), "vel-pitch",
         [&](float x) {
             const float vLo = std::max(velLo, 1.f), vHi = std::max(velHi, vLo+1.f);
             return (std::pow(vHi/vLo, x) * vLo - vLo) / (vHi - vLo);
         },
         (live.velocity - 300.f) / 500.f);
 
-    // Bz → timbre
-    drawCurve(g, makeRect(1,0), "Bz→timbre",
+    // Bz → timbre (draw threshold marker after curve)
+    {
+        auto r = makeRect(1,0);
+        drawCurve(g, r, "Bz-timbre",
         [&](float x) {
             // x=0 = Bz=0, x=1 = Bz=-30
             const float bz = -x * 30.f;
@@ -85,14 +87,26 @@ void MappingCurveDisplay::paint(juce::Graphics& g) {
             return 0.3f + 0.7f * xr;
         },
         (-live.bz) / 30.f);
+        // Threshold marker — dashed orange line at bzThresh position
+        const float margin2 = 4.f;
+        const float innerX = r.getX() + margin2;
+        const float innerW = r.getWidth() - margin2 * 2.f;
+        const float innerY = r.getY() + margin2;
+        const float innerH = r.getHeight() - margin2 * 2.f - 12.f;
+        const float tNorm  = (-bzThresh) / 30.f;  // threshold as 0-1 in range 0..-30
+        const float tx = innerX + std::max(0.f, std::min(1.f, tNorm)) * innerW;
+        g.setColour(juce::Colours::orange.withAlpha(0.65f));
+        for (float ty2 = innerY; ty2 < innerY + innerH; ty2 += 4.f)
+            g.drawVerticalLine((int)tx, ty2, ty2 + 2.f);
+    }
 
     // Kp → amplitude
-    drawCurve(g, makeRect(0,1), "Kp→amp",
+    drawCurve(g, makeRect(0,1), "Kp-amp",
         [](float x) { return 0.1f + 0.9f * x; },
         live.kp / 9.f);
 
     // Kp → density
-    drawCurve(g, makeRect(1,1), "Kp→dens",
+    drawCurve(g, makeRect(1,1), "Kp-dens",
         [&](float x) {
             const float kpVal = x * 9.f;
             const float kds   = std::max(0.f, std::min(8.f, kpDens));
