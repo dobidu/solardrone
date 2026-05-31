@@ -65,6 +65,9 @@ void VisualRenderer::timerCallback() {
     { juce::ScopedLock sl(paramsLock); p = displayParams; }
 
     lissPhase += (double)(p.l1_timbre * 0.4f + 0.06f) * dt;
+    // Store trail phase
+    trailPhases[trailWriteIdx % kTrailLen] = lissPhase;
+    ++trailWriteIdx;
     updateParticles(p, dt);
 
     repaint();
@@ -75,35 +78,77 @@ void VisualRenderer::timerCallback() {
 void VisualRenderer::drawLissajous(juce::Graphics& g,
                                     const SynthParams& p, float blend) {
     if (blend < 0.01f) return;
-    const float w = (float)getWidth();
-    const float h = (float)getHeight();
-    const float cx = w * 0.5f, cy = h * 0.5f;
-    const float rx = w * 0.44f, ry = h * 0.44f;
+    const float w = (float)getWidth(), h = (float)getHeight();
+    const float cx = w*0.5f, cy = h*0.5f;
+    const float rx = w*0.43f, ry = h*0.43f;
+    const double twoPi2 = juce::MathConstants<double>::twoPi * 2.0;
 
-    // Use normalized ratio from L1/L2 fundamentals (clamped for aesthetics)
     double ratio = (double)(p.l2_fundamental_hz / p.l1_fundamental_hz);
     ratio = std::max(0.5, std::min(ratio, 4.0));
 
-    // Color from timbre: 0=blue, 0.5=teal, 1=red
-    const float hue = 0.6f - p.l1_timbre * 0.6f;
-    const float alpha = blend * 0.85f;
-    g.setColour(juce::Colour::fromHSV(hue, 0.8f, 1.0f, alpha));
-
-    const int N = 512;
-    const double step = juce::MathConstants<double>::twoPi * 2.0 / N;
-    juce::Path path;
-
-    for (int i = 0; i < N; ++i) {
-        const double t = i * step;
-        const float x = cx + (float)std::sin(t)           * rx;
-        const float y = cy + (float)std::sin(ratio * t + lissPhase) * ry;
-        if (i == 0) path.startNewSubPath(x, y);
-        else        path.lineTo(x, y);
-    }
-    path.closeSubPath();
-
+    // Depth of 3D effect (increases with timbre/storm)
+    const float depth   = 0.20f + p.l1_timbre * 0.40f;
     const float thickness = 0.8f + p.l1_amplitude * 1.5f;
-    g.strokePath(path, juce::PathStrokeType(thickness));
+
+    const auto accent    = juce::Colour::fromHSV(0.6f - p.l1_timbre*0.6f, 0.8f, 1.0f, 1.f);
+    const auto calmColor = juce::Colour::fromHSV(0.62f, 0.75f, 0.85f, 1.f);
+
+    // ── Phosphor trail (drawn first, behind main curve) ───────────────────
+    for (int tr = kTrailLen - 1; tr >= 1; --tr) {
+        const int    idx   = (trailWriteIdx - tr + kTrailLen * 64) % kTrailLen;
+        const double tPhase = trailPhases[idx];
+        const float  alpha  = (float)(kTrailLen - tr) / kTrailLen * 0.15f * blend;
+        juce::Path   tp;
+        const int    tN = 128;
+        for (int i = 0; i <= tN; ++i) {
+            const double t  = twoPi2 * i / tN;
+            const float  tz = (float)std::sin(t*(ratio+0.7)+tPhase*1.4) * 0.35f;
+            const float  sc = 1.f / (1.f + tz * depth);
+            const float  tx = cx + (float)std::sin(t) * rx * sc;
+            const float  ty = cy + (float)std::sin(ratio*t+tPhase) * ry * sc;
+            if (i==0) tp.startNewSubPath(tx,ty); else tp.lineTo(tx,ty);
+        }
+        g.setColour(accent.withAlpha(alpha));
+        g.strokePath(tp, juce::PathStrokeType(0.7f));
+    }
+
+    // ── Main curve: 3D projection + gradient color in 16 segments ────────
+    const int N   = 512;
+    const int seg = 16;
+    const int spp = N / seg;
+
+    // Pre-compute projected points
+    std::vector<juce::Point<float>> pts(N + 1);
+    for (int i = 0; i <= N; ++i) {
+        const double t  = twoPi2 * i / N;
+        const float  z  = (float)std::sin(t*(ratio+0.7)+lissPhase*1.4) * 0.35f;
+        const float  sc = 1.f / (1.f + z * depth);
+        pts[i] = { cx + (float)std::sin(t)*rx*sc,
+                   cy + (float)std::sin(ratio*t+lissPhase)*ry*sc };
+    }
+
+    // Glow layer: thick + very transparent, drawn before main
+    {
+        juce::Path glowPath;
+        glowPath.startNewSubPath(pts[0].x, pts[0].y);
+        for (int i = 1; i <= N; ++i) glowPath.lineTo(pts[i].x, pts[i].y);
+        g.setColour(accent.withAlpha(blend * 0.12f));
+        g.strokePath(glowPath, juce::PathStrokeType(thickness * 5.f));
+        g.setColour(accent.withAlpha(blend * 0.22f));
+        g.strokePath(glowPath, juce::PathStrokeType(thickness * 2.5f));
+    }
+
+    for (int s = 0; s < seg; ++s) {
+        const float frac = (float)s / seg;
+        const auto  col  = calmColor.interpolatedWith(accent, frac);
+        juce::Path  sp;
+        const int   start = s * spp;
+        const int   end   = (s == seg-1) ? N : start + spp;
+        sp.startNewSubPath(pts[start].x, pts[start].y);
+        for (int i = start+1; i <= end; ++i) sp.lineTo(pts[i].x, pts[i].y);
+        g.setColour(col.withAlpha(blend * 0.85f));
+        g.strokePath(sp, juce::PathStrokeType(thickness));
+    }
 }
 
 // ── Particles ────────────────────────────────────────────────────────────────
@@ -111,8 +156,8 @@ void VisualRenderer::drawLissajous(juce::Graphics& g,
 void VisualRenderer::updateParticles(const SynthParams& p, float dt) {
     auto& rng = juce::Random::getSystemRandom();
 
-    // Target count from l2_harmonic_density
-    const int targetCount = 5 + (int)(45.0f * p.l2_harmonic_density);
+    // Target count: up to 200 with density
+    const int targetCount = 10 + (int)(190.0f * p.l2_harmonic_density);
     const float speed     = 0.05f + p.l1_amplitude * 0.25f;
     const float turb      = p.l1_timbre * 0.8f;
     const float hue       = 0.6f - p.l2_brightness * 0.5f;  // violet → orange
@@ -122,11 +167,13 @@ void VisualRenderer::updateParticles(const SynthParams& p, float dt) {
     for (auto& par : particles) {
         par.vx += (rng.nextFloat() - 0.5f) * turb * dt * 2.0f;
         par.vy += (rng.nextFloat() - 0.5f) * turb * dt * 2.0f;
-        // Dampen velocity
         par.vx *= (1.0f - dt * 0.5f);
         par.vy *= (1.0f - dt * 0.5f);
         par.x  += par.vx * dt;
         par.y  += par.vy * dt;
+        // Z drift (slow depth oscillation)
+        par.z  += (rng.nextFloat() - 0.5f) * 0.02f * dt;
+        par.z   = std::max(-0.5f, std::min(0.5f, par.z));
         par.life -= dt / par.maxLife;
     }
     // Remove dead particles
@@ -141,6 +188,7 @@ void VisualRenderer::updateParticles(const SynthParams& p, float dt) {
         Particle par;
         par.x       = rng.nextFloat();
         par.y       = rng.nextFloat();
+        par.z       = (rng.nextFloat() - 0.5f);  // random depth
         par.vx      = (rng.nextFloat() - 0.5f) * speed;
         par.vy      = (rng.nextFloat() - 0.5f) * speed;
         par.life    = 1.0f;
@@ -156,17 +204,31 @@ void VisualRenderer::updateParticles(const SynthParams& p, float dt) {
 void VisualRenderer::drawParticles(juce::Graphics& g,
                                     const SynthParams& /*p*/, float blend) {
     if (blend < 0.01f || particles.empty()) return;
-    const float w = (float)getWidth();
-    const float h = (float)getHeight();
+    const float w = (float)getWidth(), h = (float)getHeight();
 
-    for (const auto& par : particles) {
-        if (par.life <= 0.0f) continue;
-        const float alpha = par.life * blend * 0.8f;
-        g.setColour(juce::Colour::fromHSV(par.hue, 0.7f, 1.0f, alpha));
-        const float px = par.x * w;
-        const float py = par.y * h;
-        const float sz = par.size * blend;
-        g.fillEllipse(px - sz * 0.5f, py - sz * 0.5f, sz, sz);
+    // Painter's sort: far (negative Z) first
+    std::vector<int> idx(particles.size());
+    std::iota(idx.begin(), idx.end(), 0);
+    std::sort(idx.begin(), idx.end(),
+              [&](int a, int b){ return particles[a].z < particles[b].z; });
+
+    for (int i : idx) {
+        const auto& par = particles[i];
+        if (par.life <= 0.f) continue;
+        const float depthScale = 0.5f + (par.z + 0.5f) * 1.0f;  // 0.5 far → 1.5 near
+        const float alpha = par.life * blend * 0.8f * depthScale;
+        const float sz    = par.size * blend * depthScale;
+        // Slight parallax horizontal offset by Z
+        const float px    = (par.x + par.z * 0.06f) * w;
+        const float py    = (par.y + par.z * 0.04f) * h;
+        // Bloom: 3-pass (outer glow → mid → core)
+        const float h2 = par.hue;
+        g.setColour(juce::Colour::fromHSV(h2, 0.5f, 1.0f, std::min(1.f, alpha*0.15f)));
+        g.fillEllipse(px - sz*2.f, py - sz*2.f, sz*4.f, sz*4.f);
+        g.setColour(juce::Colour::fromHSV(h2, 0.65f, 1.0f, std::min(1.f, alpha*0.35f)));
+        g.fillEllipse(px - sz,     py - sz,     sz*2.f, sz*2.f);
+        g.setColour(juce::Colour::fromHSV(h2, 0.9f, 1.0f, std::min(1.f, alpha)));
+        g.fillEllipse(px - sz*0.5f, py - sz*0.5f, sz, sz);
     }
 }
 
@@ -194,8 +256,28 @@ void VisualRenderer::drawSpectral(juce::Graphics& g,
         const float bx     = spacing * (float)(i + 1) + warp;
         const float bw     = std::max(1.5f, spacing * 0.5f);
         const float alpha  = blend * 0.7f;
-        g.setColour(juce::Colour::fromHSV(hue1, 0.6f + p.l1_timbre * 0.3f, 1.0f, alpha));
-        g.fillRect(bx - bw * 0.5f, baseY - barHi, bw, barHi);
+        const auto barCol = juce::Colour::fromHSV(hue1, 0.6f + p.l1_timbre*0.3f, 1.0f, alpha);
+        g.setColour(barCol);
+        g.fillRect(bx - bw*0.5f, baseY - barHi, bw, barHi);
+        // 3D right face
+        const float ex = 4.f, ey = -3.f;
+        g.setColour(barCol.withBrightness(barCol.getBrightness()*0.55f).withAlpha(alpha*0.8f));
+        juce::Path side;
+        side.startNewSubPath(bx+bw*0.5f, baseY);
+        side.lineTo(bx+bw*0.5f+ex, baseY+ey);
+        side.lineTo(bx+bw*0.5f+ex, baseY-barHi+ey);
+        side.lineTo(bx+bw*0.5f,    baseY-barHi);
+        side.closeSubPath();
+        g.fillPath(side);
+        // 3D top face
+        g.setColour(barCol.brighter(0.3f).withAlpha(alpha*0.6f));
+        juce::Path top;
+        top.startNewSubPath(bx-bw*0.5f,    baseY-barHi);
+        top.lineTo(bx-bw*0.5f+ex,  baseY-barHi+ey);
+        top.lineTo(bx+bw*0.5f+ex,  baseY-barHi+ey);
+        top.lineTo(bx+bw*0.5f,     baseY-barHi);
+        top.closeSubPath();
+        g.fillPath(top);
     }
 
     // L2 overlay — thin lines from density
@@ -283,6 +365,30 @@ void VisualRenderer::paint(juce::Graphics& g) {
             g.fillRect(bx, by, sqSz, sqSz);
             bx += sqSz + sqGap;
         }
+    }
+
+    // Storm flash (Kp crosses 7) + volumetric glow
+    if (ws.kp >= 7.f && lastKpForStorm < 7.f) stormFlashAlpha = 0.5f;
+    lastKpForStorm = ws.kp;
+    stormFlashAlpha *= 0.87f;
+    if (stormFlashAlpha > 0.01f) {
+        g.setColour(ColourScheme::kpToAccent(ws.kp).withAlpha(stormFlashAlpha * 0.35f));
+        g.fillAll();
+    }
+    // Volumetric center glow (increases with Kp or amplitude)
+    if (ws.kp > 3.f || p.l1_amplitude > 0.5f) {
+        const float glowR = std::min((float)getWidth(),(float)getHeight()) * 0.33f;
+        const float gAmp  = (ws.kp / 9.f * 0.5f + p.l1_amplitude * 0.25f)
+                            * std::min(u.visual_lissajous, 1.f);
+        juce::ColourGradient grad(
+            ColourScheme::kpToAccent(ws.kp).withAlpha(gAmp * 0.18f),
+            (float)getWidth()*0.5f, (float)getHeight()*0.5f,
+            juce::Colours::transparentBlack,
+            (float)getWidth()*0.5f + glowR, (float)getHeight()*0.5f,
+            true);
+        g.setGradientFill(grad);
+        g.fillEllipse((float)getWidth()*0.5f-glowR,(float)getHeight()*0.5f-glowR,
+                      glowR*2.f, glowR*2.f);
     }
 
     // Flare flash + badge
