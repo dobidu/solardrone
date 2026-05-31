@@ -245,22 +245,22 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     // Section labels
     g.setFont(12.0f);
     g.setColour(accent.withAlpha(0.65f));
-    g.drawText("REPEATER", 8,   602, 90, 14, juce::Justification::left, false);
-    g.drawText("CHOPPER",  528, 602, 90, 14, juce::Justification::left, false);
+    g.drawText("REPEATER", 8,   602, 110, 14, juce::Justification::left, false);
+    g.drawText("CHOPPER",  528, 602, 90,  14, juce::Justification::left, false);
 
     // Right panel title
     g.setFont(11.0f);
     g.setColour(accent.withAlpha(0.4f));
     g.drawText("PARAMETERS", 670, 4, 340, 14, juce::Justification::left, false);
 
-    // OSC/MIDI activity indicator
+    // OSC/MIDI label + activity dot (y=542 = above controls at 558)
+    g.setFont(10.0f);
+    g.setColour(accent.withAlpha(0.4f));
+    g.drawText("OSC / MIDI OUT", 670, 542, 140, 14, juce::Justification::left, false);
     if (oscActivityAlpha > 0.01f) {
         g.setColour(juce::Colours::cyan.withAlpha(oscActivityAlpha));
-        g.fillEllipse(1034, 596, 8, 8);
+        g.fillEllipse(1022, 562, 9, 9);
     }
-    g.setFont(9.0f);
-    g.setColour(accent.withAlpha(0.4f));
-    g.drawText("OSC / MIDI", 670, 580, 70, 14, juce::Justification::left, false);
 }
 
 void SolarDroneAudioProcessorEditor::resized() {
@@ -270,101 +270,101 @@ void SolarDroneAudioProcessorEditor::resized() {
     btnFreeze.setBounds(548, 6, 100, 24);
 
     // ── Right panel (rx=670, rw=360, height=600) ──────────────────────────
+    // Total allocated: rows+spatial+mapping+macrorb+osc = ~598px. Tight but fits.
     const int rx = 670, lh = 14, sh = 22, pad = 6, rw = 360;
     const int colW = (rw - pad) / 2;
 
-    // Row 0: Harmony combo (100px) + Interval slider
-    cmbHarmony.setBounds(rx, 18, 100, sh);
-    lblInterval.setBounds(rx + 108, 18,      rw - 108, lh);
-    slInterval.setBounds( rx + 108, 18 + lh, rw - 108, sh);
+    // Row 0: y=14
+    cmbHarmony.setBounds(rx, 14, 100, sh);
+    lblInterval.setBounds(rx+108, 14,    rw-108, lh);
+    slInterval.setBounds( rx+108, 14+lh, rw-108, sh);
 
-    // Rows 1-4: sliders in pairs
     auto placeRow = [&](juce::Slider& sL, juce::Label& lL,
                         juce::Slider& sR, juce::Label& lR, int y) {
-        lL.setBounds(rx,            y, colW, lh);
-        sL.setBounds(rx,            y+lh, colW, sh);
-        lR.setBounds(rx+colW+pad,   y, colW, lh);
-        sR.setBounds(rx+colW+pad,   y+lh, colW, sh);
+        lL.setBounds(rx,          y, colW, lh);   sL.setBounds(rx,          y+lh, colW, sh);
+        lR.setBounds(rx+colW+pad, y, colW, lh);   sR.setBounds(rx+colW+pad, y+lh, colW, sh);
     };
-    placeRow(slGlide,   lblGlide,   slDynamics, lblDynamics, 60);
-    placeRow(slBalance, lblBalance, slSpread,   lblSpread,   106);
-    placeRow(slVisLiss, lblVisLiss, slVisPart,  lblVisPart,  152);
-    lblVisSpec.setBounds(rx, 198, colW, lh);
-    slVisSpec.setBounds( rx, 198+lh, colW, sh);
+    placeRow(slGlide,   lblGlide,   slDynamics, lblDynamics, 54);
+    placeRow(slBalance, lblBalance, slSpread,   lblSpread,   94);
+    placeRow(slVisLiss, lblVisLiss, slVisPart,  lblVisPart,  134);
+    lblVisSpec.setBounds(rx, 174, colW, lh);
+    slVisSpec.setBounds( rx, 174+lh, colW, sh);   // bottom=210
 
-    // Spatial display (150×96 centered, y=234)
-    spatialDisplay.setBounds(rx + 105, 234, 150, 96);
+    // Spatial display: y=216, 150×86
+    spatialDisplay.setBounds(rx+105, 216, 150, 86);  // bottom=302
 
-    // Mapping curves (y=342, full width, 90px tall)
-    mappingDisplay.setBounds(rx, 342, rw, 90);
-    // 4 mapping sliders below (y=436)
+    // Mapping curves: y=308, 360×80
+    mappingDisplay.setBounds(rx, 308, rw, 80);        // bottom=388
+
+    // 4 mapping sliders: y=392
     const int mSlW = rw / 4;
-    const int mY   = 436;
-    lblMapVelLo.setBounds(   rx+0*mSlW, mY,    mSlW, lh);
-    slMapVelLo.setBounds(    rx+0*mSlW, mY+lh, mSlW, sh);
-    lblMapVelHi.setBounds(   rx+1*mSlW, mY,    mSlW, lh);
-    slMapVelHi.setBounds(    rx+1*mSlW, mY+lh, mSlW, sh);
-    lblMapBzThresh.setBounds(rx+2*mSlW, mY,    mSlW, lh);
-    slMapBzThresh.setBounds( rx+2*mSlW, mY+lh, mSlW, sh);
-    lblMapKpDens.setBounds(  rx+3*mSlW, mY,    mSlW, lh);
-    slMapKpDens.setBounds(   rx+3*mSlW, mY+lh, mSlW, sh);
+    const int mY   = 392;
+    lblMapVelLo.setBounds(   rx+0*mSlW, mY,    mSlW, lh); slMapVelLo.setBounds(   rx+0*mSlW, mY+lh, mSlW, sh);
+    lblMapVelHi.setBounds(   rx+1*mSlW, mY,    mSlW, lh); slMapVelHi.setBounds(   rx+1*mSlW, mY+lh, mSlW, sh);
+    lblMapBzThresh.setBounds(rx+2*mSlW, mY,    mSlW, lh); slMapBzThresh.setBounds(rx+2*mSlW, mY+lh, mSlW, sh);
+    lblMapKpDens.setBounds(  rx+3*mSlW, mY,    mSlW, lh); slMapKpDens.setBounds(  rx+3*mSlW, mY+lh, mSlW, sh);
+    // bottom=392+14+22=428
 
-    // MacroOrb (y=476, 280×110)
-    macroOrb.setBounds(rx + 40, 476, 280, 110);
+    // MacroOrb: y=436, 280×116, bottom=552
+    macroOrb.setBounds(rx+40, 436, 280, 116);
 
-    // OSC/MIDI section (y=594)
-    btnOSC.setBounds(    rx,       594, 52, 20);
-    txtOSCPort.setBounds(rx + 56,  594, 90, 20);
-    btnMIDICC.setBounds( rx + 150, 594, 68, 20);
+    // OSC/MIDI: y=558, h=26, bottom=584 ✓ (< 600)
+    btnOSC.setBounds(    rx,       558, 52, 26);
+    txtOSCPort.setBounds(rx+56,    558, 90, 26);
+    btnMIDICC.setBounds( rx+150,   558, 68, 26);
 
     // ── Bottom strip (160px, y=600-760) ──────────────────────────────────
+    // Content: sectionLabel(14) + pad(6) + row1(18+32=50) + gap(8) + row2(18+32=50) = 128px
+    // Top/bottom padding: (160-128)/2 = 16px each
     const int stripTop = 600;
-    const int lbH = 14, ctH = 26, gap2 = 5;
-    const int row1L = stripTop + 16;
-    const int row1C = row1L + lbH;
-    const int row2L = row1C + ctH + gap2;
-    const int row2C = row2L + lbH;
+    const int lbH2 = 18, ctH2 = 32;
+    const int row1L = stripTop + 16;          // label y row1 = 616
+    const int row1C = row1L + lbH2;           // control y row1 = 634, bottom = 666
+    const int row2L = row1C + ctH2 + 8;       // label y row2 = 674
+    const int row2C = row2L + lbH2;           // control y row2 = 692, bottom = 724
+    const int lbH = lbH2, ctH = ctH2;
 
-    // Left half REPEATER: x=8 to x=520
+    // ProbDial spans both rows: y=row1L..row2C+ctH = 616..724, height=108
+    probDial.setBounds(8, row1L, 108, row2C + ctH2 - row1L);
+
+    // Left half REPEATER: x=120 to x=518
     {
-        int bx = 8;
-        const int dialSz = 80;
-        probDial.setBounds(bx, stripTop + 4, dialSz, dialSz); bx += dialSz + 6;
+        int bx = 120;
+        btnRepOn.setBounds(bx, row1C, 60, ctH2); bx += 64;
 
-        btnRepOn.setBounds(bx, row1C, 56, ctH); bx += 60;
+        const int comboW = 96;
+        lblRepBars.setBounds(bx, row1L, comboW, lbH2);
+        cmbRepBars.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
 
-        const int comboW = 90;
-        lblRepBars.setBounds(bx, row1L, comboW, lbH);
-        cmbRepBars.setBounds(bx, row1C, comboW, ctH); bx += comboW + 6;
+        const int bpmW = 140;
+        lblRepBPM.setBounds(bx, row1L, bpmW, lbH2);
+        slRepBPM.setBounds( bx, row1C, bpmW, ctH2);
 
-        const int bpmW = 130;
-        lblRepBPM.setBounds(bx, row1L, bpmW, lbH);
-        slRepBPM.setBounds( bx, row1C, bpmW, ctH); bx += bpmW + 6;
-
-        int bx2 = 8 + dialSz + 6 + 60 + comboW + 6;
-        const int slW = (515 - bx2) / 2;
-        lblRepFeedback.setBounds(bx2, row2L, slW, lbH);
-        slRepFeedback.setBounds( bx2, row2C, slW, ctH); bx2 += slW + 6;
-        lblRepWet.setBounds(bx2, row2L, slW, lbH);
-        slRepWet.setBounds( bx2, row2C, slW, ctH);
+        // Row 2: FB + Wet
+        int bx2 = 120 + 64 + 96 + 6;
+        const int slW = (514 - bx2) / 2;
+        lblRepFeedback.setBounds(bx2, row2L, slW, lbH2);
+        slRepFeedback.setBounds( bx2, row2C, slW, ctH2); bx2 += slW + 6;
+        lblRepWet.setBounds(bx2, row2L, slW, lbH2);
+        slRepWet.setBounds( bx2, row2C, slW, ctH2);
     }
 
     // Right half CHOPPER: x=528 to x=1042
     {
         int bx = 528;
-        btnChopOn.setBounds(  bx, row1C, 62, ctH); bx += 66;
-        btnChopSync.setBounds(bx, row1C, 52, ctH); bx += 56;
+        btnChopOn.setBounds(  bx, row1C, 66, ctH2); bx += 70;
+        btnChopSync.setBounds(bx, row1C, 56, ctH2); bx += 60;
 
-        const int comboW = 88;
-        lblChopShape.setBounds(bx, row1L, comboW, lbH);
-        cmbChopShape.setBounds(bx, row1C, comboW, ctH); bx += comboW + 6;
-        lblChopDiv.setBounds(  bx, row1L, comboW, lbH);
-        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH); bx += comboW + 6;
+        const int comboW = 96;
+        lblChopShape.setBounds(bx, row1L, comboW, lbH2);
+        cmbChopShape.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
+        lblChopDiv.setBounds(  bx, row1L, comboW, lbH2);
+        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH2); bx += comboW + 6;
 
         const int chopSlW = (1040 - bx) / 2;
-        lblChopRate.setBounds( bx,            row2L, chopSlW, lbH);
-        slChopRate.setBounds(  bx,            row2C, chopSlW, ctH); bx += chopSlW + 6;
-        lblChopDepth.setBounds(bx,            row2L, chopSlW, lbH);
-        slChopDepth.setBounds( bx,            row2C, chopSlW, ctH);
+        lblChopRate.setBounds( bx,            row2L, chopSlW, lbH2);
+        slChopRate.setBounds(  bx,            row2C, chopSlW, ctH2); bx += chopSlW + 6;
+        lblChopDepth.setBounds(bx,            row2L, chopSlW, lbH2);
+        slChopDepth.setBounds( bx,            row2C, chopSlW, ctH2);
     }
 }
