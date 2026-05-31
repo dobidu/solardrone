@@ -13,7 +13,10 @@ void OSCMIDIBridge::setOSCEnabled(bool e, int port) {
         oscPort    = port;
         lastPort   = port;
         oscSender.disconnect();
-        if (e) oscSender.connect("127.0.0.1", port);
+        if (e) {
+            const bool ok = oscSender.connect("127.0.0.1", port);
+            DBG("OSCMIDIBridge: connect to 127.0.0.1:" << port << " = " << (ok ? "OK" : "FAILED"));
+        }
     }
 }
 
@@ -32,7 +35,7 @@ void OSCMIDIBridge::send(const SynthParams& s, const SpaceWeatherState& w,
     const auto now = juce::Time::currentTimeMillis();
     if (now - lastSendMs < kIntervalMs) return;
     lastSendMs = now;
-    if (oscEnabled)  sendOSC(s, w, fl);
+    if (oscEnabled)  { DBG("OSC send tick"); sendOSC(s, w, fl); }
     if (midiEnabled) sendMIDI(s, w, fl, vol, balance);
     lastSentMs = now;
 }

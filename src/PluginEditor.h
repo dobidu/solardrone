@@ -79,10 +79,8 @@ private:
 
     // OSC/MIDI
     juce::ToggleButton btnOSC, btnMIDICC;
-    juce::Slider       slOSCPort;
-    juce::Label        lblOSCPort;
+    juce::TextEditor   txtOSCPort;
     std::unique_ptr<ButtonAttachment>  attOSC, attMIDICC;
-    std::unique_ptr<SliderAttachment>  attOSCPort;
     float          oscActivityAlpha = 0.f;
     OSCMIDIBridge  oscMidiBridge;
     float          lastFlareLevelForOSC = 0.f;

@@ -134,13 +134,22 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     btnMIDICC.setButtonText("MIDI");
     btnMIDICC.setColour(juce::ToggleButton::textColourId, juce::Colours::plum);
     addAndMakeVisible(btnMIDICC);
-    mkSlider(slOSCPort, lblOSCPort, "Port", this);
-    slOSCPort.setTextBoxStyle(juce::Slider::TextBoxRight, false, 45, 16);
-    slOSCPort.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    slOSCPort.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
-    attOSC     = std::make_unique<ButtonAttachment>(apvts, "osc_enabled",     btnOSC);
-    attMIDICC  = std::make_unique<ButtonAttachment>(apvts, "midi_cc_enabled", btnMIDICC);
-    attOSCPort = std::make_unique<SliderAttachment>(apvts, "osc_port",        slOSCPort);
+    // OSC port as editable text field
+    txtOSCPort.setText("9000", false);
+    txtOSCPort.setInputRestrictions(5, "0123456789");
+    txtOSCPort.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0xff181c24));
+    txtOSCPort.setColour(juce::TextEditor::textColourId, juce::Colours::white);
+    txtOSCPort.setColour(juce::TextEditor::outlineColourId, juce::Colour(0xff2a6fa8));
+    txtOSCPort.onReturnKey = [this]() {
+        const int p = std::max(1024, std::min(65535, txtOSCPort.getText().getIntValue()));
+        txtOSCPort.setText(juce::String(p), false);
+        if (auto* param = processorRef.apvts.getParameter("osc_port"))
+            param->setValueNotifyingHost(param->convertTo0to1((float)p));
+    };
+    txtOSCPort.onFocusLost = txtOSCPort.onReturnKey;
+    addAndMakeVisible(txtOSCPort);
+    attOSC    = std::make_unique<ButtonAttachment>(apvts, "osc_enabled",     btnOSC);
+    attMIDICC = std::make_unique<ButtonAttachment>(apvts, "midi_cc_enabled", btnMIDICC);
 
     addAndMakeVisible(spatialDisplay);
     addAndMakeVisible(probDial);
@@ -173,9 +182,12 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
         sunDisc.setFlareLevel(fl);
         spatialDisplay.setFlareLevel(fl);
         // OSC/MIDI bridge on message thread (not audio thread — fixes blocking issue)
+        // Read port from TextEditor directly (AudioParameterInt raw value is normalized)
+        const int oscPort = std::max(1024, std::min(65535,
+            txtOSCPort.getText().isEmpty() ? 9000 : txtOSCPort.getText().getIntValue()));
         oscMidiBridge.setOSCEnabled(
             *processorRef.apvts.getRawParameterValue("osc_enabled") > 0.5f,
-            (int)*processorRef.apvts.getRawParameterValue("osc_port"));
+            oscPort);
         oscMidiBridge.setMIDIEnabled(
             *processorRef.apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
         oscMidiBridge.send(processorRef.getCurrentSynthParams(),
@@ -310,10 +322,9 @@ void SolarDroneAudioProcessorEditor::resized() {
     macroOrb.setBounds(rx + 30, 385, 240, 110);
 
     // OSC/MIDI section (y=500)
-    btnOSC.setBounds(   rx,       500, 44, 18);
-    slOSCPort.setBounds(rx + 48,  500, 130, 18);
-    lblOSCPort.setBounds(rx + 48, 487, 130, 12);
-    btnMIDICC.setBounds(rx + 182, 500, 52, 18);
+    btnOSC.setBounds(    rx,      500, 44, 18);
+    txtOSCPort.setBounds(rx + 48, 500, 80, 18);
+    btnMIDICC.setBounds( rx + 132,500, 52, 18);
 
     // ── Bottom strip (120px, y=520-640) ──────────────────────────────────
     // Two rows: label row (y=538, 14px) + control row (y=554, 22px)
