@@ -12,7 +12,7 @@ void BeatRepeater::prepare(double sr, int /*maxBlockSize*/) {
 }
 
 void BeatRepeater::setEnabled(bool e)              { enabled  = e; }
-void BeatRepeater::setLoopLength(LoopLength l)     { loopLen  = l; }
+void BeatRepeater::setLoopLength(LoopLength l)     { pendingLoopLen = l; } // applied at boundary
 void BeatRepeater::setFeedback(float f)            { feedback = std::max(0.0f, std::min(0.99f, f)); }
 void BeatRepeater::setWet(float w)                 { wet      = std::max(0.0f, std::min(1.0f, w)); }
 void BeatRepeater::setBeatPeriodSamples(int s)     { beatPeriod = std::max(1, s); }
@@ -33,8 +33,8 @@ int BeatRepeater::loopLengthSamples() const {
 void BeatRepeater::process(juce::AudioBuffer<float>& buffer) {
     if (bufferSize == 0) return;
 
-    // Smooth BPM transitions to avoid crackle (alpha ~0.2 per block ≈ 250ms convergence)
-    currentBeatPeriodF += 0.2f * ((float)beatPeriod - currentBeatPeriodF);
+    // Smooth BPM transitions — alpha 0.05 ≈ 600ms convergence (slower = fewer clicks)
+    currentBeatPeriodF += 0.05f * ((float)beatPeriod - currentBeatPeriodF);
     beatPeriod = std::max(1, (int)(currentBeatPeriodF + 0.5f));
 
     const int n    = buffer.getNumSamples();
@@ -44,11 +44,13 @@ void BeatRepeater::process(juce::AudioBuffer<float>& buffer) {
     auto* outL = buffer.getWritePointer(0);
     auto* outR = nCh > 1 ? buffer.getWritePointer(1) : outL;
 
-    const int loopLen = std::min(loopLengthSamples(), bufferSize - 1);
+    int loopLen = std::min(loopLengthSamples(), bufferSize - 1);
 
     for (int i = 0; i < n; ++i) {
-        // Roll density die at each loop cycle boundary
+        // At loop boundary: apply pending loop length + roll density die
         if (samplesIntoLoop >= loopLen) {
+            BeatRepeater::loopLen = pendingLoopLen;  // update member enum (no mid-buffer jump)
+            loopLen         = std::min(loopLengthSamples(), bufferSize - 1);
             samplesIntoLoop = 0;
             cycleActive = (density >= 0.99f ||
                 juce::Random::getSystemRandom().nextFloat() < density);

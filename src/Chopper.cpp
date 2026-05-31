@@ -25,7 +25,7 @@ void Chopper::setBPMSync(bool sync, float bpm, float divBeats) {
 }
 
 void Chopper::updatePhaseInc() {
-    phaseInc = rate / sampleRate;
+    targetPhaseInc = rate / sampleRate;
 }
 
 float Chopper::lfoValue() const {
@@ -42,6 +42,8 @@ float Chopper::lfoValue() const {
 
 void Chopper::process(juce::AudioBuffer<float>& buffer) {
     if (!enabled) return;
+    // Smooth phaseInc to reduce clicks on rate/div changes
+    phaseInc += 0.05 * (targetPhaseInc - phaseInc);
     const int n  = buffer.getNumSamples();
     const int ch = buffer.getNumChannels();
     for (int i = 0; i < n; ++i) {

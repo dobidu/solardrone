@@ -8,7 +8,7 @@ static void mkSlider(juce::Slider& s, juce::Label& l,
     s.setColour(juce::Slider::thumbColourId,  juce::Colours::white);
     p->addAndMakeVisible(s);
     l.setText(name, juce::dontSendNotification);
-    l.setFont(juce::Font(9.0f));
+    l.setFont(juce::Font(11.0f));
     l.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
     l.setJustificationType(juce::Justification::centred);
     p->addAndMakeVisible(l);
@@ -121,7 +121,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(sunDisc);
 
     startTimerHz(10);
-    setSize(900, 600);
+    setSize(900, 640);
 }
 
 SolarDroneAudioProcessorEditor::~SolarDroneAudioProcessorEditor() {
@@ -148,33 +148,33 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
 
     // Space grid
     g.setColour(grid);
-    for (int x = 0; x < 900; x += 40) g.drawVerticalLine(x, 0.f, 600.f);
-    for (int y = 0; y < 600; y += 40) g.drawHorizontalLine(y, 0.f, 900.f);
+    for (int x = 0; x < 900; x += 40) g.drawVerticalLine(x, 0.f, 640.f);
+    for (int y = 0; y < 640; y += 40) g.drawHorizontalLine(y, 0.f, 900.f);
 
     // Right panel tint
     g.setColour(accent.withAlpha(0.04f));
     g.fillRect(582, 0, 318, 520);
 
-    // Bottom strip
+    // Bottom strip (120px)
     g.setColour(juce::Colour(0xff060c18));
-    g.fillRect(0, 520, 900, 80);
+    g.fillRect(0, 520, 900, 120);
 
     // Dividers
     g.setColour(accent.withAlpha(0.18f));
     g.drawVerticalLine(581, 0.f, 521.f);
-    g.drawHorizontalLine(520, 0.f, 900.f);
-    g.drawVerticalLine(449, 521.f, 600.f);  // REP | CHOP divider
+    g.drawHorizontalLine(519, 0.f, 900.f);
+    g.drawVerticalLine(449, 520.f, 640.f);  // REP | CHOP divider
 
-    // Labels
-    g.setFont(8.0f);
-    g.setColour(accent.withAlpha(0.55f));
-    g.drawText("REPEATER", 8,   522, 70, 10, juce::Justification::left, false);
-    g.drawText("CHOPPER",  456, 522, 70, 10, juce::Justification::left, false);
+    // Section labels — 11pt, bright
+    g.setFont(11.0f);
+    g.setColour(accent.withAlpha(0.65f));
+    g.drawText("REPEATER", 8,   522, 80, 14, juce::Justification::left, false);
+    g.drawText("CHOPPER",  456, 522, 80, 14, juce::Justification::left, false);
 
     // Right panel title
-    g.setFont(9.0f);
-    g.setColour(accent.withAlpha(0.35f));
-    g.drawText("PARAMETERS", 590, 4, 300, 10, juce::Justification::left, false);
+    g.setFont(10.0f);
+    g.setColour(accent.withAlpha(0.4f));
+    g.drawText("PARAMETERS", 590, 4, 300, 12, juce::Justification::left, false);
 }
 
 void SolarDroneAudioProcessorEditor::resized() {
@@ -220,38 +220,60 @@ void SolarDroneAudioProcessorEditor::resized() {
     // MacroOrb — bottom of right panel, centered
     macroOrb.setBounds(rx + 30, 195, 240, 240);
 
-    // ── Bottom strip ──────────────────────────────────────────────────────
-    const int sy = 524, sbh = 18, slbh = 12;
+    // ── Bottom strip (120px, y=520-640) ──────────────────────────────────
+    // Two rows: label row (y=538, 14px) + control row (y=554, 22px)
+    // + second label row (y=582, 14px) + second control row (y=598, 22px)
+    const int stripTop = 520;
+    const int lbH = 14, ctH = 22, gap = 4;
+    const int row1L = stripTop + 18;   // label y row 1
+    const int row1C = row1L + lbH;     // control y row 1
+    const int row2L = row1C + ctH + 6; // label y row 2
+    const int row2C = row2L + lbH;     // control y row 2
 
-    // Repeater (left half, x=8 to x=445)
-    int bx = 8;
-    const int btnW = 42, comboW = 56;
-    const int dialSz = 58;
-    btnRepOn.setBounds(bx, sy + slbh, btnW, sbh);      bx += btnW + 2;
-    // ProbDensityDial replaces cmbRepBars visually
-    probDial.setBounds(bx, sy - 2, dialSz, dialSz);   bx += dialSz + 2;
-    // Keep cmbRepBars small (loop length still needed)
-    lblRepBars.setBounds(bx, sy, 36, slbh);
-    cmbRepBars.setBounds(bx, sy + slbh, 36, sbh);  bx += 38;
-    const int repSlW = (437 - bx) / 3;
-    lblRepBPM.setBounds(     bx,               sy, repSlW, slbh);
-    slRepBPM.setBounds(      bx,               sy + slbh, repSlW, sbh);  bx += repSlW + 2;
-    lblRepFeedback.setBounds(bx,               sy, repSlW, slbh);
-    slRepFeedback.setBounds( bx,               sy + slbh, repSlW, sbh);  bx += repSlW + 2;
-    lblRepWet.setBounds(     bx,               sy, repSlW, slbh);
-    slRepWet.setBounds(      bx,               sy + slbh, repSlW, sbh);
+    // Left half REPEATER: x=8 to x=444
+    {
+        int bx = 8;
+        const int dialSz = 72;
+        // ProbDial spans both rows
+        probDial.setBounds(bx, stripTop + 4, dialSz, dialSz); bx += dialSz + 4;
 
-    // Chopper (right half, x=456 to x=892)
-    bx = 456;
-    btnChopOn.setBounds(   bx, sy + slbh, btnW, sbh);     bx += btnW + 2;
-    btnChopSync.setBounds( bx, sy + slbh, btnW - 4, sbh); bx += btnW - 2;
-    lblChopShape.setBounds(bx, sy, comboW, slbh);
-    cmbChopShape.setBounds(bx, sy + slbh, comboW, sbh);   bx += comboW + 2;
-    lblChopDiv.setBounds(  bx, sy, comboW - 8, slbh);
-    cmbChopDiv.setBounds(  bx, sy + slbh, comboW - 8, sbh); bx += comboW - 6;
-    const int chopSlW = (892 - bx) / 2;
-    lblChopRate.setBounds( bx,             sy, chopSlW, slbh);
-    slChopRate.setBounds(  bx,             sy + slbh, chopSlW, sbh); bx += chopSlW + 2;
-    lblChopDepth.setBounds(bx,             sy, chopSlW, slbh);
-    slChopDepth.setBounds( bx,             sy + slbh, chopSlW, sbh);
+        // btnRepOn
+        btnRepOn.setBounds(bx, row1C, 48, ctH); bx += 50;
+
+        // Bars combo
+        lblRepBars.setBounds(bx, row1L, 50, lbH);
+        cmbRepBars.setBounds(bx, row1C, 50, ctH); bx += 52;
+
+        // BPM slider (row 1 remainder)
+        const int bpmW = 110;
+        lblRepBPM.setBounds(bx, row1L, bpmW, lbH);
+        slRepBPM.setBounds( bx, row1C, bpmW, ctH); bx += bpmW + 4;
+
+        // FB + Wet on row 2 (from dialSz start)
+        int bx2 = 8 + dialSz + 4 + 50 + 52;
+        const int slW = (440 - bx2) / 2;
+        lblRepFeedback.setBounds(bx2, row2L, slW, lbH);
+        slRepFeedback.setBounds( bx2, row2C, slW, ctH); bx2 += slW + 4;
+        lblRepWet.setBounds(bx2, row2L, slW, lbH);
+        slRepWet.setBounds( bx2, row2C, slW, ctH);
+    }
+
+    // Right half CHOPPER: x=452 to x=892
+    {
+        int bx = 452;
+        btnChopOn.setBounds(  bx, row1C, 52, ctH); bx += 54;
+        btnChopSync.setBounds(bx, row1C, 44, ctH); bx += 46;
+
+        const int comboW = 64;
+        lblChopShape.setBounds(bx, row1L, comboW, lbH);
+        cmbChopShape.setBounds(bx, row1C, comboW, ctH); bx += comboW + 4;
+        lblChopDiv.setBounds(  bx, row1L, comboW, lbH);
+        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH); bx += comboW + 4;
+
+        const int chopSlW = (890 - bx) / 2;
+        lblChopRate.setBounds( bx,             row2L, chopSlW, lbH);
+        slChopRate.setBounds(  bx,             row2C, chopSlW, ctH); bx += chopSlW + 4;
+        lblChopDepth.setBounds(bx,             row2L, chopSlW, lbH);
+        slChopDepth.setBounds( bx,             row2C, chopSlW, ctH);
+    }
 }

@@ -24,6 +24,7 @@ private:
     Shape  shape      = Shape::square;
     bool   bpmSync    = true;
     float  rate       = 4.0f;
-    double phase      = 0.0;
-    double phaseInc   = 0.0;
+    double phase          = 0.0;
+    double phaseInc       = 0.0;
+    double targetPhaseInc = 0.0;  // smoothed to avoid clicks on rate change
 };

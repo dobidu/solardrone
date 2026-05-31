@@ -24,7 +24,8 @@ private:
     float      feedback    = 0.5f;
     float      wet         = 0.7f;
     int        beatPeriod  = 22050;
-    LoopLength loopLen     = LoopLength::Bar4th;
+    LoopLength loopLen        = LoopLength::Bar4th;
+    LoopLength pendingLoopLen = LoopLength::Bar4th;  // deferred to boundary
 
     std::vector<float> ringL, ringR;
     int   writePos           = 0;
