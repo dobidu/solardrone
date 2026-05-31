@@ -181,25 +181,6 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
         sunDisc.setFlareLevel(fl);
         spatialDisplay.setFlareLevel(fl);
-        // OSC/MIDI bridge on message thread (not audio thread — fixes blocking issue)
-        // Read port from TextEditor directly (AudioParameterInt raw value is normalized)
-        const int oscPort = std::max(1024, std::min(65535,
-            txtOSCPort.getText().isEmpty() ? 9000 : txtOSCPort.getText().getIntValue()));
-        oscMidiBridge.setOSCEnabled(
-            *processorRef.apvts.getRawParameterValue("osc_enabled") > 0.5f,
-            oscPort);
-        oscMidiBridge.setMIDIEnabled(
-            *processorRef.apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
-        oscMidiBridge.send(processorRef.getCurrentSynthParams(),
-                           processorRef.getLatestSpaceWeatherState(),
-                           fl,
-                           *processorRef.apvts.getRawParameterValue("volume"),
-                           *processorRef.apvts.getRawParameterValue("layer_balance"));
-        // Activity indicator
-        if (oscMidiBridge.wasRecentlySent())
-            oscActivityAlpha = 1.0f;
-        else
-            oscActivityAlpha = std::max(0.f, oscActivityAlpha - 0.15f);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,
@@ -211,6 +192,27 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             *processorRef.apvts.getRawParameterValue("map_bz_thresh"),
             *processorRef.apvts.getRawParameterValue("map_kp_dens"));
         repaint();
+    }
+
+    // OSC/MIDI — always runs every timer tick (not gated by kp change)
+    {
+        const int oscPort = std::max(1024, std::min(65535,
+            txtOSCPort.getText().isEmpty() ? 9000 : txtOSCPort.getText().getIntValue()));
+        const auto& sw = processorRef.getLatestSpaceWeatherState();
+        float fl2 = 0.f;
+        if (sw.x_ray_flux >= 1e-5f)
+            fl2 = std::min(1.f, (std::log10(sw.x_ray_flux) + 5.f) / 2.f);
+        oscMidiBridge.setOSCEnabled(
+            *processorRef.apvts.getRawParameterValue("osc_enabled") > 0.5f, oscPort);
+        oscMidiBridge.setMIDIEnabled(
+            *processorRef.apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
+        oscMidiBridge.send(processorRef.getCurrentSynthParams(), sw, fl2,
+                           *processorRef.apvts.getRawParameterValue("volume"),
+                           *processorRef.apvts.getRawParameterValue("layer_balance"));
+        if (oscMidiBridge.wasRecentlySent())
+            oscActivityAlpha = 1.0f;
+        else
+            oscActivityAlpha = std::max(0.f, oscActivityAlpha - 0.15f);
     }
 }
 
