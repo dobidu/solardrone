@@ -7,6 +7,7 @@
 #include "MacroOrb.h"
 #include "ProbDensityDial.h"
 #include "MappingCurveDisplay.h"
+#include "SpatialDisplay.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -27,6 +28,7 @@ private:
     MacroOrb        macroOrb;
     ProbDensityDial      probDial;
     MappingCurveDisplay  mappingDisplay;
+    SpatialDisplay       spatialDisplay;
     float                currentKp = 0.f;
 
     juce::Slider slMapVelLo, slMapVelHi, slMapBzThresh, slMapKpDens;

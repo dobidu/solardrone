@@ -3,6 +3,10 @@
 #include <cmath>
 #include <algorithm>
 
+void OscillatorBank::setSpatialGains(float gL, float gR) {
+    spatialGainL = gL; spatialGainR = gR;
+}
+
 void OscillatorBank::prepare(double sr, int maxPartials) {
     sampleRate = sr;
     partials.resize((size_t)maxPartials);
@@ -18,10 +22,9 @@ void OscillatorBank::applyParams(const SynthParams& p, int layer, float layerGai
         const double fundamental = (double)p.l1_fundamental_hz;
         const float timbre = p.l1_timbre;
 
-        // Stereo: L1 slightly left
-        const float sw = p.stereo_width;
-        const float panL = 0.5f + sw * 0.3f;
-        const float panR = 1.0f - panL;
+        // Stereo via spatial gains
+        const float panL = spatialGainL;
+        const float panR = spatialGainR;
 
         for (int i = 0; i < activeCount; ++i) {
             const float harmonic = (float)(i + 1);
@@ -39,10 +42,9 @@ void OscillatorBank::applyParams(const SynthParams& p, int layer, float layerGai
         activeCount = std::min(activeCount, (int)partials.size());
         const double fundamental = (double)p.l2_fundamental_hz;
 
-        // Stereo: L2 slightly right
-        const float sw = p.stereo_width;
-        const float panR = 0.5f + sw * 0.3f;
-        const float panL = 1.0f - panR;
+        // Stereo via spatial gains
+        const float panL = spatialGainL;
+        const float panR = spatialGainR;
 
         for (int i = 0; i < activeCount; ++i) {
             const float harmonic = (float)(i + 1);

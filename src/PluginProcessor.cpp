@@ -72,6 +72,26 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "map_kp_dens",  "Kp Dens Start",  0.0f,    8.0f,   4.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "flare_sensitivity", "Flare Sensitivity", 0.0f, 1.0f, 0.7f));
+    // Output EQ
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "eq_low",  "EQ Low (dB)",  -12.f, 12.f, 0.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "eq_mid",  "EQ Mid (dB)",  -12.f, 12.f, 0.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "eq_high", "EQ High (dB)", -12.f, 12.f, 0.f));
+    // Spatial positioning
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l1_azimuth",   "L1 Azimuth",   -90.f, 90.f,   0.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l1_elevation", "L1 Elevation", -45.f, 45.f,  15.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l2_azimuth",   "L2 Azimuth",   -90.f, 90.f,  30.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l2_elevation", "L2 Elevation", -45.f, 45.f,   0.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l3_azimuth",   "L3 Azimuth",   -90.f, 90.f, -30.f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "l3_elevation", "L3 Elevation", -45.f, 45.f,  30.f));
 
     return { params.begin(), params.end() };
 }
@@ -91,6 +111,15 @@ void SolarDroneAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     tempoTracker.prepare(sampleRate);
     beatRepeater.prepare(sampleRate, samplesPerBlock);
     chopper.prepare(sampleRate);
+    outputEq.prepare({sampleRate, (juce::uint32)samplesPerBlock, 2});
+
+    // SmoothedValues: 50ms ramp — eliminates slider crackling
+    smoothedVolume.reset(sampleRate, 0.05);
+    smoothedBalance.reset(sampleRate, 0.05);
+    smoothedDynamics.reset(sampleRate, 0.05);
+    smoothedVolume.setCurrentAndTargetValue(0.7f);
+    smoothedBalance.setCurrentAndTargetValue(0.5f);
+    smoothedDynamics.setCurrentAndTargetValue(1.0f);
 }
 
 void SolarDroneAudioProcessor::releaseResources() {}
@@ -98,9 +127,14 @@ void SolarDroneAudioProcessor::releaseResources() {}
 void SolarDroneAudioProcessor::processBlock(
     juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
+    // Smoothed critical params (eliminates crackling on rapid slider movement)
+    smoothedVolume.setTargetValue(*apvts.getRawParameterValue("volume"));
+    smoothedBalance.setTargetValue(*apvts.getRawParameterValue("layer_balance"));
+    smoothedDynamics.setTargetValue(*apvts.getRawParameterValue("dynamics_range"));
+
     // Read APVTS params into UserParams
-    userParams.dynamics_range            = *apvts.getRawParameterValue("dynamics_range");
-    userParams.layer_balance             = *apvts.getRawParameterValue("layer_balance");
+    userParams.dynamics_range            = smoothedDynamics.getNextValue();
+    userParams.layer_balance             = smoothedBalance.getNextValue();
     userParams.stereo_spread             = *apvts.getRawParameterValue("stereo_spread");
     userParams.glide_time_secs           = *apvts.getRawParameterValue("glide_time");
     userParams.visual_lissajous          = *apvts.getRawParameterValue("vis_lissajous");
@@ -115,6 +149,13 @@ void SolarDroneAudioProcessor::processBlock(
     userParams.map_vel_hi_hz     = *apvts.getRawParameterValue("map_vel_hi");
     userParams.map_bz_thresh     = *apvts.getRawParameterValue("map_bz_thresh");
     userParams.map_kp_dens_start = *apvts.getRawParameterValue("map_kp_dens");
+    // Spatial positioning
+    userParams.l1_azimuth   = *apvts.getRawParameterValue("l1_azimuth");
+    userParams.l1_elevation = *apvts.getRawParameterValue("l1_elevation");
+    userParams.l2_azimuth   = *apvts.getRawParameterValue("l2_azimuth");
+    userParams.l2_elevation = *apvts.getRawParameterValue("l2_elevation");
+    userParams.l3_azimuth   = *apvts.getRawParameterValue("l3_azimuth");
+    userParams.l3_elevation = *apvts.getRawParameterValue("l3_elevation");
 
     engine.setUserParams(userParams);
 
@@ -153,7 +194,6 @@ void SolarDroneAudioProcessor::processBlock(
     beatRepeater.setDensity(*apvts.getRawParameterValue("repeater_density"));
 
     const bool droneOn = *apvts.getRawParameterValue("drone_on") > 0.5f;
-    const float volume = *apvts.getRawParameterValue("volume");
 
     // Chopper params
     static const float divBeats[] = {0.25f, 0.5f, 1.0f, 2.0f, 4.0f};
@@ -170,7 +210,20 @@ void SolarDroneAudioProcessor::processBlock(
         engine.processBlock(buffer);
         beatRepeater.process(buffer);
         chopper.process(buffer);
-        buffer.applyGain(volume);
+        // Smoothed volume (sample-accurate, no crackling)
+        {
+            const int n = buffer.getNumSamples();
+            for (int i = 0; i < n; ++i) {
+                const float g = smoothedVolume.getNextValue();
+                for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+                    buffer.getWritePointer(ch)[i] *= g;
+            }
+        }
+        // Output EQ
+        outputEq.setLowShelf( *apvts.getRawParameterValue("eq_low"));
+        outputEq.setMidPeak(  *apvts.getRawParameterValue("eq_mid"));
+        outputEq.setHighShelf(*apvts.getRawParameterValue("eq_high"));
+        outputEq.process(buffer);
     } else {
         buffer.clear();
     }

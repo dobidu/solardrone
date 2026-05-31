@@ -45,6 +45,8 @@ target_sources(SolarDrone PRIVATE
     src/MacroOrb.cpp
     src/ProbDensityDial.cpp
     src/MappingCurveDisplay.cpp
+    src/OutputEQ.cpp
+    src/SpatialDisplay.cpp
 )
 
 target_compile_definitions(SolarDrone PUBLIC

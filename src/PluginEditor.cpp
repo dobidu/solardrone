@@ -28,6 +28,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     , sunDisc(p.apvts)
     , macroOrb(p.apvts)
     , probDial(p.apvts)
+    , spatialDisplay(p.apvts)
 {
     // ── Right-panel sliders ────────────────────────────────────────────────
     mkSlider(slGlide,    lblGlide,    "Glide",  this);
@@ -126,6 +127,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attMapKpDens   = std::make_unique<SliderAttachment>(apvts, "map_kp_dens",  slMapKpDens);
     addAndMakeVisible(mappingDisplay);
 
+    addAndMakeVisible(spatialDisplay);
     addAndMakeVisible(probDial);
     addAndMakeVisible(macroOrb);
     addAndMakeVisible(visualRenderer);
@@ -147,12 +149,14 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
         macroOrb.setKp(kp);
         probDial.setKp(kp);
         mappingDisplay.setKp(kp);
+        spatialDisplay.setKp(kp);
         // Flare level for corona
         const auto& sw2 = processorRef.getLatestSpaceWeatherState();
         float fl = 0.0f;
         if (sw2.x_ray_flux >= 1e-5f)
             fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
         sunDisc.setFlareLevel(fl);
+        spatialDisplay.setFlareLevel(fl);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,
@@ -245,11 +249,13 @@ void SolarDroneAudioProcessorEditor::resized() {
     lblVisSpec.setBounds(rx, y, colW, lh);
     slVisSpec.setBounds( rx, y + lh, colW, sh);
 
-    // Mapping section (y=195 to y=305)
-    mappingDisplay.setBounds(rx, 195, rw, 84);   // 2×2 mini-curves 84px tall
-    // 4 mapping sliders below curves
+    // Spatial display (y=195, 120×80)
+    spatialDisplay.setBounds(rx + 90, 195, 120, 80);
+
+    // Mapping section (y=283 to y=373)
+    mappingDisplay.setBounds(rx, 283, rw, 72);   // 2×2 mini-curves
     const int mSlW = rw / 4;
-    const int mY   = 283;
+    const int mY   = 359;
     lblMapVelLo.setBounds(   rx + 0*mSlW, mY,    mSlW, lh);
     slMapVelLo.setBounds(    rx + 0*mSlW, mY+lh, mSlW, sh);
     lblMapVelHi.setBounds(   rx + 1*mSlW, mY,    mSlW, lh);
@@ -259,8 +265,8 @@ void SolarDroneAudioProcessorEditor::resized() {
     lblMapKpDens.setBounds(  rx + 3*mSlW, mY,    mSlW, lh);
     slMapKpDens.setBounds(   rx + 3*mSlW, mY+lh, mSlW, sh);
 
-    // MacroOrb below mapping section
-    macroOrb.setBounds(rx + 30, 310, 240, 200);
+    // MacroOrb (compact, y=385)
+    macroOrb.setBounds(rx + 30, 385, 240, 130);
 
     // ── Bottom strip (120px, y=520-640) ──────────────────────────────────
     // Two rows: label row (y=538, 14px) + control row (y=554, 22px)

@@ -16,6 +16,14 @@ struct UserParams {
     float map_bz_thresh    = -10.0f;   // Bz nT where tense timbre activates
     float map_kp_dens_start =  4.0f;   // Kp where density/brightness activates
 
+    // Spatial positioning per layer (degrees)
+    float l1_azimuth   =   0.0f;  // -90=left, +90=right
+    float l1_elevation =  15.0f;  // -45=below, +45=above
+    float l2_azimuth   =  30.0f;
+    float l2_elevation =   0.0f;
+    float l3_azimuth   = -30.0f;
+    float l3_elevation =  30.0f;
+
     // Visual layer blend weights (0=off, 1=full)
     float visual_lissajous = 0.7f;
     float visual_particles = 0.7f;

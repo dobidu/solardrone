@@ -55,6 +55,13 @@ SynthParams AdditiveEngine::getSmoothedParams() const {
     return smoothed;
 }
 
+static std::pair<float,float> computeSpatialGains(float azDeg, float /*elDeg*/) {
+    const float az = std::max(-90.f, std::min(90.f, azDeg));
+    // constant-power panning: az=-90→(1,0), az=0→(0.707,0.707), az=90→(0,1)
+    const float t  = (az / 90.0f + 1.0f) * juce::MathConstants<float>::halfPi / 2.0f;
+    return {std::cos(t), std::sin(t)};
+}
+
 void AdditiveEngine::setFlareLevel(float level, float sensitivity) {
     l3Target = std::max(0.0f, std::min(1.0f, level * sensitivity));
 }
@@ -65,9 +72,22 @@ void AdditiveEngine::updateControlRate() {
     const auto& sm = s;
 
     // Constant-power layer balance crossfade
-    const float angle  = userParams.layer_balance * juce::MathConstants<float>::halfPi;
-    l1Bank.applyParams(sm, 0, std::cos(angle));
-    l2Bank.applyParams(sm, 1, std::sin(angle));
+    const float angle = userParams.layer_balance * juce::MathConstants<float>::halfPi;
+    const float bl1   = std::cos(angle);
+    const float bl2   = std::sin(angle);
+
+    // Spatial ILD gains
+    auto [l1L, l1R] = computeSpatialGains(userParams.l1_azimuth, userParams.l1_elevation);
+    auto [l2L, l2R] = computeSpatialGains(userParams.l2_azimuth, userParams.l2_elevation);
+    auto [l3L, l3R] = computeSpatialGains(userParams.l3_azimuth, userParams.l3_elevation);
+
+    l1Bank.setSpatialGains(l1L * bl1, l1R * bl1);
+    l2Bank.setSpatialGains(l2L * bl2, l2R * bl2);
+    if (l3Envelope > 0.001f)
+        l3Bank.setSpatialGains(l3L * l3Envelope, l3R * l3Envelope);
+
+    l1Bank.applyParams(sm, 0, 1.0f);
+    l2Bank.applyParams(sm, 1, 1.0f);
 
     // L3 burst envelope
     if (l3Target > l3Envelope)

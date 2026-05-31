@@ -4,6 +4,7 @@
 #include "SynthParamMapper.h"
 #include "DataFetcher.h"
 #include "UserParams.h"
+#include "OutputEQ.h"
 #include "TempoTracker.h"
 #include "BeatRepeater.h"
 #include "Chopper.h"
@@ -50,6 +51,11 @@ private:
     TempoTracker   tempoTracker;
     BeatRepeater   beatRepeater;
     Chopper        chopper;
+    OutputEQ       outputEq;
+
+    juce::SmoothedValue<float> smoothedVolume  {0.7f};
+    juce::SmoothedValue<float> smoothedBalance {0.5f};
+    juce::SmoothedValue<float> smoothedDynamics{1.0f};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };

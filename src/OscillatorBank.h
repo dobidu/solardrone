@@ -5,6 +5,7 @@
 class OscillatorBank {
 public:
     void prepare(double sampleRate, int maxPartials = 24);
+    void setSpatialGains(float gainL, float gainR);
     void applyParams(const SynthParams& p, int layer, float layerGain);
     void render(float* left, float* right, int numSamples);
 
@@ -17,6 +18,8 @@ private:
     };
 
     std::vector<Partial> partials;
-    double sampleRate   = 44100.0;
-    int    activeCount  = 0;
+    double sampleRate    = 44100.0;
+    int    activeCount   = 0;
+    float  spatialGainL  = 0.5f;
+    float  spatialGainR  = 0.5f;
 };
