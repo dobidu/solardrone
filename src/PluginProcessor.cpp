@@ -61,6 +61,15 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "repeater_density", "Repeat Density", 0.0f, 1.0f, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
         "freeze_on",     "Freeze",        false));
+    // Mapping thresholds
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "map_vel_lo", "Map Vel Lo Hz",  30.0f,  200.0f,  55.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "map_vel_hi", "Map Vel Hi Hz", 100.0f,  440.0f, 220.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "map_bz_thresh", "Bz Thresh nT", -30.0f,  -0.5f, -10.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "map_kp_dens",  "Kp Dens Start",  0.0f,    8.0f,   4.0f));
 
     return { params.begin(), params.end() };
 }
@@ -99,6 +108,11 @@ void SolarDroneAudioProcessor::processBlock(
     userParams.harmony_mode = (*apvts.getRawParameterValue("harmony_mode") < 0.5f)
         ? UserParams::HarmonyMode::just
         : UserParams::HarmonyMode::equalTemperament;
+    // Mapping thresholds
+    userParams.map_vel_lo_hz     = *apvts.getRawParameterValue("map_vel_lo");
+    userParams.map_vel_hi_hz     = *apvts.getRawParameterValue("map_vel_hi");
+    userParams.map_bz_thresh     = *apvts.getRawParameterValue("map_bz_thresh");
+    userParams.map_kp_dens_start = *apvts.getRawParameterValue("map_kp_dens");
 
     engine.setUserParams(userParams);
 

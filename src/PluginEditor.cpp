@@ -115,6 +115,17 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(btnFreeze);
     attFreeze = std::make_unique<ButtonAttachment>(apvts, "freeze_on", btnFreeze);
 
+    // Mapping sliders
+    mkSlider(slMapVelLo,   lblMapVelLo,   "V.Lo",  this);
+    mkSlider(slMapVelHi,   lblMapVelHi,   "V.Hi",  this);
+    mkSlider(slMapBzThresh,lblMapBzThresh, "Bz thr", this);
+    mkSlider(slMapKpDens,  lblMapKpDens,  "Kp act", this);
+    attMapVelLo    = std::make_unique<SliderAttachment>(apvts, "map_vel_lo",   slMapVelLo);
+    attMapVelHi    = std::make_unique<SliderAttachment>(apvts, "map_vel_hi",   slMapVelHi);
+    attMapBzThresh = std::make_unique<SliderAttachment>(apvts, "map_bz_thresh",slMapBzThresh);
+    attMapKpDens   = std::make_unique<SliderAttachment>(apvts, "map_kp_dens",  slMapKpDens);
+    addAndMakeVisible(mappingDisplay);
+
     addAndMakeVisible(probDial);
     addAndMakeVisible(macroOrb);
     addAndMakeVisible(visualRenderer);
@@ -135,6 +146,17 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
         sunDisc.setKp(kp);
         macroOrb.setKp(kp);
         probDial.setKp(kp);
+        mappingDisplay.setKp(kp);
+        mappingDisplay.setLive({
+            processorRef.getLatestSpaceWeatherState().velocity,
+            processorRef.getLatestSpaceWeatherState().bz_gsm,
+            kp
+        });
+        mappingDisplay.setParams(
+            *processorRef.apvts.getRawParameterValue("map_vel_lo"),
+            *processorRef.apvts.getRawParameterValue("map_vel_hi"),
+            *processorRef.apvts.getRawParameterValue("map_bz_thresh"),
+            *processorRef.apvts.getRawParameterValue("map_kp_dens"));
         repaint();
     }
 }
@@ -217,8 +239,22 @@ void SolarDroneAudioProcessorEditor::resized() {
     lblVisSpec.setBounds(rx, y, colW, lh);
     slVisSpec.setBounds( rx, y + lh, colW, sh);
 
-    // MacroOrb — bottom of right panel, centered
-    macroOrb.setBounds(rx + 30, 195, 240, 240);
+    // Mapping section (y=195 to y=305)
+    mappingDisplay.setBounds(rx, 195, rw, 84);   // 2×2 mini-curves 84px tall
+    // 4 mapping sliders below curves
+    const int mSlW = rw / 4;
+    const int mY   = 283;
+    lblMapVelLo.setBounds(   rx + 0*mSlW, mY,    mSlW, lh);
+    slMapVelLo.setBounds(    rx + 0*mSlW, mY+lh, mSlW, sh);
+    lblMapVelHi.setBounds(   rx + 1*mSlW, mY,    mSlW, lh);
+    slMapVelHi.setBounds(    rx + 1*mSlW, mY+lh, mSlW, sh);
+    lblMapBzThresh.setBounds(rx + 2*mSlW, mY,    mSlW, lh);
+    slMapBzThresh.setBounds( rx + 2*mSlW, mY+lh, mSlW, sh);
+    lblMapKpDens.setBounds(  rx + 3*mSlW, mY,    mSlW, lh);
+    slMapKpDens.setBounds(   rx + 3*mSlW, mY+lh, mSlW, sh);
+
+    // MacroOrb below mapping section
+    macroOrb.setBounds(rx + 30, 310, 240, 200);
 
     // ── Bottom strip (120px, y=520-640) ──────────────────────────────────
     // Two rows: label row (y=538, 14px) + control row (y=554, 22px)

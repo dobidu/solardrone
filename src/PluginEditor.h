@@ -6,6 +6,7 @@
 #include "ColourScheme.h"
 #include "MacroOrb.h"
 #include "ProbDensityDial.h"
+#include "MappingCurveDisplay.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -24,8 +25,12 @@ private:
     VisualRenderer  visualRenderer;
     SunDisc         sunDisc;
     MacroOrb        macroOrb;
-    ProbDensityDial probDial;
-    float           currentKp = 0.f;
+    ProbDensityDial      probDial;
+    MappingCurveDisplay  mappingDisplay;
+    float                currentKp = 0.f;
+
+    juce::Slider slMapVelLo, slMapVelHi, slMapBzThresh, slMapKpDens;
+    juce::Label  lblMapVelLo, lblMapVelHi, lblMapBzThresh, lblMapKpDens;
 
     juce::ToggleButton btnFreeze;
 
@@ -67,6 +72,7 @@ private:
     std::unique_ptr<ComboBoxAttachment>  attChopShape, attChopDiv;
     std::unique_ptr<ButtonAttachment>    attChopOn, attChopSync;
     std::unique_ptr<ButtonAttachment>    attFreeze;
+    std::unique_ptr<SliderAttachment>    attMapVelLo, attMapVelHi, attMapBzThresh, attMapKpDens;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessorEditor)
 };

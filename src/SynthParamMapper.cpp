@@ -10,26 +10,27 @@ SynthParams SynthParamMapper::map(const SpaceWeatherState& state,
 
     // ── Layer 1: solar wind ───────────────────────────────────────────────
 
-    // velocity (300-800 km/s) → l1_fundamental_hz (55-220 Hz, log scale)
-    const float v = clamp(state.velocity, 300.0f, 800.0f);
-    out.l1_fundamental_hz = 55.0f * std::pow(4.0f, (v - 300.0f) / 500.0f);
+    // velocity (300-800 km/s) → l1_fundamental_hz (user-editable range, log scale)
+    const float v   = clamp(state.velocity, 300.0f, 800.0f);
+    const float vLo = std::max(params.map_vel_lo_hz, 1.0f);
+    const float vHi = std::max(params.map_vel_hi_hz, vLo + 1.0f);
+    out.l1_fundamental_hz = vLo * std::pow(vHi / vLo, (v - 300.0f) / 500.0f);
 
     // density (1-50 p/cm³) → l1_harmonic_count (4-24 partials)
     // Minimum 4 partials ensures richer tone even on quiet solar days
     const float d = clamp(state.density, 1.0f, 50.0f);
     out.l1_harmonic_count = 4 + (int)std::round(20.0f * (d - 1.0f) / 49.0f);
 
-    // Bz → l1_timbre: 0=open, 1=tense
-    // Linear 0→0.3 for Bz in [0, -10], non-linear activation below -10 nT
+    // Bz → l1_timbre: 0=open, 1=tense (threshold user-editable)
     {
         const float bz = state.bz_gsm;
+        const float t  = std::min(params.map_bz_thresh, -0.1f);  // e.g. -10
         if (bz >= 0.0f) {
             out.l1_timbre = 0.0f;
-        } else if (bz > -10.0f) {
-            out.l1_timbre = -bz / 10.0f * 0.3f;
+        } else if (bz > t) {
+            out.l1_timbre = (bz / t) * 0.3f;   // 0 at bz=0, 0.3 at bz=t
         } else {
-            // Sigmoid-like ramp: 0.3 at Bz=-10, 1.0 at Bz=-17 nT
-            const float x = clamp((-bz - 10.0f) / 7.0f, 0.0f, 1.0f);
+            const float x = clamp((t - bz) / 7.0f, 0.0f, 1.0f);
             out.l1_timbre = 0.3f + 0.7f * x;
         }
     }
@@ -44,14 +45,18 @@ SynthParams SynthParamMapper::map(const SpaceWeatherState& state,
     // Kp → l2_amplitude: floor 0.1 ensures L2 always audible; peaks at 1.0 at Kp=9
     out.l2_amplitude = (0.1f + 0.9f * (kp / 9.0f)) * params.dynamics_range;
 
-    // Kp → l2_harmonic_density: continuous quadratic from 0 — present on all days
+    // Kp → l2_harmonic_density: quadratic from user threshold
     out.l2_harmonic_density = (kp / 9.0f) * (kp / 9.0f);
 
-    // Kp → l2_brightness: activates at Kp=4 (not 6) for earlier storm character
-    if (kp < 4.0f) {
-        out.l2_brightness = 0.0f;
-    } else {
-        out.l2_brightness = clamp((kp - 4.0f) / 4.0f, 0.0f, 1.0f);
+    // Kp → l2_brightness: activates at user-editable threshold
+    {
+        const float kds   = clamp(params.map_kp_dens_start, 0.0f, 8.0f);
+        const float range = std::max(9.0f - kds, 0.1f);
+        if (kp < kds) {
+            out.l2_brightness = 0.0f;
+        } else {
+            out.l2_brightness = clamp((kp - kds) / range, 0.0f, 1.0f);
+        }
     }
 
     // ── l2_fundamental_hz from l1 + user interval ─────────────────────────
