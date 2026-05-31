@@ -230,14 +230,7 @@ void SolarDroneAudioProcessor::processBlock(
         outputEq.setHighShelf(*apvts.getRawParameterValue("eq_high"));
         outputEq.process(buffer);
 
-        // OSC/MIDI bridge (throttled internally to 100ms)
-        oscMidiBridge.setOSCEnabled(*apvts.getRawParameterValue("osc_enabled") > 0.5f,
-                                    (int)*apvts.getRawParameterValue("osc_port"));
-        oscMidiBridge.setMIDIEnabled(*apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
-        oscMidiBridge.send(engine.getSmoothedParams(), fetcher.getState(),
-                           flareLevel,
-                           smoothedVolume.getCurrentValue(),
-                           smoothedBalance.getCurrentValue());
+        // OSC/MIDI bridge moved to PluginEditor::timerCallback() (message thread)
     } else {
         buffer.clear();
     }

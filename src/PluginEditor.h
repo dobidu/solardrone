@@ -8,6 +8,7 @@
 #include "ProbDensityDial.h"
 #include "MappingCurveDisplay.h"
 #include "SpatialDisplay.h"
+#include "OSCMIDIBridge.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -82,7 +83,9 @@ private:
     juce::Label        lblOSCPort;
     std::unique_ptr<ButtonAttachment>  attOSC, attMIDICC;
     std::unique_ptr<SliderAttachment>  attOSCPort;
-    float oscActivityAlpha = 0.f;
+    float          oscActivityAlpha = 0.f;
+    OSCMIDIBridge  oscMidiBridge;
+    float          lastFlareLevelForOSC = 0.f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessorEditor)
 };

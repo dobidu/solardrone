@@ -5,7 +5,7 @@
 #include "DataFetcher.h"
 #include "UserParams.h"
 #include "OutputEQ.h"
-#include "OSCMIDIBridge.h"
+// OSCMIDIBridge is used in PluginEditor (message thread), not PluginProcessor
 #include "TempoTracker.h"
 #include "BeatRepeater.h"
 #include "Chopper.h"
@@ -39,7 +39,6 @@ public:
 
     SynthParams         getCurrentSynthParams() const;
     SpaceWeatherState   getLatestSpaceWeatherState() const;
-    bool                isOSCRecentlySent() const { return oscMidiBridge.wasRecentlySent(); }
 
     juce::AudioProcessorValueTreeState apvts;
 
@@ -58,7 +57,6 @@ private:
     juce::SmoothedValue<float> smoothedVolume  {0.7f};
     juce::SmoothedValue<float> smoothedBalance {0.5f};
     juce::SmoothedValue<float> smoothedDynamics{1.0f};
-    OSCMIDIBridge oscMidiBridge;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };

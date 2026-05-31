@@ -172,8 +172,19 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
         sunDisc.setFlareLevel(fl);
         spatialDisplay.setFlareLevel(fl);
+        // OSC/MIDI bridge on message thread (not audio thread — fixes blocking issue)
+        oscMidiBridge.setOSCEnabled(
+            *processorRef.apvts.getRawParameterValue("osc_enabled") > 0.5f,
+            (int)*processorRef.apvts.getRawParameterValue("osc_port"));
+        oscMidiBridge.setMIDIEnabled(
+            *processorRef.apvts.getRawParameterValue("midi_cc_enabled") > 0.5f);
+        oscMidiBridge.send(processorRef.getCurrentSynthParams(),
+                           processorRef.getLatestSpaceWeatherState(),
+                           fl,
+                           *processorRef.apvts.getRawParameterValue("volume"),
+                           *processorRef.apvts.getRawParameterValue("layer_balance"));
         // Activity indicator
-        if (processorRef.isOSCRecentlySent())
+        if (oscMidiBridge.wasRecentlySent())
             oscActivityAlpha = 1.0f;
         else
             oscActivityAlpha = std::max(0.f, oscActivityAlpha - 0.15f);
