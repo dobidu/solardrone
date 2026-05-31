@@ -13,6 +13,10 @@ struct SynthParams {
     float l2_brightness       = 0.0f;   // 0-1, activates at Kp >= 6
     float l2_amplitude        = 0.0f;   // 0-1, linear from Kp
 
+    // Layer 3 — solar flare burst
+    float l3_amplitude     = 0.0f;
+    float l3_fundamental_hz = 82.5f;
+
     // Global
     float stereo_width        = 0.5f;
 };

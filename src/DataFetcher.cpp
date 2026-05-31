@@ -31,11 +31,18 @@ void DataFetcher::fetchAndUpdateState() {
         next = state;
     }
 
-    auto windJson = juce::URL(kWindUrl).readEntireTextStream();
-    auto kpJson   = juce::URL(kKpUrl).readEntireTextStream();
+    auto windJson  = juce::URL(kWindUrl).readEntireTextStream();
+    auto kpJson    = juce::URL(kKpUrl).readEntireTextStream();
+    auto xrayJson  = juce::URL(kXRayUrl).readEntireTextStream();
 
     const bool windOk = !windJson.isEmpty() && parseSolarWindJson(windJson, next);
     const bool kpOk   = !kpJson.isEmpty()   && parseKpJson(kpJson, next);
+    if (!xrayJson.isEmpty() && parseXrayJson(xrayJson, next))
+        lastXRayFlux = next.x_ray_flux;
+    else {
+        next.x_ray_flux  = lastXRayFlux;
+        next.flare_class = SpaceWeatherState::classifyFlux(lastXRayFlux);
+    }
 
     if (windOk || kpOk) {
         next.source    = SpaceWeatherState::Source::live;
@@ -99,4 +106,27 @@ bool DataFetcher::parseKpJson(const juce::String& json, SpaceWeatherState& out) 
     }
 
     return true;
+}
+
+bool DataFetcher::parseXrayJson(const juce::String& json, SpaceWeatherState& out) {
+    auto parsed = juce::JSON::parse(json);
+    if (!parsed.isArray() || parsed.getArray()->isEmpty())
+        return false;
+
+    for (const auto& item : *parsed.getArray()) {
+        if (!item.isObject()) continue;
+        auto energy = item["energy"];
+        if (!energy.isString() || energy.toString() != "0.1-0.8nm") continue;
+        auto flux = item["flux"];
+        if (flux.isDouble() || flux.isInt()) {
+            const float f = static_cast<float>(static_cast<double>(flux));
+            if (f > 0.0f) {
+                out.x_ray_flux  = f;
+                out.flare_class = SpaceWeatherState::classifyFlux(f);
+                lastXRayFlux    = f;
+                return true;
+            }
+        }
+    }
+    return false;
 }

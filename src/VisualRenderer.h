@@ -62,4 +62,8 @@ private:
     float bzHistory[120] = {};
     int   bzHistoryIdx   = 0;
 
+    // Flare flash
+    float flashAlpha = 0.0f;
+    SpaceWeatherState::FlareClass lastFlareClass = SpaceWeatherState::FlareClass::none;
+
 };

@@ -8,6 +8,7 @@ public:
     ~SunDisc() override = default;
 
     void setKp(float kp);
+    void setFlareLevel(float level);
 
     void paint(juce::Graphics&) override;
     void mouseDoubleClick(const juce::MouseEvent&) override;
@@ -20,6 +21,7 @@ private:
 
     juce::AudioProcessorValueTreeState& apvts;
     float currentKp       = 0.f;
+    float flareLevel      = 0.f;
     float dragStartY      = 0.f;
     float dragStartVolume = 0.7f;
 };

@@ -34,6 +34,12 @@ void VisualRenderer::timerCallback() {
             cachedWeatherState = processor->getLatestSpaceWeatherState();
             bzHistory[bzHistoryIdx % 120] = cachedWeatherState.bz_gsm;
             ++bzHistoryIdx;
+
+            // Flare flash on new M+ event
+            const auto fc = cachedWeatherState.flare_class;
+            if (fc >= SpaceWeatherState::FlareClass::M && fc > lastFlareClass)
+                flashAlpha = 0.4f;
+            lastFlareClass = fc;
         }
 
         // Freeze edge detection
@@ -276,6 +282,23 @@ void VisualRenderer::paint(juce::Graphics& g) {
             g.setColour(lit ? sqCol.withAlpha(0.85f) : sqCol.withAlpha(0.12f));
             g.fillRect(bx, by, sqSz, sqSz);
             bx += sqSz + sqGap;
+        }
+    }
+
+    // Flare flash + badge
+    flashAlpha *= 0.85f;
+    if (flashAlpha > 0.01f) {
+        g.setColour(juce::Colours::white.withAlpha(flashAlpha));
+        g.fillAll();
+    }
+    if (ws.flare_class >= SpaceWeatherState::FlareClass::M) {
+        const char* fc = (ws.flare_class == SpaceWeatherState::FlareClass::X) ? "X-FLARE"
+                       : (ws.flare_class == SpaceWeatherState::FlareClass::M) ? "M-FLARE" : "";
+        if (fc[0] != '\0') {
+            g.setFont(13.0f);
+            g.setColour(juce::Colours::orange.withAlpha(0.90f));
+            g.drawText(fc, getLocalBounds().reduced(8).removeFromTop(22),
+                       juce::Justification::topLeft, false);
         }
     }
 

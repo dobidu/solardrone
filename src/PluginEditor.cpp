@@ -147,6 +147,12 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
         macroOrb.setKp(kp);
         probDial.setKp(kp);
         mappingDisplay.setKp(kp);
+        // Flare level for corona
+        const auto& sw2 = processorRef.getLatestSpaceWeatherState();
+        float fl = 0.0f;
+        if (sw2.x_ray_flux >= 1e-5f)
+            fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
+        sunDisc.setFlareLevel(fl);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,

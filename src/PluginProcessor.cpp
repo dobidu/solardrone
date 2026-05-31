@@ -70,6 +70,8 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "map_bz_thresh", "Bz Thresh nT", -30.0f,  -0.5f, -10.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "map_kp_dens",  "Kp Dens Start",  0.0f,    8.0f,   4.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "flare_sensitivity", "Flare Sensitivity", 0.0f, 1.0f, 0.7f));
 
     return { params.begin(), params.end() };
 }
@@ -115,6 +117,16 @@ void SolarDroneAudioProcessor::processBlock(
     userParams.map_kp_dens_start = *apvts.getRawParameterValue("map_kp_dens");
 
     engine.setUserParams(userParams);
+
+    // L3 flare burst
+    {
+        const float flareSens = *apvts.getRawParameterValue("flare_sensitivity");
+        const auto& sw = fetcher.getState();
+        float flareLevel = 0.0f;
+        if (sw.x_ray_flux >= 1e-5f)
+            flareLevel = std::min(1.0f, (std::log10(sw.x_ray_flux) + 5.0f) / 2.0f);
+        engine.setFlareLevel(flareLevel, flareSens);
+    }
 
     // Poll DataFetcher — skip when frozen
     const bool frozen = *apvts.getRawParameterValue("freeze_on") > 0.5f;

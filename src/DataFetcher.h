@@ -13,6 +13,7 @@ public:
     // Exposed for unit testing — parse fixture strings without network
     bool parseSolarWindJson(const juce::String& json, SpaceWeatherState& out);
     bool parseKpJson(const juce::String& json, SpaceWeatherState& out);
+    bool parseXrayJson(const juce::String& json, SpaceWeatherState& out);
 
 private:
     void run() override;
@@ -28,8 +29,12 @@ private:
 
     int pollIntervalMs = 60000;
 
+    float lastXRayFlux = 0.0f;
+
     static constexpr const char* kWindUrl =
         "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json";
     static constexpr const char* kKpUrl =
         "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json";
+    static constexpr const char* kXRayUrl =
+        "https://services.swpc.noaa.gov/json/goes/secondary/xrays-1-minute.json";
 };

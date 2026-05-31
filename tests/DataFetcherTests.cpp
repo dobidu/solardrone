@@ -52,6 +52,15 @@ static const char* kNullKp = R"json(
 [{"time_tag": "2024-01-15 12:01:00.000", "estimated_kp": null}]
 )json";
 
+static const char* kQuietXray = R"json(
+[{"time_tag":"2024-01-15 12:00:00.000","satellite":17,"energy":"0.1-0.8nm","flux":2.0e-7},
+ {"time_tag":"2024-01-15 12:00:00.000","satellite":17,"energy":"0.05-0.4nm","flux":1.2e-8}]
+)json";
+
+static const char* kMFlareXray = R"json(
+[{"time_tag":"2024-03-24 06:00:00.000","satellite":17,"energy":"0.1-0.8nm","flux":2.0e-5}]
+)json";
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 class DataFetcherTests : public juce::UnitTest {
@@ -60,6 +69,8 @@ public:
 
     void runTest() override {
         testDefaultState();
+        testParseXrayQuiet();
+        testParseXrayMFlare();
         testParseQuietDayWind();
         testParseStormDayWind();
         testNullWindRetainsLastValid();
@@ -70,6 +81,30 @@ public:
     }
 
 private:
+    void testParseXrayQuiet() {
+        beginTest("Parse quiet X-ray (B class, flux=5e-8)");
+        DataFetcher df;
+        df.setPollIntervalMs(999'000'000);
+        SpaceWeatherState out;
+        bool ok = df.parseXrayJson(kQuietXray, out);
+        expect(ok, "parse should succeed");
+        expectWithinAbsoluteError(out.x_ray_flux, 2.0e-7f, 1e-8f, "flux");
+        expectEquals((int)out.flare_class, (int)SpaceWeatherState::FlareClass::B, "class B");
+        df.stopThread(1000);
+    }
+
+    void testParseXrayMFlare() {
+        beginTest("Parse M flare X-ray (M2, flux=2e-5)");
+        DataFetcher df;
+        df.setPollIntervalMs(999'000'000);
+        SpaceWeatherState out;
+        bool ok = df.parseXrayJson(kMFlareXray, out);
+        expect(ok, "parse should succeed");
+        expectWithinAbsoluteError(out.x_ray_flux, 2.0e-5f, 1e-6f, "flux");
+        expectEquals((int)out.flare_class, (int)SpaceWeatherState::FlareClass::M, "class M");
+        df.stopThread(1000);
+    }
+
     void testDefaultState() {
         beginTest("Default state: velocity/density/Bz/Kp at spec defaults");
         // With JUCE_USE_CURL=0, HTTP always returns empty → source=cached, values stay default.

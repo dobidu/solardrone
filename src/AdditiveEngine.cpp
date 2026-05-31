@@ -5,7 +5,11 @@
 void AdditiveEngine::prepare(double sampleRate, int samplesPerBlock) {
     l1Bank.prepare(sampleRate, 24);
     l2Bank.prepare(sampleRate, 24);
+    l3Bank.prepare(sampleRate, 8);   // burst: 8 bright partials
     interp.prepare(sampleRate, 100);
+    // Attack 2s, Decay 20s (per control-rate block at ~100Hz)
+    l3AttackRate = 1.0f / (2.0f  * 100.0f);
+    l3DecayRate  = 1.0f / (20.0f * 100.0f);
     controlPeriod  = std::max(1, (int)(sampleRate / 100.0));
     controlCounter = 0;
     prepared = true;
@@ -38,6 +42,8 @@ void AdditiveEngine::processBlock(juce::AudioBuffer<float>& buffer) {
         const int chunk = std::min(remaining, controlCounter);
         l1Bank.render(left + offset, right + offset, chunk);
         l2Bank.render(left + offset, right + offset, chunk);
+        if (l3Envelope > 0.001f)
+            l3Bank.render(left + offset, right + offset, chunk);
         offset    += chunk;
         remaining -= chunk;
         controlCounter -= chunk;
@@ -49,17 +55,32 @@ SynthParams AdditiveEngine::getSmoothedParams() const {
     return smoothed;
 }
 
+void AdditiveEngine::setFlareLevel(float level, float sensitivity) {
+    l3Target = std::max(0.0f, std::min(1.0f, level * sensitivity));
+}
+
 void AdditiveEngine::updateControlRate() {
     auto s = interp.getSmoothed();
     { juce::ScopedLock sl(smoothedLock); smoothed = s; }
-    const auto& smoothed = s;
+    const auto& sm = s;
 
     // Constant-power layer balance crossfade
-    const float angle = userParams.layer_balance
-                        * juce::MathConstants<float>::halfPi;
-    const float l1Gain = std::cos(angle);
-    const float l2Gain = std::sin(angle);
+    const float angle  = userParams.layer_balance * juce::MathConstants<float>::halfPi;
+    l1Bank.applyParams(sm, 0, std::cos(angle));
+    l2Bank.applyParams(sm, 1, std::sin(angle));
 
-    l1Bank.applyParams(smoothed, 0, l1Gain);
-    l2Bank.applyParams(smoothed, 1, l2Gain);
+    // L3 burst envelope
+    if (l3Target > l3Envelope)
+        l3Envelope = std::min(l3Target, l3Envelope + l3AttackRate);
+    else
+        l3Envelope = std::max(l3Target, l3Envelope - l3DecayRate);
+
+    if (l3Envelope > 0.001f) {
+        SynthParams l3 = sm;
+        l3.l1_fundamental_hz = sm.l1_fundamental_hz * 1.5f;  // perfect 5th
+        l3.l1_harmonic_count = 8;
+        l3.l1_timbre         = 0.3f + sm.l1_timbre * 0.5f;
+        l3.l1_amplitude      = l3Envelope;
+        l3Bank.applyParams(l3, 0, 1.0f);
+    }
 }

@@ -3,7 +3,8 @@
 
 SunDisc::SunDisc(juce::AudioProcessorValueTreeState& a) : apvts(a) {}
 
-void SunDisc::setKp(float kp) { currentKp = kp; repaint(); }
+void SunDisc::setKp(float kp)          { currentKp   = kp;    repaint(); }
+void SunDisc::setFlareLevel(float level){ flareLevel  = level;  repaint(); }
 
 float SunDisc::getVolume()  const { return *apvts.getRawParameterValue("volume"); }
 bool  SunDisc::getDroneOn() const { return *apvts.getRawParameterValue("drone_on") > 0.5f; }
@@ -37,6 +38,15 @@ void SunDisc::paint(juce::Graphics& g) {
     const float ir = r * 0.62f;
     g.setColour(juce::Colour(0xff040810).withAlpha(on ? 0.95f : 0.65f));
     g.fillEllipse(cx - ir, cy - ir, ir * 2.f, ir * 2.f);
+
+    // Flare corona ring
+    if (flareLevel > 0.05f) {
+        const float cr = r * (1.25f + flareLevel * 0.5f);
+        g.setColour(juce::Colours::orange.withAlpha(flareLevel * 0.35f));
+        g.drawEllipse(cx - cr, cy - cr, cr * 2.f, cr * 2.f, 2.5f);
+        g.setColour(juce::Colours::white.withAlpha(flareLevel * 0.15f));
+        g.drawEllipse(cx - cr*1.1f, cy - cr*1.1f, cr*2.2f, cr*2.2f, 1.0f);
+    }
 
     // Symbol
     g.setFont(r * 0.38f);
