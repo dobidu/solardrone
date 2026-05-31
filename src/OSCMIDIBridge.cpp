@@ -32,10 +32,9 @@ void OSCMIDIBridge::setMIDIEnabled(bool e) {
 
 void OSCMIDIBridge::send(const SynthParams& s, const SpaceWeatherState& w,
                           float fl, float vol, float balance) {
+    // No internal throttle — caller (timerCallback at 10fps) controls rate
     const auto now = juce::Time::currentTimeMillis();
-    if (now - lastSendMs < kIntervalMs) return;
-    lastSendMs = now;
-    if (oscEnabled)  { DBG("OSC send tick"); sendOSC(s, w, fl); }
+    if (oscEnabled)  sendOSC(s, w, fl);
     if (midiEnabled) sendMIDI(s, w, fl, vol, balance);
     lastSentMs = now;
 }
