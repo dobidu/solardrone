@@ -186,7 +186,24 @@ Phases: 8 of 8 complete
 | v2.2 | Historical playback from NOAA archive | Likely |
 | v2.3 | User-editable mapping curves (expose SynthParamMapper as UI) | Unlikely |
 
-**Future ecosystem (not roadmapped):** OSC output; binaural/Ambisonics; web companion; mobile port.
+**Future ecosystem (not roadmapped):** web companion; mobile port.
+
+## Milestone v2.3 — Mapping UI ✅ (complete)
+## Milestone v2.4 — X-ray Flux (planned)
+## Milestone v2.5 — Visual Overhaul 2: Dynamic & Immersive
+
+**Goal:** Transform the visual renderer from functional to stunning. More particles, 3D projection, color gradients, trail effects, volumetric glow.
+
+**Scope:**
+- **Lissajous 3D**: Add Z oscillator (sin(ω₃t+φ)), project to 2D with perspective depth. The figure gains dimensionality and rotates slowly with l1_timbre.
+- **Particle system overhaul**: 200+ particles with Z depth, painter's sort, size-by-depth, color gradient by age (birth=accent, death=transparent). Turbulence driven by Bz.
+- **Trail effect on Lissajous**: Draw N previous curve positions with decreasing alpha — creates a phosphor/CRT afterglow effect.
+- **Volumetric glow on SunDisc**: Radial gradient bloom around disc, intensity = l1_amplitude.
+- **Spectral 3D bars**: Draw spectral bars as parallelograms with slight perspective offset — appears as 3D extrusion.
+- **Storm flash**: When Kp crosses 7, brief full-screen flash followed by color-shifted visual mode.
+- **Gradient strokes**: Lissajous color transitions along curve length (calm blue → storm red over one period).
+
+**Spike required:** evaluate JUCE software renderer performance with 200 particles + 3D projections at 30fps. OpenGL path optional if software renderer < 25fps.
 
 ## Milestone v2.1 — Rhythmic Modulation
 
