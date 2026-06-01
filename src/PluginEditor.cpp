@@ -160,6 +160,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
         showVisual = !showVisual;
         visualRenderer.setVisible(showVisual);
         sunDisc.setVisible(showVisual);
+        btnFreeze.setVisible(showVisual);
         btnToggleVisual.setButtonText(showVisual ? "HIDE VISUAL" : "SHOW VISUAL");
         setSize(showVisual ? 1350 : 690, showVisual ? 760 : 820);
     };
@@ -248,9 +249,9 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
 
     // Space grid
     g.setColour(grid);
-    const int W = getWidth();
-    for (int x = 0; x < W; x += 40) g.drawVerticalLine(x, 0.f, 760.f);
-    for (int y = 0; y < 760; y += 40) g.drawHorizontalLine(y, 0.f, (float)W);
+    const int W = getWidth(), H = getHeight();
+    for (int x = 0; x < W; x += 40) g.drawVerticalLine(x, 0.f, (float)H);
+    for (int y = 0; y < H; y += 40) g.drawHorizontalLine(y, 0.f, (float)W);
 
     const int TW  = getWidth();
     const int rx  = showVisual ? 660  : 0;    // params column x
@@ -296,12 +297,14 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawText("PARAMETERS", rx + 6,   4, 320, 14, juce::Justification::left, false);
     g.drawText("RESONATORS", resx + 6, 4, 300, 14, juce::Justification::left, false);
 
-    // OSC/MIDI label
+    // OSC/MIDI section label (below MacroOrb which ends at y=552)
     g.setFont(10.0f);
-    g.drawText("OSC / MIDI", rx + 6, 542, 100, 14, juce::Justification::left, false);
+    g.setColour(accent.withAlpha(0.4f));
+    g.drawText("OSC / MIDI", rx + 6, 556, 100, 12, juce::Justification::left, false);
+    // Activity dot: right of MIDI button (ends at rx+218)
     if (oscActivityAlpha > 0.01f) {
         g.setColour(juce::Colours::cyan.withAlpha(oscActivityAlpha));
-        g.fillEllipse((float)(rx + 338), 562.f, 9.f, 9.f);
+        g.fillEllipse((float)(rx + 226), 574.f, 9.f, 9.f);
     }
 }
 
@@ -356,10 +359,10 @@ void SolarDroneAudioProcessorEditor::resized() {
     // MacroOrb: y=436, 280×116, bottom=552
     macroOrb.setBounds(rx+40, 436, 280, 116);
 
-    // OSC/MIDI: y=556
-    btnOSC.setBounds(    rx,      556, 52, 26);
-    txtOSCPort.setBounds(rx+56,   556, 90, 26);
-    btnMIDICC.setBounds( rx+150,  556, 68, 26);
+    // OSC/MIDI: label at y=556(paint), buttons at y=570, dot at rx+226,574
+    btnOSC.setBounds(    rx,      570, 52, 24);
+    txtOSCPort.setBounds(rx+56,   570, 90, 24);
+    btnMIDICC.setBounds( rx+150,  570, 68, 24);
 
     // ── Bottom strip (dynamic layout) ─────────────────────────────────────
     const int TW    = getWidth();
