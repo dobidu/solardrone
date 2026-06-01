@@ -61,13 +61,13 @@ PLAN ──▶ APPLY ──▶ UNIFY
 ## Session Continuity
 
 Last session: 2026-06-01
-Stopped at: v2.9.0 released — SolarTerminal + REP/CHOP expanded + UI audit complete
+Stopped at: v2.9.1 released — terminal live update fix
 Next action: Preset System (v2.10) — save/load named APVTS patches
 Resume file: .paul/HANDOFF-2026-06-01.md
 Resume context:
-- v2.9.0 tagged and on GitHub as latest, all docs updated
+- v2.9.1 on GitHub as latest (terminal fix: updateTerminal outside Kp gate)
 - Window: 1350×780 full / 690×890 compact
-- SolarTerminal: src/SolarTerminal.h/.cpp (new component in ResonatorPanel)
+- SolarTerminal updates at 10fps always; resonator toggles appear in event log
 - 6 new DSP params: repeater_reverse/pan/stutter + chopper_attack/release/phase
 - ScopedNoDenormals in processBlock + ResonatorEngine::process (critical for Windows)
 - Resonators default OFF (prevents IIR instability on first launch)
