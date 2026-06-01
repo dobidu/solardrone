@@ -247,6 +247,7 @@ cmake --build build --target SolarDrone_Tests
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| v2.9.1 | 2026-06-01 | Terminal live update fix (resonator toggles now logged instantly) |
 | v2.9.0 | 2026-06-01 | SolarTerminal console, REP/CHOP 6 new params, UI audit |
 | v2.8.0 | 2026-06-01 | Resonator Engine (modal/FDN/strings), 3-column layout, HIDE VISUAL |
 | v2.7.0 | 2026-05-31 | Visual Overhaul 2: 3D Lissajous, bloom, 200+ particles |
