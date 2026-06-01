@@ -61,6 +61,25 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "repeater_density", "Repeat Density", 0.0f, 1.0f, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
         "freeze_on",     "Freeze",        false));
+    // Resonators
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "res_modal_on",    "Modal On",      true));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "res_modal_wet",   "Modal Wet",     0.f, 1.f, 0.10f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "res_modal_decay", "Modal Decay",   0.1f, 8.f, 2.0f));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "res_fdn_on",      "FDN On",        true));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "res_fdn_wet",     "FDN Wet",       0.f, 1.f, 0.08f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "res_fdn_size",    "FDN Size",      0.f, 1.f, 0.5f));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "res_strings_on",  "Strings On",    true));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "res_strings_wet", "Strings Wet",   0.f, 1.f, 0.10f));
+    params.push_back(std::make_unique<juce::AudioParameterInt>(
+        "res_strings_n",   "Strings Count", 4, 12, 6));
     // Mapping thresholds
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "map_vel_lo", "Map Vel Lo Hz",  30.0f,  200.0f,  55.0f));
@@ -115,6 +134,7 @@ SolarDroneAudioProcessor::~SolarDroneAudioProcessor() {}
 
 void SolarDroneAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     engine.prepare(sampleRate, samplesPerBlock);
+    resonatorEngine.prepare({sampleRate, (juce::uint32)samplesPerBlock, 2});
     tempoTracker.prepare(sampleRate);
     beatRepeater.prepare(sampleRate, samplesPerBlock);
     chopper.prepare(sampleRate);
@@ -224,6 +244,18 @@ void SolarDroneAudioProcessor::processBlock(
                     buffer.getWritePointer(ch)[i] *= g;
             }
         }
+        // Resonators
+        resonatorEngine.setModalEnabled(*apvts.getRawParameterValue("res_modal_on") > 0.5f);
+        resonatorEngine.setModalWet(*apvts.getRawParameterValue("res_modal_wet"));
+        resonatorEngine.setModalDecay(*apvts.getRawParameterValue("res_modal_decay"));
+        resonatorEngine.setFDNEnabled(*apvts.getRawParameterValue("res_fdn_on") > 0.5f);
+        resonatorEngine.setFDNWet(*apvts.getRawParameterValue("res_fdn_wet"));
+        resonatorEngine.setFDNSize(*apvts.getRawParameterValue("res_fdn_size"));
+        resonatorEngine.setStringsEnabled(*apvts.getRawParameterValue("res_strings_on") > 0.5f);
+        resonatorEngine.setStringsWet(*apvts.getRawParameterValue("res_strings_wet"));
+        resonatorEngine.setStringCount((int)*apvts.getRawParameterValue("res_strings_n"));
+        resonatorEngine.process(buffer);
+
         // Output EQ
         outputEq.setLowShelf( *apvts.getRawParameterValue("eq_low"));
         outputEq.setMidPeak(  *apvts.getRawParameterValue("eq_mid"));
@@ -246,6 +278,11 @@ void SolarDroneAudioProcessor::setStateInformation(const void* data, int sizeInB
     std::unique_ptr<juce::XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
     if (xml && xml->hasTagName(apvts.state.getType()))
         apvts.replaceState(juce::ValueTree::fromXml(*xml));
+}
+
+void SolarDroneAudioProcessor::updateResonatorSolarData() {
+    resonatorEngine.updateFromSolarData(fetcher.getState(),
+                                        engine.getSmoothedParams().l1_fundamental_hz);
 }
 
 SynthParams SolarDroneAudioProcessor::getCurrentSynthParams() const {

@@ -6,6 +6,7 @@
 #include "UserParams.h"
 #include "OutputEQ.h"
 // OSCMIDIBridge is used in PluginEditor (message thread), not PluginProcessor
+#include "ResonatorEngine.h"
 #include "TempoTracker.h"
 #include "BeatRepeater.h"
 #include "Chopper.h"
@@ -57,6 +58,11 @@ private:
     juce::SmoothedValue<float> smoothedVolume  {0.7f};
     juce::SmoothedValue<float> smoothedBalance {0.5f};
     juce::SmoothedValue<float> smoothedDynamics{1.0f};
+    ResonatorEngine resonatorEngine;
+
+    // Called from PluginEditor timerCallback (message thread)
+    void updateResonatorSolarData();
+    bool isResonatorEnabled() const { return resonatorEngine.isEnabled(); }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };
