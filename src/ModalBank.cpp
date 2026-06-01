@@ -25,11 +25,12 @@ void ModalBank::setWet(float w)             { wet           = w; }
 void ModalBank::updateCoefficients() {
     for (int k = 0; k < kMaxModes; ++k) {
         const float harm  = (float)(k + 1);
-        // Stretched spectrum
         const float freq  = fundamental * std::pow(harm, 1.0f + inharmonicity * 0.3f);
-        const float fcl   = std::min(freq, sampleRate * 0.45f);
-        // Q from decay: Q ≈ π × f × τ
-        const float q     = std::max(0.5f, std::min(500.f,
+        const float fcl   = std::max(20.f, std::min(freq, sampleRate * 0.45f));
+        // Q cap: prevent IIR instability at low freq / high Q
+        // Stable limit: Q < sr / (2π × fc) × safety_factor
+        const float qMax  = std::min(60.f, sampleRate / (juce::MathConstants<float>::twoPi * fcl) * 0.8f);
+        const float q     = std::max(0.5f, std::min(qMax,
                                 juce::MathConstants<float>::pi * fcl * decaySecs));
         auto coeffs = juce::dsp::IIR::Coefficients<float>::makeBandPass(
                           (double)sampleRate, (double)fcl, (double)q);

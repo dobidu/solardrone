@@ -78,13 +78,15 @@ void ResonatorEngine::process(juce::AudioBuffer<float>& buffer) {
     if (fdnEnabled)     fdn.process(fdnBuf);            else fdnBuf.clear();
     if (stringsEnabled) strings.process(stringBuf);    else stringBuf.clear();
 
-    // Sum: dry + modal_wet + fdn_wet + string_wet
+    // Sum: dry + modal_wet + fdn_wet + string_wet (NaN guard)
     for (int c = 0; c < ch; ++c) {
         auto* out = buffer.getWritePointer(c);
         const auto* m = modalBuf.getReadPointer(c);
         const auto* f = fdnBuf.getReadPointer(c);
         const auto* s = stringBuf.getReadPointer(c);
-        for (int i = 0; i < n; ++i)
-            out[i] = out[i] + m[i] + f[i] + s[i];
+        for (int i = 0; i < n; ++i) {
+            const float wet = m[i] + f[i] + s[i];
+            out[i] = std::isfinite(wet) ? out[i] + wet : out[i];
+        }
     }
 }

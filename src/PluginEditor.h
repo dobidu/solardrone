@@ -83,6 +83,11 @@ private:
     std::unique_ptr<ButtonAttachment>    attFreeze;
     std::unique_ptr<SliderAttachment>    attMapVelLo, attMapVelHi, attMapBzThresh, attMapKpDens;
 
+    // ── EQ ───────────────────────────────────────────────────────────────────
+    juce::Slider slEQLow, slEQMid, slEQHigh;
+    juce::Label  lblEQLow, lblEQMid, lblEQHigh;
+    std::unique_ptr<SliderAttachment> attEQLow, attEQMid, attEQHigh;
+
     // OSC/MIDI
     juce::ToggleButton btnOSC, btnMIDICC;
     juce::TextEditor   txtOSCPort;

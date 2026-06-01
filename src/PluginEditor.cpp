@@ -128,6 +128,24 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attMapKpDens   = std::make_unique<SliderAttachment>(apvts, "map_kp_dens",  slMapKpDens);
     addAndMakeVisible(mappingDisplay);
 
+    // EQ sliders
+    auto setupEQ = [&](juce::Slider& sl, juce::Label& lbl, const char* name) {
+        sl.setSliderStyle(juce::Slider::LinearHorizontal);
+        sl.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 16);
+        sl.setColour(juce::Slider::trackColourId, juce::Colour(0xff2a6fa8));
+        addAndMakeVisible(sl);
+        lbl.setText(name, juce::dontSendNotification);
+        lbl.setFont(juce::Font(11.f));
+        lbl.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
+        addAndMakeVisible(lbl);
+    };
+    setupEQ(slEQLow,  lblEQLow,  "Low (dB)");
+    setupEQ(slEQMid,  lblEQMid,  "Mid (dB)");
+    setupEQ(slEQHigh, lblEQHigh, "High (dB)");
+    attEQLow  = std::make_unique<SliderAttachment>(apvts, "eq_low",  slEQLow);
+    attEQMid  = std::make_unique<SliderAttachment>(apvts, "eq_mid",  slEQMid);
+    attEQHigh = std::make_unique<SliderAttachment>(apvts, "eq_high", slEQHigh);
+
     // OSC/MIDI controls
     btnOSC.setButtonText("OSC");
     btnOSC.setColour(juce::ToggleButton::textColourId, juce::Colours::cyan);
@@ -296,9 +314,10 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawText("PARAMETERS", rx + 6,   4, 320, 14, juce::Justification::left, false);
     g.drawText("RESONATORS", resx + 6, 4, 300, 14, juce::Justification::left, false);
 
-    // OSC/MIDI
+    // EQ + OSC labels
     g.setFont(10.0f);
-    g.drawText("OSC / MIDI", rx + 6, 542, 100, 14, juce::Justification::left, false);
+    g.drawText("EQ",         rx + 6, 520, 40,  14, juce::Justification::left, false);
+    g.drawText("OSC / MIDI", rx + 6, 558, 100, 14, juce::Justification::left, false);
     if (oscActivityAlpha > 0.01f) {
         g.setColour(juce::Colours::cyan.withAlpha(oscActivityAlpha));
         g.fillEllipse((float)(rx + 338), 562.f, 9.f, 9.f);
@@ -353,13 +372,21 @@ void SolarDroneAudioProcessorEditor::resized() {
     lblMapKpDens.setBounds(  rx+3*mSlW, mY,    mSlW, lh); slMapKpDens.setBounds(  rx+3*mSlW, mY+lh, mSlW, sh);
     // bottom=392+14+22=428
 
-    // MacroOrb: y=436, 280×116, bottom=552
-    macroOrb.setBounds(rx+40, 436, 280, 116);
+    // MacroOrb: y=436, 280×90, bottom=526
+    macroOrb.setBounds(rx+40, 436, 280, 90);
 
-    // OSC/MIDI
-    btnOSC.setBounds(    rx,      556, 52, 24);
-    txtOSCPort.setBounds(rx+56,   556, 90, 24);
-    btnMIDICC.setBounds( rx+150,  556, 68, 24);
+    // EQ row: y=530, h=36 (label=14 + slider=22), bottom=566
+    {
+        const int eqW = rw / 3;
+        lblEQLow.setBounds( rx,          530, eqW-2, lh);   slEQLow.setBounds( rx,          530+lh, eqW-2, sh);
+        lblEQMid.setBounds( rx+eqW,      530, eqW-2, lh);   slEQMid.setBounds( rx+eqW,      530+lh, eqW-2, sh);
+        lblEQHigh.setBounds(rx+eqW*2,    530, eqW-2, lh);   slEQHigh.setBounds(rx+eqW*2,    530+lh, eqW-2, sh);
+    }
+
+    // OSC/MIDI: y=570
+    btnOSC.setBounds(    rx,      570, 52, 24);
+    txtOSCPort.setBounds(rx+56,   570, 90, 24);
+    btnMIDICC.setBounds( rx+150,  570, 68, 24);
 
     // ── Bottom strip (dynamic layout) ─────────────────────────────────────
     const int TW    = getWidth();
