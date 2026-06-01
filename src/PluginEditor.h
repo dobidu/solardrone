@@ -9,6 +9,7 @@
 #include "MappingCurveDisplay.h"
 #include "SpatialDisplay.h"
 #include "OSCMIDIBridge.h"
+#include "ResonatorPanel.h"
 
 class SolarDroneAudioProcessorEditor
     : public juce::AudioProcessorEditor
@@ -30,6 +31,11 @@ private:
     ProbDensityDial      probDial;
     MappingCurveDisplay  mappingDisplay;
     SpatialDisplay       spatialDisplay;
+    ResonatorPanel       resonatorPanel;
+
+    juce::TextButton btnToggleVisual;
+    bool             showVisual = true;
+    ResonatorPanel*  getResonatorPanel() { return &resonatorPanel; }
     float                currentKp = 0.f;
 
     juce::Slider slMapVelLo, slMapVelHi, slMapBzThresh, slMapKpDens;

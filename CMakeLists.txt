@@ -51,6 +51,7 @@ target_sources(SolarDrone PRIVATE
     src/FeedbackDelayNetwork.cpp
     src/SympatheticStrings.cpp
     src/ResonatorEngine.cpp
+    src/ResonatorPanel.cpp
     src/SpatialDisplay.cpp
     src/OSCMIDIBridge.cpp
 )

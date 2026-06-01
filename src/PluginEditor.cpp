@@ -29,6 +29,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     , macroOrb(p.apvts)
     , probDial(p.apvts)
     , spatialDisplay(p.apvts)
+    , resonatorPanel(p.apvts)
 {
     // ── Right-panel sliders ────────────────────────────────────────────────
     mkSlider(slGlide,    lblGlide,    "Glide",  this);
@@ -151,6 +152,19 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attOSC    = std::make_unique<ButtonAttachment>(apvts, "osc_enabled",     btnOSC);
     attMIDICC = std::make_unique<ButtonAttachment>(apvts, "midi_cc_enabled", btnMIDICC);
 
+    // Visual toggle button (always visible in bottom strip)
+    btnToggleVisual.setButtonText("HIDE VISUAL");
+    btnToggleVisual.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff1a2a3a));
+    btnToggleVisual.setColour(juce::TextButton::textColourOffId, juce::Colours::lightgrey);
+    btnToggleVisual.onClick = [this]() {
+        showVisual = !showVisual;
+        visualRenderer.setVisible(showVisual);
+        sunDisc.setVisible(showVisual);
+        btnToggleVisual.setButtonText(showVisual ? "HIDE VISUAL" : "SHOW VISUAL");
+        setSize(showVisual ? 1350 : 690, 760);
+    };
+    addAndMakeVisible(btnToggleVisual);
+    addAndMakeVisible(resonatorPanel);
     addAndMakeVisible(spatialDisplay);
     addAndMakeVisible(probDial);
     addAndMakeVisible(macroOrb);
@@ -158,7 +172,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(sunDisc);
 
     startTimerHz(10);
-    setSize(1050, 760);
+    setSize(1350, 760);
 }
 
 SolarDroneAudioProcessorEditor::~SolarDroneAudioProcessorEditor() {
@@ -181,6 +195,15 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             fl = std::min(1.0f, (std::log10(sw2.x_ray_flux) + 5.0f) / 2.0f);
         sunDisc.setFlareLevel(fl);
         spatialDisplay.setFlareLevel(fl);
+
+        // Resonator solar update + panel live data
+        processorRef.updateResonatorSolarData();
+        resonatorPanel.setKp(kp);
+        resonatorPanel.setLiveData(
+            processorRef.getLatestSpaceWeatherState().velocity,
+            processorRef.getLatestSpaceWeatherState().temperature,
+            processorRef.getLatestSpaceWeatherState().dst_index,
+            processorRef.getLatestSpaceWeatherState().proton_flux_10mev);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,
@@ -225,53 +248,69 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
 
     // Space grid
     g.setColour(grid);
-    for (int x = 0; x < 1050; x += 40) g.drawVerticalLine(x, 0.f, 760.f);
-    for (int y = 0; y < 760; y += 40) g.drawHorizontalLine(y, 0.f, 1050.f);
+    const int W = getWidth();
+    for (int x = 0; x < W; x += 40) g.drawVerticalLine(x, 0.f, 760.f);
+    for (int y = 0; y < 760; y += 40) g.drawHorizontalLine(y, 0.f, (float)W);
+
+    const int TW  = getWidth();
+    const int rx  = showVisual ? 660  : 0;    // params column x
+    const int resx= showVisual ? 1020 : 360;  // resonator column x
+    const int chopX = TW / 2;                 // REP|CHOP divider
 
     // Right panel tint
     g.setColour(accent.withAlpha(0.04f));
-    g.fillRect(662, 0, 388, 600);
+    g.fillRect(rx, 0, 360, 600);
+    // Resonator column tint
+    g.setColour(accent.withAlpha(0.025f));
+    g.fillRect(resx, 0, TW - resx, 600);
 
-    // Bottom strip (160px)
+    // Bottom strip
     g.setColour(juce::Colour(0xff060c18));
-    g.fillRect(0, 600, 1050, 160);
+    g.fillRect(0, 600, TW, 160);
 
     // Dividers
     g.setColour(accent.withAlpha(0.18f));
-    g.drawVerticalLine(661, 0.f, 601.f);
-    g.drawHorizontalLine(599, 0.f, 1050.f);
-    g.drawVerticalLine(522, 600.f, 760.f);  // REP | CHOP divider
+    if (showVisual) g.drawVerticalLine(659, 0.f, 601.f);
+    g.drawVerticalLine(rx + 360, 0.f, 601.f);
+    g.drawHorizontalLine(599, 0.f, (float)TW);
+    g.drawVerticalLine(chopX, 600.f, 760.f);
 
     // Section labels
     g.setFont(12.0f);
     g.setColour(accent.withAlpha(0.65f));
-    g.drawText("REPEATER", 8,   602, 110, 14, juce::Justification::left, false);
-    g.drawText("CHOPPER",  528, 602, 90,  14, juce::Justification::left, false);
+    g.drawText("REPEATER", 8,          602, 110, 14, juce::Justification::left, false);
+    g.drawText("CHOPPER",  chopX + 8,  602, 90,  14, juce::Justification::left, false);
 
-    // Right panel title
+    // Column titles
     g.setFont(11.0f);
     g.setColour(accent.withAlpha(0.4f));
-    g.drawText("PARAMETERS", 670, 4, 340, 14, juce::Justification::left, false);
+    g.drawText("PARAMETERS", rx + 6,   4, 320, 14, juce::Justification::left, false);
+    g.drawText("RESONATORS", resx + 6, 4, 300, 14, juce::Justification::left, false);
 
-    // OSC/MIDI label + activity dot (y=542 = above controls at 558)
+    // OSC/MIDI
     g.setFont(10.0f);
-    g.setColour(accent.withAlpha(0.4f));
-    g.drawText("OSC / MIDI OUT", 670, 542, 140, 14, juce::Justification::left, false);
+    g.drawText("OSC / MIDI", rx + 6, 542, 100, 14, juce::Justification::left, false);
     if (oscActivityAlpha > 0.01f) {
         g.setColour(juce::Colours::cyan.withAlpha(oscActivityAlpha));
-        g.fillEllipse(1022, 562, 9, 9);
+        g.fillEllipse((float)(rx + 338), 562.f, 9.f, 9.f);
     }
 }
 
 void SolarDroneAudioProcessorEditor::resized() {
-    // ── Visual zone (660×600) ─────────────────────────────────────────────
-    visualRenderer.setBounds(0, 0, 660, 600);
-    sunDisc.setBounds(260, 230, 140, 140);
-    btnFreeze.setBounds(548, 6, 100, 24);
+    // ── Dynamic layout (showVisual flag) ─────────────────────────────────
+    const int rx   = showVisual ? 660  : 0;    // params column x
+    const int resx = showVisual ? 1020 : 360;  // resonator column x
 
-    // ── Right panel (rx=670, rw=360, height=600) ──────────────────────────
-    // Total allocated: rows+spatial+mapping+macrorb+osc = ~598px. Tight but fits.
-    const int rx = 670, lh = 14, sh = 22, pad = 6, rw = 360;
+    // Visual zone
+    if (showVisual) {
+        visualRenderer.setBounds(0, 0, 660, 600);
+        sunDisc.setBounds(260, 230, 140, 140);
+        btnFreeze.setBounds(548, 6, 100, 24);
+    }
+    resonatorPanel.setBounds(resx, 0, 330, 600);
+
+    // ── Params panel (dynamic x=rx) ──────────────────────────────────────
+    const int lh = 14, sh = 22, pad = 6, rw = 360;
     const int colW = (rw - pad) / 2;
 
     // Row 0: y=14
@@ -308,26 +347,28 @@ void SolarDroneAudioProcessorEditor::resized() {
     // MacroOrb: y=436, 280×116, bottom=552
     macroOrb.setBounds(rx+40, 436, 280, 116);
 
-    // OSC/MIDI: y=558, h=26, bottom=584 ✓ (< 600)
-    btnOSC.setBounds(    rx,       558, 52, 26);
-    txtOSCPort.setBounds(rx+56,    558, 90, 26);
-    btnMIDICC.setBounds( rx+150,   558, 68, 26);
+    // OSC/MIDI: y=554, h=26
+    btnOSC.setBounds(    rx,       554, 52, 26);
+    txtOSCPort.setBounds(rx+56,    554, 90, 26);
+    btnMIDICC.setBounds( rx+150,   554, 68, 26);
 
-    // ── Bottom strip (160px, y=600-760) ──────────────────────────────────
-    // Content: sectionLabel(14) + pad(6) + row1(18+32=50) + gap(8) + row2(18+32=50) = 128px
-    // Top/bottom padding: (160-128)/2 = 16px each
-    const int stripTop = 600;
-    const int lbH2 = 18, ctH2 = 32;
-    const int row1L = stripTop + 16;          // label y row1 = 616
-    const int row1C = row1L + lbH2;           // control y row1 = 634, bottom = 666
-    const int row2L = row1C + ctH2 + 8;       // label y row2 = 674
-    const int row2C = row2L + lbH2;           // control y row2 = 692, bottom = 724
-    const int lbH = lbH2, ctH = ctH2;
+    // HIDE/SHOW VISUAL button: bottom of params panel
+    btnToggleVisual.setBounds(rx + 4, 574, rw - 8, 22);
 
-    // ProbDial spans both rows: y=row1L..row2C+ctH = 616..724, height=108
+    // ── Bottom strip (160px, y=600-760, dynamic width) ────────────────────
+    const int TW  = getWidth();
+    const int halfW   = TW / 2;
+    const int stripTop= 600;
+    const int lbH2    = 18, ctH2 = 32;
+    const int row1L   = stripTop + 16;
+    const int row1C   = row1L + lbH2;
+    const int row2L   = row1C + ctH2 + 8;
+    const int row2C   = row2L + lbH2;
+
+    // ProbDial (spans both rows)
     probDial.setBounds(8, row1L, 108, row2C + ctH2 - row1L);
 
-    // Left half REPEATER: x=120 to x=518
+    // ── REPEATER (left half: x=120 to halfW-8) ───────────────────────────
     {
         int bx = 120;
         btnRepOn.setBounds(bx, row1C, 60, ctH2); bx += 64;
@@ -336,35 +377,35 @@ void SolarDroneAudioProcessorEditor::resized() {
         lblRepBars.setBounds(bx, row1L, comboW, lbH2);
         cmbRepBars.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
 
-        const int bpmW = 140;
-        lblRepBPM.setBounds(bx, row1L, bpmW, lbH2);
-        slRepBPM.setBounds( bx, row1C, bpmW, ctH2);
+        const int bpmW = std::max(80, (halfW - bx - 10) / 2);
+        lblRepBPM.setBounds(bx, row1L, bpmW + 40, lbH2);
+        slRepBPM.setBounds( bx, row1C, bpmW + 40, ctH2);
 
         // Row 2: FB + Wet
-        int bx2 = 120 + 64 + 96 + 6;
-        const int slW = (514 - bx2) / 2;
-        lblRepFeedback.setBounds(bx2, row2L, slW, lbH2);
-        slRepFeedback.setBounds( bx2, row2C, slW, ctH2); bx2 += slW + 6;
+        int bx2 = 120 + 64 + comboW + 6;
+        const int slW = (halfW - 10 - bx2) / 2;
+        lblRepFeedback.setBounds(bx2,       row2L, slW, lbH2);
+        slRepFeedback.setBounds( bx2,       row2C, slW, ctH2); bx2 += slW + 6;
         lblRepWet.setBounds(bx2, row2L, slW, lbH2);
         slRepWet.setBounds( bx2, row2C, slW, ctH2);
     }
 
-    // Right half CHOPPER: x=528 to x=1042
+    // ── CHOPPER (right half: x=halfW+8 to TW-8) ──────────────────────────
     {
-        int bx = 528;
+        int bx = halfW + 8;
         btnChopOn.setBounds(  bx, row1C, 66, ctH2); bx += 70;
-        btnChopSync.setBounds(bx, row1C, 56, ctH2); bx += 60;
+        btnChopSync.setBounds(bx, row1C, 52, ctH2); bx += 56;
 
-        const int comboW = 96;
+        const int comboW = std::max(80, (TW - bx - 16) / 4);
         lblChopShape.setBounds(bx, row1L, comboW, lbH2);
         cmbChopShape.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
         lblChopDiv.setBounds(  bx, row1L, comboW, lbH2);
         cmbChopDiv.setBounds(  bx, row1C, comboW, ctH2); bx += comboW + 6;
 
-        const int chopSlW = (1040 - bx) / 2;
-        lblChopRate.setBounds( bx,            row2L, chopSlW, lbH2);
-        slChopRate.setBounds(  bx,            row2C, chopSlW, ctH2); bx += chopSlW + 6;
-        lblChopDepth.setBounds(bx,            row2L, chopSlW, lbH2);
-        slChopDepth.setBounds( bx,            row2C, chopSlW, ctH2);
+        const int slW = (TW - 8 - bx) / 2;
+        lblChopRate.setBounds( bx,       row2L, slW, lbH2);
+        slChopRate.setBounds(  bx,       row2C, slW, ctH2); bx += slW + 6;
+        lblChopDepth.setBounds(bx,       row2L, slW, lbH2);
+        slChopDepth.setBounds( bx,       row2C, slW, ctH2);
     }
 }

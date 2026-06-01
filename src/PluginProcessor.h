@@ -40,6 +40,8 @@ public:
 
     SynthParams         getCurrentSynthParams() const;
     SpaceWeatherState   getLatestSpaceWeatherState() const;
+    void                updateResonatorSolarData();
+    bool                isResonatorEnabled() const { return resonatorEngine.isEnabled(); }
 
     juce::AudioProcessorValueTreeState apvts;
 
@@ -59,10 +61,6 @@ private:
     juce::SmoothedValue<float> smoothedBalance {0.5f};
     juce::SmoothedValue<float> smoothedDynamics{1.0f};
     ResonatorEngine resonatorEngine;
-
-    // Called from PluginEditor timerCallback (message thread)
-    void updateResonatorSolarData();
-    bool isResonatorEnabled() const { return resonatorEngine.isEnabled(); }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarDroneAudioProcessor)
 };
