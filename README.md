@@ -22,6 +22,8 @@ These drive a two-layer additive oscillator bank with configurable glide, a thre
 
 Quiet solar conditions produce a sparse, open drone. Geomagnetic storms (Kp ≥ 6, southward Bz) produce dense, tense harmonic texture. A large proton event injects noise into the sympathetic strings.
 
+A **SolarTerminal** hacking console displays live solar data, resonator state, and an event log (Kp jumps, storm onsets, SEP events) in the resonator panel.
+
 ## Requirements
 
 | Dependency | Version |
@@ -82,7 +84,7 @@ open build/SolarDrone_artefacts/Release/Standalone/SolarDrone.app
 > .\build\SolarDrone_artefacts\Release\Standalone\SolarDrone.exe
 > ```
 
-The app opens a **1350×760** window: visual (left 660px), parameters (centre 360px), resonators (right 330px). Click **HIDE VISUAL** (bottom-right) to collapse to **690×820** — parameters and resonators only, Repeater/Chopper stacked.
+The app opens a **1350×780** window: visual (left 660px), parameters (centre 360px), resonators (right 330px). Click **HIDE VISUAL** (bottom-right) to collapse to **690×890** — parameters and resonators only, Repeater/Chopper stacked.
 
 After ~30 seconds the status overlay changes from `default` to `live  Kp X.X  age 0s` (green). The drone shifts to reflect actual solar wind conditions.
 
@@ -124,6 +126,9 @@ All parameters are automatable via DAW (APVTS).
 | Bars | 1/16–2 | 1/4 | Loop length |
 | Feedback | 0–1 | 0.5 | Loop decay |
 | Wet | 0–1 | 0.5 | Wet/dry mix |
+| Reverse | on/off | off | Play loop buffer backwards |
+| Stutter | x1/x2/x4/x8 | x1 | Subdivide loop into shorter segments |
+| Pan | -1 → +1 | 0 | Constant-power wet stereo pan |
 
 ### Chopper (bottom strip, right)
 
@@ -135,6 +140,9 @@ All parameters are automatable via DAW (APVTS).
 | Division | 1/16–1 | 1/8 | Gate rate |
 | Rate | 0.1–20 Hz | 4 Hz | Free rate when sync off |
 | Depth | 0–1 | 0.8 | Gate depth |
+| Attack | 0–1 | 0.05 | Gate rise time (fraction of half-period) |
+| Release | 0–1 | 0.05 | Gate fall time |
+| Phase | 0–360° | 0 | LFO phase offset relative to beat |
 
 ### Resonator Engine (right panel)
 
@@ -239,6 +247,7 @@ cmake --build build --target SolarDrone_Tests
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| v2.9.0 | 2026-06-01 | SolarTerminal console, REP/CHOP 6 new params, UI audit |
 | v2.8.0 | 2026-06-01 | Resonator Engine (modal/FDN/strings), 3-column layout, HIDE VISUAL |
 | v2.7.0 | 2026-05-31 | Visual Overhaul 2: 3D Lissajous, bloom, 200+ particles |
 | v2.6.0 | 2026-05-31 | OSC + MIDI CC output |

@@ -61,9 +61,17 @@ PLAN ──▶ APPLY ──▶ UNIFY
 ## Session Continuity
 
 Last session: 2026-06-01
-Stopped at: v2.8.4 approved — Resonator Engine UI complete
-Next action: create v2.8.0 GitHub release tag
-Resume context: All resonator phases (v2.8.1–v2.8.4) done. Layout 1350×760 full / 690×820 compact with HIDE VISUAL toggle. 20/20 tests pass.
+Stopped at: v2.9.0 released — SolarTerminal + REP/CHOP expanded + UI audit complete
+Next action: Preset System (v2.10) — save/load named APVTS patches
+Resume file: .paul/HANDOFF-2026-06-01.md
+Resume context:
+- v2.9.0 tagged and on GitHub as latest, all docs updated
+- Window: 1350×780 full / 690×890 compact
+- SolarTerminal: src/SolarTerminal.h/.cpp (new component in ResonatorPanel)
+- 6 new DSP params: repeater_reverse/pan/stutter + chopper_attack/release/phase
+- ScopedNoDenormals in processBlock + ResonatorEngine::process (critical for Windows)
+- Resonators default OFF (prevents IIR instability on first launch)
+- No blockers — roadmap complete through v2.9
 
 ---
 *STATE.md — Updated after every significant action*

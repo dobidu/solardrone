@@ -200,6 +200,7 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 | v2.6 | OSC + MIDI CC output | ✅ 2026-05-31 |
 | v2.7 | Visual Overhaul 2 (3D Lissajous, bloom, 200+ particles) | ✅ 2026-05-31 |
 | v2.8 | Resonator Engine (modal/FDN/strings) + dynamic layout | ✅ 2026-06-01 |
+| v2.9 | SolarTerminal + REP/CHOP expanded controls + UI audit | ✅ 2026-06-01 |
 
 **Future ecosystem (not roadmapped):** historical playback, web companion, mobile port.
 
@@ -286,4 +287,24 @@ HIDE VISUAL toggle collapses to 690×820 with stacked Repeater/Chopper strip.
 
 ---
 *Roadmap created: 2026-05-29*
-*Last updated: 2026-06-01 — v2.8.0 Resonator Engine complete*
+---
+
+## Milestone v2.9 — Terminal + Expanded Rhythm Controls ✅ (complete 2026-06-01)
+
+**SolarTerminal:** hacking console in resonator panel — live solar data, resonator state, event log (Kp jumps, Dst storm, SEP events), blinking cursor, color-coded alerts.
+
+**Beat Repeater (+3):** Reverse (backwards playback), Stutter (×1/×2/×4/×8 loop subdivision), Pan (wet stereo pan).
+
+**Chopper (+3):** Attack/Release (gate envelope shaping), Phase (LFO phase offset 0–360°).
+
+**UI audit:** 8 layout bugs fixed (label overlaps, compact overflow, stutter characters, BPM textbox, column headers).
+
+---
+
+## Next directions (not roadmapped)
+
+- **Preset System** — save/load named patches; APVTS XML already in place
+- **Historical Playback** — replay NOAA archive from a past date
+- **MIDI Input → Resonators** — play resonators live while solar data drives timbre
+
+*Last updated: 2026-06-01 — v2.9.0 complete*
