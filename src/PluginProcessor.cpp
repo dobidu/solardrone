@@ -47,7 +47,7 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "repeater_pan",      "Repeat Pan",    -1.0f, 1.0f, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "repeater_stutter",  "Stutter",
-        juce::StringArray{"\xc3\x971","\xc3\x972","\xc3\x974","\xc3\x978"}, 0));
+        juce::StringArray{"x1","x2","x4","x8"}, 0));
 
     // Chopper
     params.push_back(std::make_unique<juce::AudioParameterBool>(

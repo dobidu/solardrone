@@ -64,7 +64,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(btnRepOn);
     // Row 3 REP
     mkSlider(slRepPan,  lblRepPan,  "Pan",  this);
-    cmbRepStutter.addItemList({"\xc3\x971","\xc3\x972","\xc3\x974","\xc3\x978"}, 1);
+    cmbRepStutter.addItemList({"x1","x2","x4","x8"}, 1);
     mkCombo(cmbRepStutter, this);
     addAndMakeVisible(lblRepStutter);
     lblRepStutter.setText("Stutter", juce::dontSendNotification);
@@ -304,17 +304,17 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     // Section labels + divider (layout-dependent)
     g.setFont(12.0f);
     g.setColour(accent.withAlpha(0.65f));
+    // REPEATER label always at x=104 (after ProbDensityDial which occupies x=8..98)
     if (showVisual) {
         // wide: vertical divider, labels side by side
         g.drawVerticalLine(chopX, 600.f, (float)(600 + stripH));
-        g.drawText("REPEATER", 8,         602, 110, 14, juce::Justification::left, false);
-        g.drawText("CHOPPER",  chopX + 8, 602, 90,  14, juce::Justification::left, false);
+        g.drawText("REPEATER", 104,        602, 110, 14, juce::Justification::left, false);
+        g.drawText("CHOPPER",  chopX + 8,  602, 90,  14, juce::Justification::left, false);
     } else {
         // compact: horizontal divider, labels stacked
-        // repH = 10 + 3*(14+24+4) + 10 = 146, chopper starts at 600+150
         g.drawHorizontalLine(750, 0.f, (float)TW);
-        g.drawText("REPEATER", 8, 602, 110, 14, juce::Justification::left, false);
-        g.drawText("CHOPPER",  8, 752, 90,  14, juce::Justification::left, false);
+        g.drawText("REPEATER", 104, 602, 110, 14, juce::Justification::left, false);
+        g.drawText("CHOPPER",  8,   752, 90,  14, juce::Justification::left, false);
     }
 
     // Column titles
@@ -351,10 +351,10 @@ void SolarDroneAudioProcessorEditor::resized() {
     const int lh = 14, sh = 22, pad = 6, rw = 360;
     const int colW = (rw - pad) / 2;
 
-    // Row 0: y=14
-    cmbHarmony.setBounds(rx, 14, 100, sh);
-    lblInterval.setBounds(rx+108, 14,    rw-108, lh);
-    slInterval.setBounds( rx+108, 14+lh, rw-108, sh);
+    // Row 0: y=20 (gap after "PARAMETERS" label which ends at y=18)
+    cmbHarmony.setBounds(rx, 20, 100, sh);
+    lblInterval.setBounds(rx+108, 20,    rw-108, lh);
+    slInterval.setBounds( rx+108, 20+lh, rw-108, sh);
 
     auto placeRow = [&](juce::Slider& sL, juce::Label& lL,
                         juce::Slider& sR, juce::Label& lR, int y) {
@@ -431,7 +431,7 @@ void SolarDroneAudioProcessorEditor::resized() {
 
         // Row 3: REV | PAN | STUTTER
         int bx3 = bx0;
-        btnRepReverse.setBounds(bx3, r3C, 44, sh3); bx3 += 48;
+        btnRepReverse.setBounds(bx3, r3C, 56, sh3); bx3 += 60;
         const int panW = avail - 48 - cbW - 4;
         lblRepPan.setBounds(bx3, r3L, panW, lh3);
         slRepPan.setBounds( bx3, r3C, panW, sh3); bx3 += panW + 4;
