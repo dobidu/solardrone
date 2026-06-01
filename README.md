@@ -1,14 +1,26 @@
 # SolarDrone
 
-A standalone app and JUCE plugin (VST3, AU) that sonifies real-time space weather data from NOAA SWPC as a two-layer additive drone with animated visual. Solar wind parameters (velocity, density, Bz) drive Layer 1; the Kp planetary index drives Layer 2. The drone evolves continuously as space weather changes.
+A standalone app and JUCE plugin (VST3, AU) that sonifies real-time space weather data from NOAA SWPC as a two-layer additive drone with animated visual and resonator engine.
+
+Solar wind parameters (velocity, density, Bz, temperature) drive Layer 1; the Kp planetary index drives Layer 2. Three parallel resonator modules (modal bank, feedback delay network, sympathetic strings) are continuously driven by live solar data. The drone evolves in real time as space weather changes.
 
 Educational tool and material for audiovisual installation.
 
 ## What it does
 
-SolarDrone fetches live data from NOAA's Space Weather Prediction Center every 60 seconds — solar wind speed, density, interplanetary magnetic field (Bz), and the Kp geomagnetic disturbance index. These drive a two-layer additive oscillator bank with configurable interpolation (default: 2-minute glide). A three-layer visual renderer (Lissajous curves, particle field, spectral envelope) animates in real time alongside the audio.
+SolarDrone fetches five live feeds from NOAA SWPC every 60 seconds:
 
-Quiet solar conditions produce a sparse, open drone. Geomagnetic storms (Kp ≥ 6, southward Bz) produce dense, tense harmonic texture.
+| Feed | Data |
+|------|------|
+| `rtsw_wind_1m.json` | Solar wind velocity, density, Bz, temperature |
+| `planetary_k_index_1m.json` | Kp geomagnetic index (0–9) |
+| `xrays-1-minute.json` | X-ray flux + flare classification |
+| `kyoto-dst.json` | Dst storm index (nT) |
+| `integral-protons-1-day.json` | Proton flux >10 MeV (pfu) |
+
+These drive a two-layer additive oscillator bank with configurable glide, a three-layer visual renderer (Lissajous curves, particle field, spectral bars), and a resonator engine that applies room/string/modal coloration to the drone.
+
+Quiet solar conditions produce a sparse, open drone. Geomagnetic storms (Kp ≥ 6, southward Bz) produce dense, tense harmonic texture. A large proton event injects noise into the sympathetic strings.
 
 ## Requirements
 
@@ -62,18 +74,17 @@ open build/SolarDrone_artefacts/Release/Standalone/SolarDrone.app
 .\build\Release\SolarDrone_artefacts\Standalone\SolarDrone.exe
 ```
 
-> **Windows — build from source required**: Windows Smart App Control blocks unsigned binaries downloaded from the internet. Build locally instead:
+> **Windows — build from source required**: Windows Smart App Control blocks unsigned binaries downloaded from the internet. Build locally:
 > ```cmd
 > git config --global --add safe.directory *
 > cmake -B build -DCMAKE_BUILD_TYPE=Release
 > cmake --build build --config Release
 > .\build\SolarDrone_artefacts\Release\Standalone\SolarDrone.exe
 > ```
-> The `safe.directory *` is needed once because the project may contain directories created by WSL2/Linux tools.
 
-The app opens a 600×480 window: animated visual fills the top 400px, controls at the bottom. The status overlay (top-right) shows `default  Kp 0.0  age 0s` on launch.
+The app opens a **1350×760** window: visual (left 660px), parameters (centre 360px), resonators (right 330px). Click **HIDE VISUAL** (bottom-right) to collapse to **690×820** — parameters and resonators only, Repeater/Chopper stacked.
 
-After ~30 seconds, a live NOAA fetch completes and the overlay changes to `live  Kp X.X  age 0s` (green). The drone pitch and harmonic content shift to reflect actual solar wind conditions.
+After ~30 seconds the status overlay changes from `default` to `live  Kp X.X  age 0s` (green). The drone shifts to reflect actual solar wind conditions.
 
 ## Plugin Install
 
@@ -84,37 +95,105 @@ After ~30 seconds, a live NOAA fetch completes and the overlay changes to `live 
 
 **AU (macOS only)** — copy `build/.../SolarDrone.component` to `~/Library/Audio/Plug-Ins/Components/`
 
-See [Known Limitations](#known-limitations) for notes on macOS code signing.
-
 ## Controls
 
 All parameters are automatable via DAW (APVTS).
 
+### Main
+
 | Parameter | Range | Default | Description |
 |-----------|-------|---------|-------------|
 | Volume | 0–1 | 0.7 | Master output level |
-| Drone On | on/off | on | Silences output immediately when off |
+| Drone On | on/off | on | Silences output immediately |
 | Glide Time | 30–300 s | 120 s | Interpolation speed between data updates |
 | Dynamics | 0–1 | 1.0 | Scales L2 amplitude excursion |
-| Layer Balance | 0–1 | 0.5 | 0 = full L1 (solar wind), 1 = full L2 (Kp) |
+| Layer Balance | 0–1 | 0.5 | 0 = L1 (solar wind), 1 = L2 (Kp) |
 | Stereo Spread | 0–1 | 0.5 | Stereo width between layers |
 | Harmony Mode | Just / Equal | Just | Interval tuning system |
-| L1/L2 Interval | 0–12 semitones | 7 (P5th) | Interval between L1 and L2 fundamentals |
-| Visual Lissajous | 0–1 | 0.7 | Blend weight for Lissajous curve layer |
-| Visual Particles | 0–1 | 0.7 | Blend weight for particle field layer |
-| Visual Spectral | 0–1 | 0.7 | Blend weight for spectral bar layer |
+| L1/L2 Interval | 0–12 semitones | 7 | Interval between L1 and L2 fundamentals |
+| Visual Lissajous | 0–1 | 0.7 | Lissajous curve layer blend |
+| Visual Particles | 0–1 | 0.7 | Particle field layer blend |
+| Visual Spectral | 0–1 | 0.7 | Spectral bar layer blend |
+
+### Beat Repeater (bottom strip, left)
+
+| Parameter | Range | Default | Description |
+|-----------|-------|---------|-------------|
+| Repeater On | on/off | off | Enables stutter loop |
+| BPM | 30–300 | 120 | Loop rate (or lock to MIDI clock) |
+| Bars | 1/16–2 | 1/4 | Loop length |
+| Feedback | 0–1 | 0.5 | Loop decay |
+| Wet | 0–1 | 0.5 | Wet/dry mix |
+
+### Chopper (bottom strip, right)
+
+| Parameter | Range | Default | Description |
+|-----------|-------|---------|-------------|
+| Chopper On | on/off | off | Enables rhythmic gate |
+| BPM Sync | on/off | on | Syncs to Repeater BPM / MIDI clock |
+| Shape | sine/square/saw | square | Gate envelope shape |
+| Division | 1/16–1 | 1/8 | Gate rate |
+| Rate | 0.1–20 Hz | 4 Hz | Free rate when sync off |
+| Depth | 0–1 | 0.8 | Gate depth |
+
+### Resonator Engine (right panel)
+
+| Parameter | Range | Default | Description |
+|-----------|-------|---------|-------------|
+| Modal On | on/off | off | Enable modal bank |
+| Modal Wet | 0–1 | 0.3 | Modal bank wet level |
+| Modal Decay | 0–1 | 0.5 | Base decay time (solar vel scales this) |
+| FDN On | on/off | off | Enable feedback delay network |
+| FDN Wet | 0–1 | 0.3 | FDN wet level |
+| FDN Size | 0–1 | 0.5 | Room size (Dst scales T60) |
+| Strings On | on/off | off | Enable sympathetic strings |
+| Strings Wet | 0–1 | 0.3 | Strings wet level |
+| Strings N | 0–1 | 0.5 | Number of active strings |
+
+### OSC / MIDI CC Output
+
+| Control | Description |
+|---------|-------------|
+| OSC Enable | Streams solar data to UDP port (default 9000) |
+| OSC Port | UDP port (text field, default 9000) |
+| MIDI CC | Sends Kp/velocity/Bz as CC 20/21/22 on ch 1 |
+
+Outputs are sent every 100ms (10fps) on the message thread.
 
 ## Architecture
 
-Five components in the signal chain:
+```
+DataFetcher (5 NOAA feeds, 60s poll)
+    │
+    ▼
+SpaceWeatherState  ──────────────────────────────────────────────┐
+    │                                                             │
+    ▼                                                             ▼
+SynthParamMapper                                         ResonatorEngine
+(hybrid linear+nonlinear)                      ┌─────────────────────────────┐
+    │                                          │ ModalBank (32 IIR bandpass) │
+    ▼                                          │ FDN (8-tap Hadamard)        │
+Interpolator (exponential slew, ~100Hz)        │ SympatheticStrings (12 comb)│
+    │                                          └─────────────────────────────┘
+    ▼                                                             │
+AdditiveEngine (L1 solar wind + L2 Kp)  ──────────────────────▶ mix
+    │
+    ▼
+BeatRepeater → Chopper → OutputEQ (3-band) → audio out
+    │
+    ▼
+VisualRenderer (30fps: Lissajous 3D + particles + spectral)
+```
 
-1. **DataFetcher** — background thread, polls `rtsw_wind_1m.json` and `planetary_k_index_1m.json` from NOAA SWPC every 60 seconds. Handles null fields (sensor calibration gaps) by retaining last valid values.
-2. **SynthParamMapper** — pure function `(SpaceWeatherState, UserParams) → SynthParams`. Hybrid mapping: linear base + non-linear activations at Bz ≤ −10 nT and Kp ≥ 6.
-3. **Interpolator** — per-field exponential slew on SynthParams at ~100 Hz control rate. Glide time configurable 30–300 s.
-4. **AdditiveEngine** — two independent oscillator banks (L1: solar wind, L2: Kp). Constant-power layer balance crossfade.
-5. **VisualRenderer** — JUCE Component, 30 fps, three composited layers driven by smoothed SynthParams.
+### Resonator solar data mappings
 
-See `ROADMAP.md` for full phase breakdown and `src/SynthParamMapper.cpp` for mapping formulas.
+| Solar input | Resonator | Effect |
+|-------------|-----------|--------|
+| Wind velocity | Modal Bank | decay time (fast wind = shorter decay) |
+| Kp index | Modal Bank | mode count + inharmonicity |
+| Dst index | FDN | T60 reverb time (storm = longer tail) |
+| Dynamic pressure (vel × density) | FDN | absorption cutoff frequency |
+| Proton flux >10 MeV | Strings | damping + noise injection |
 
 ## Running Tests
 
@@ -126,32 +205,49 @@ cmake --build build --target SolarDrone_Tests
 .\build\Release\SolarDrone_Tests_artefacts\SolarDroneTests.exe
 ```
 
-15 unit tests: 8 DataFetcher parser tests (quiet day, storm day, null fields), 7 SynthParamMapper tests (mapping values, determinism, harmony modes).
+20 unit tests: DataFetcher parsers (quiet day, storm day, null fields, temperature, Dst, proton flux), SynthParamMapper (mapping values, determinism, harmony modes).
 
 ## Known Limitations
 
-**HTTP sandbox in Logic Pro / Pro Tools**: these hosts sandbox plugin processes and block outbound HTTP. SolarDrone detects empty responses and falls back to the last known space weather state (`source = "cached"`, displayed in yellow). The drone continues playing with the last values. This is a documented v1 design decision — no companion app workaround is provided.
+**HTTP sandbox in Logic Pro / Pro Tools**: these hosts block outbound HTTP. SolarDrone falls back to last known state (`source = "cached"`, displayed in yellow).
 
-**First fetch latency**: NOAA data arrives ~30 seconds after cold start. The drone plays with default values (velocity = 450 km/s, Kp = 0) until the first successful fetch.
+**First fetch latency**: NOAA data arrives ~30 seconds after cold start. Default values play until first successful fetch (velocity = 450 km/s, Kp = 0).
 
-**ALSA warnings on Linux/WSL2**: `open /dev/snd/seq failed` messages are non-fatal. JUCE handles missing ALSA devices gracefully; audio output uses the available device.
+**ALSA warnings on Linux/WSL2**: `open /dev/snd/seq failed` messages are non-fatal.
 
-**Windows Smart App Control**: blocks unsigned binaries downloaded from the internet — no bypass available. Build from source locally (see Quick Start); locally-compiled binaries are not subject to Smart App Control.
+**Windows Smart App Control**: blocks unsigned downloaded binaries. Build from source (see Quick Start).
 
-**AU code signing (macOS)**: unsigned AU builds require Gatekeeper to be disabled or the binary to be signed with an Apple Developer ID. For development use: `sudo spctl --master-disable` or use the VST3 format instead.
+**AU code signing (macOS)**: unsigned AU builds require Gatekeeper disabled or Apple Developer ID. Use VST3 for development.
 
-**Drone on/off**: toggling off silences immediately (no fade). A glide-out fade is registered for v2.
+**Drone on/off**: silences immediately (no fade). Glide-out fade deferred to a future version.
 
-**Real-time data only**: historical playback is not implemented in v1. Data is always the most recent NOAA reading.
+**Real-time data only**: historical playback not implemented.
 
-## Data Source
+## Data Sources
 
-[NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov/) — public JSON API, no authentication required.
+[NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov/) — public JSON API, no authentication.
 
-- Solar wind: `https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json`
-- Kp index: `https://services.swpc.noaa.gov/json/planetary_k_index_1m.json`
+| Feed | URL |
+|------|-----|
+| Solar wind | `https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json` |
+| Kp index | `https://services.swpc.noaa.gov/json/planetary_k_index_1m.json` |
+| X-ray flux | `https://services.swpc.noaa.gov/json/goes/primary/xrays-1-minute.json` |
+| Dst index | `https://services.swpc.noaa.gov/products/kyoto-dst.json` |
+| Proton flux | `https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json` |
 
-Data updated every ~1 minute. Fields used: `speed` (km/s), `density` (p/cm³), `bz_gsm` (nT), `estimated_kp` (0–9).
+## Release History
+
+| Version | Date | Highlights |
+|---------|------|-----------|
+| v2.8.0 | 2026-06-01 | Resonator Engine (modal/FDN/strings), 3-column layout, HIDE VISUAL |
+| v2.7.0 | 2026-05-31 | Visual Overhaul 2: 3D Lissajous, bloom, 200+ particles |
+| v2.6.0 | 2026-05-31 | OSC + MIDI CC output |
+| v2.5.0 | 2026-05-31 | Binaural ILD, 3-band EQ, crackling fix |
+| v2.4.0 | 2026-05-31 | X-ray flux → L3 burst layer |
+| v2.3.0 | 2026-05-31 | Mapping UI with editable thresholds |
+| v2.2.0 | 2026-05-30 | UI/UX overhaul (SunDisc, MacroOrb, spatial display) |
+| v2.1.0 | 2026-05-30 | BeatRepeater + Chopper with MIDI clock sync |
+| v1.0.0 | 2026-05-29 | Initial release |
 
 ## License
 

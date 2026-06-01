@@ -6,9 +6,19 @@ Eight phases from empty JUCE project to v1 release: foundation build, live data 
 
 ## Current Milestone
 
-**v1.0 Initial Release** (v1.0.0)
-Status: ✅ Complete
-Phases: 8 of 8 complete
+**v2.8.0 — Resonator Engine** ✅ Complete (2026-06-01)
+
+| Release | Status | Date |
+|---------|--------|------|
+| v1.0.0 Initial Release | ✅ | 2026-05-29 |
+| v2.1.0 BeatRepeater + Chopper | ✅ | 2026-05-30 |
+| v2.2.0 UI/UX Overhaul | ✅ | 2026-05-30 |
+| v2.3.0 Mapping UI | ✅ | 2026-05-31 |
+| v2.4.0 X-ray Flux L3 Layer | ✅ | 2026-05-31 |
+| v2.5.0 Binaural ILD + EQ | ✅ | 2026-05-31 |
+| v2.6.0 OSC + MIDI CC | ✅ | 2026-05-31 |
+| v2.7.0 Visual Overhaul 2 | ✅ | 2026-05-31 |
+| v2.8.0 Resonator Engine | ✅ | 2026-06-01 |
 
 ## Phases
 
@@ -178,18 +188,21 @@ Phases: 8 of 8 complete
 
 ---
 
-## Phases — v2 (registered, not planned)
+## Phases — v2 (all complete)
 
-| Phase | Focus | Research |
-|-------|-------|----------|
-| v2.1 | Additional NOAA data sources (X-ray flux, proton flux) | Likely |
-| v2.2 | Historical playback from NOAA archive | Likely |
-| v2.3 | User-editable mapping curves (expose SynthParamMapper as UI) | Unlikely |
+| Phase | Focus | Status |
+|-------|-------|--------|
+| v2.1 | BeatRepeater + Chopper, MIDI clock sync | ✅ 2026-05-30 |
+| v2.2 | UI/UX Overhaul (SunDisc, MacroOrb, spatial display) | ✅ 2026-05-30 |
+| v2.3 | Mapping UI with editable thresholds | ✅ 2026-05-31 |
+| v2.4 | X-ray flux → L3 burst layer | ✅ 2026-05-31 |
+| v2.5 | Binaural ILD + 3-band EQ + crackling fix | ✅ 2026-05-31 |
+| v2.6 | OSC + MIDI CC output | ✅ 2026-05-31 |
+| v2.7 | Visual Overhaul 2 (3D Lissajous, bloom, 200+ particles) | ✅ 2026-05-31 |
+| v2.8 | Resonator Engine (modal/FDN/strings) + dynamic layout | ✅ 2026-06-01 |
 
-**Future ecosystem (not roadmapped):** web companion; mobile port.
+**Future ecosystem (not roadmapped):** historical playback, web companion, mobile port.
 
-## Milestone v2.3 — Mapping UI ✅ (complete)
-## Milestone v2.4 — X-ray Flux (planned)
 ## Milestone v2.5 — Visual Overhaul 2: Dynamic & Immersive
 
 **Goal:** Transform the visual renderer from functional to stunning. More particles, 3D projection, color gradients, trail effects, volumetric glow.
@@ -259,5 +272,18 @@ Phases: 8 of 8 complete
 - Inserts in same stage as Beat Repeater (chainable)
 
 ---
+
+## Milestone v2.8 — Resonator Engine ✅ (complete 2026-06-01)
+
+Three parallel resonator modules driven by live solar data:
+
+- **Modal Bank** (32 IIR bandpass): velocity → decay, Kp → mode count/inharmonicity
+- **FDN** (8-tap Hadamard): Dst → T60, dynamic pressure → absorption cutoff
+- **Sympathetic Strings** (12 comb): proton flux → damping + noise injection
+
+UI: 3-column layout (1350×760) — Visual | Params | Resonators simultaneously.
+HIDE VISUAL toggle collapses to 690×820 with stacked Repeater/Chopper strip.
+
+---
 *Roadmap created: 2026-05-29*
-*Last updated: 2026-05-29 — Phase 1 complete*
+*Last updated: 2026-06-01 — v2.8.0 Resonator Engine complete*
