@@ -52,15 +52,19 @@ private:
 
     // ── Bottom strip — Repeater ───────────────────────────────────────────
     juce::Slider       slRepBPM, slRepFeedback, slRepWet;
-    juce::ComboBox     cmbRepBars;
-    juce::ToggleButton btnRepOn;
+    juce::Slider       slRepPan;
+    juce::ComboBox     cmbRepBars, cmbRepStutter;
+    juce::ToggleButton btnRepOn, btnRepReverse;
     juce::Label        lblRepBPM, lblRepFeedback, lblRepWet, lblRepBars;
+    juce::Label        lblRepPan, lblRepStutter;
 
     // ── Bottom strip — Chopper ────────────────────────────────────────────
     juce::Slider       slChopRate, slChopDepth;
+    juce::Slider       slChopAttack, slChopRelease, slChopPhase;
     juce::ComboBox     cmbChopShape, cmbChopDiv;
     juce::ToggleButton btnChopOn, btnChopSync;
     juce::Label        lblChopRate, lblChopDepth, lblChopShape, lblChopDiv;
+    juce::Label        lblChopAttack, lblChopRelease, lblChopPhase;
 
     using SliderAttachment   = juce::AudioProcessorValueTreeState::SliderAttachment;
     using ButtonAttachment   = juce::AudioProcessorValueTreeState::ButtonAttachment;
@@ -72,12 +76,13 @@ private:
     std::unique_ptr<ComboBoxAttachment>  attHarmony;
 
     // Repeater
-    std::unique_ptr<SliderAttachment>    attRepBPM, attRepFeedback, attRepWet;
-    std::unique_ptr<ComboBoxAttachment>  attRepBars;
-    std::unique_ptr<ButtonAttachment>    attRepOn;
+    std::unique_ptr<SliderAttachment>    attRepBPM, attRepFeedback, attRepWet, attRepPan;
+    std::unique_ptr<ComboBoxAttachment>  attRepBars, attRepStutter;
+    std::unique_ptr<ButtonAttachment>    attRepOn, attRepReverse;
 
     // Chopper
     std::unique_ptr<SliderAttachment>    attChopRate, attChopDepth;
+    std::unique_ptr<SliderAttachment>    attChopAttack, attChopRelease, attChopPhase;
     std::unique_ptr<ComboBoxAttachment>  attChopShape, attChopDiv;
     std::unique_ptr<ButtonAttachment>    attChopOn, attChopSync;
     std::unique_ptr<ButtonAttachment>    attFreeze;

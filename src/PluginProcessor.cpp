@@ -41,6 +41,13 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "repeater_feedback", "Feedback",       0.0f, 1.0f, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "repeater_wet",      "Repeater Wet",   0.0f, 1.0f, 0.7f));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        "repeater_reverse",  "Reverse",        false));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "repeater_pan",      "Repeat Pan",    -1.0f, 1.0f, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        "repeater_stutter",  "Stutter",
+        juce::StringArray{"\xc3\x971","\xc3\x972","\xc3\x974","\xc3\x978"}, 0));
 
     // Chopper
     params.push_back(std::make_unique<juce::AudioParameterBool>(
@@ -57,6 +64,12 @@ SolarDroneAudioProcessor::createParameterLayout() {
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "chopper_div",   "Chopper Div",
         juce::StringArray{"1/16","1/8","1/4","1/2","1 bar"}, 2));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "chopper_attack",  "Chop Attack",   0.0f, 1.0f, 0.05f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "chopper_release", "Chop Release",  0.0f, 1.0f, 0.05f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "chopper_phase",   "Chop Phase",    0.0f, 360.0f, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "repeater_density", "Repeat Density", 0.0f, 1.0f, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
@@ -218,6 +231,9 @@ void SolarDroneAudioProcessor::processBlock(
     beatRepeater.setFeedback(*apvts.getRawParameterValue("repeater_feedback"));
     beatRepeater.setWet(*apvts.getRawParameterValue("repeater_wet"));
     beatRepeater.setDensity(*apvts.getRawParameterValue("repeater_density"));
+    beatRepeater.setReverse(*apvts.getRawParameterValue("repeater_reverse") > 0.5f);
+    beatRepeater.setPan(*apvts.getRawParameterValue("repeater_pan"));
+    beatRepeater.setStutterMult(1 << (int)*apvts.getRawParameterValue("repeater_stutter"));
 
     const bool droneOn = *apvts.getRawParameterValue("drone_on") > 0.5f;
 
@@ -231,6 +247,9 @@ void SolarDroneAudioProcessor::processBlock(
     chopper.setBPMSync(chopSync, tempoTracker.getCurrentBPM(), divBeats[divIdx]);
     if (!chopSync)
         chopper.setRate(*apvts.getRawParameterValue("chopper_rate"));
+    chopper.setAttack( *apvts.getRawParameterValue("chopper_attack"));
+    chopper.setRelease(*apvts.getRawParameterValue("chopper_release"));
+    chopper.setPhaseOffset(*apvts.getRawParameterValue("chopper_phase"));
 
     if (droneOn) {
         engine.processBlock(buffer);

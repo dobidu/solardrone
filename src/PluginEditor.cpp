@@ -60,9 +60,19 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     lblRepBars.setFont(juce::Font(9.f));
     lblRepBars.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
     btnRepOn.setButtonText("REP");
-    btnRepOn.setColour(juce::ToggleButton::textColourId,
-                       juce::Colours::steelblue);
+    btnRepOn.setColour(juce::ToggleButton::textColourId, juce::Colours::steelblue);
     addAndMakeVisible(btnRepOn);
+    // Row 3 REP
+    mkSlider(slRepPan,  lblRepPan,  "Pan",  this);
+    cmbRepStutter.addItemList({"\xc3\x971","\xc3\x972","\xc3\x974","\xc3\x978"}, 1);
+    mkCombo(cmbRepStutter, this);
+    addAndMakeVisible(lblRepStutter);
+    lblRepStutter.setText("Stutter", juce::dontSendNotification);
+    lblRepStutter.setFont(juce::Font(9.f));
+    lblRepStutter.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
+    btnRepReverse.setButtonText("REV");
+    btnRepReverse.setColour(juce::ToggleButton::textColourId, juce::Colours::salmon);
+    addAndMakeVisible(btnRepReverse);
 
     // ── Chopper strip ─────────────────────────────────────────────────────
     mkSlider(slChopRate,  lblChopRate,  "Rate",  this);
@@ -85,6 +95,10 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     btnChopSync.setButtonText("Sync");
     btnChopSync.setColour(juce::ToggleButton::textColourId, juce::Colours::lightgrey);
     addAndMakeVisible(btnChopSync);
+    // Row 3 CHOP
+    mkSlider(slChopAttack,  lblChopAttack,  "Atk",   this);
+    mkSlider(slChopRelease, lblChopRelease, "Rel",   this);
+    mkSlider(slChopPhase,   lblChopPhase,   "Phase", this);
 
     // ── APVTS attachments ─────────────────────────────────────────────────
     auto& apvts = processorRef.apvts;
@@ -101,11 +115,17 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     attRepBPM      = std::make_unique<SliderAttachment>(apvts, "repeater_bpm",      slRepBPM);
     attRepFeedback = std::make_unique<SliderAttachment>(apvts, "repeater_feedback", slRepFeedback);
     attRepWet      = std::make_unique<SliderAttachment>(apvts, "repeater_wet",      slRepWet);
+    attRepPan      = std::make_unique<SliderAttachment>(apvts, "repeater_pan",      slRepPan);
     attRepBars     = std::make_unique<ComboBoxAttachment>(apvts, "repeater_bars",   cmbRepBars);
+    attRepStutter  = std::make_unique<ComboBoxAttachment>(apvts, "repeater_stutter",cmbRepStutter);
     attRepOn       = std::make_unique<ButtonAttachment>(apvts, "repeater_on",       btnRepOn);
+    attRepReverse  = std::make_unique<ButtonAttachment>(apvts, "repeater_reverse",  btnRepReverse);
 
-    attChopRate    = std::make_unique<SliderAttachment>(apvts, "chopper_rate",  slChopRate);
-    attChopDepth   = std::make_unique<SliderAttachment>(apvts, "chopper_depth", slChopDepth);
+    attChopRate    = std::make_unique<SliderAttachment>(apvts, "chopper_rate",    slChopRate);
+    attChopDepth   = std::make_unique<SliderAttachment>(apvts, "chopper_depth",   slChopDepth);
+    attChopAttack  = std::make_unique<SliderAttachment>(apvts, "chopper_attack",  slChopAttack);
+    attChopRelease = std::make_unique<SliderAttachment>(apvts, "chopper_release", slChopRelease);
+    attChopPhase   = std::make_unique<SliderAttachment>(apvts, "chopper_phase",   slChopPhase);
     attChopShape   = std::make_unique<ComboBoxAttachment>(apvts, "chopper_shape", cmbChopShape);
     attChopDiv     = std::make_unique<ComboBoxAttachment>(apvts, "chopper_div",   cmbChopDiv);
     attChopOn      = std::make_unique<ButtonAttachment>(apvts, "chopper_on",   btnChopOn);
@@ -162,7 +182,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
         sunDisc.setVisible(showVisual);
         btnFreeze.setVisible(showVisual);
         btnToggleVisual.setButtonText(showVisual ? "HIDE VISUAL" : "SHOW VISUAL");
-        setSize(showVisual ? 1350 : 690, showVisual ? 760 : 820);
+        setSize(showVisual ? 1350 : 690, showVisual ? 780 : 840);
     };
     addAndMakeVisible(btnToggleVisual);
     addAndMakeVisible(resonatorPanel);
@@ -173,7 +193,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
     addAndMakeVisible(sunDisc);
 
     startTimerHz(10);
-    setSize(1350, 760);
+    setSize(1350, 780);
 }
 
 SolarDroneAudioProcessorEditor::~SolarDroneAudioProcessorEditor() {
@@ -271,7 +291,7 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.fillRect(resx, 0, TW - resx, 600);
 
     // Bottom strip
-    const int stripH = showVisual ? 160 : 220;
+    const int stripH = showVisual ? 180 : 240;
     g.setColour(juce::Colour(0xff060c18));
     g.fillRect(0, 600, TW, stripH);
 
@@ -291,9 +311,10 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
         g.drawText("CHOPPER",  chopX + 8, 602, 90,  14, juce::Justification::left, false);
     } else {
         // compact: horizontal divider, labels stacked
-        g.drawHorizontalLine(710, 0.f, (float)TW);
+        // repH = 10 + 3*(14+24+4) + 10 = 146, chopper starts at 600+150
+        g.drawHorizontalLine(750, 0.f, (float)TW);
         g.drawText("REPEATER", 8, 602, 110, 14, juce::Justification::left, false);
-        g.drawText("CHOPPER",  8, 712, 90,  14, juce::Justification::left, false);
+        g.drawText("CHOPPER",  8, 752, 90,  14, juce::Justification::left, false);
     }
 
     // Column titles
@@ -369,74 +390,105 @@ void SolarDroneAudioProcessorEditor::resized() {
     txtOSCPort.setBounds(rx+56,   570, 90, 24);
     btnMIDICC.setBounds( rx+150,  570, 68, 24);
 
-    // ── Bottom strip (dynamic layout) ─────────────────────────────────────
-    const int TW    = getWidth();
-    const int TH    = getHeight();
-    const int lbH2  = 16, ctH2 = 28;
+    // ── Bottom strip (dynamic layout, 3 rows per section) ─────────────────
+    const int TW   = getWidth();
+    const int TH   = getHeight();
+    const int lh3  = 14, sh3 = 24, gap3 = 4;
+    const int rowH = lh3 + sh3 + gap3;  // 42px per row
 
-    auto layoutSection = [&](int secTop, int secW, int secX,
-                              bool withProbDial) {
-        const int row1L = secTop + 12;
-        const int row1C = row1L + lbH2;
-        const int row2L = row1C + ctH2 + 6;
-        const int row2C = row2L + lbH2;
+    auto layoutREP = [&](int secTop, int secW, int secX, bool withProbDial) {
+        const int r1L = secTop + 10;
+        const int r1C = r1L + lh3;
+        const int r2L = r1C + sh3 + gap3;
+        const int r2C = r2L + lh3;
+        const int r3L = r2C + sh3 + gap3;
+        const int r3C = r3L + lh3;
 
         int bx0 = secX;
         if (withProbDial) {
-            probDial.setBounds(bx0, row1L, 96, row2C + ctH2 - row1L);
-            bx0 += 100;
+            probDial.setBounds(bx0, r1L, 90, r3C + sh3 - r1L);
+            bx0 += 94;
         }
+        const int avail = secX + secW - bx0 - 4;
 
-        // REP row1
+        // Row 1: ON | BARS | BPM
         int bx = bx0;
-        btnRepOn.setBounds(bx, row1C, 56, ctH2); bx += 60;
-        const int comboW = 88;
-        lblRepBars.setBounds(bx, row1L, comboW, lbH2);
-        cmbRepBars.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 4;
-        const int bpmW = std::max(80, (secX + secW - bx - 4) / 3 + 10);
-        lblRepBPM.setBounds(bx, row1L, bpmW, lbH2);
-        slRepBPM.setBounds( bx, row1C, bpmW, ctH2);
+        btnRepOn.setBounds(bx, r1C, 52, sh3); bx += 56;
+        const int cbW = 82;
+        lblRepBars.setBounds(bx, r1L, cbW, lh3);
+        cmbRepBars.setBounds(bx, r1C, cbW, sh3); bx += cbW + 4;
+        const int bpmW = avail - 56 - cbW - 4;
+        lblRepBPM.setBounds(bx, r1L, bpmW, lh3);
+        slRepBPM.setBounds( bx, r1C, bpmW, sh3);
 
-        // REP row2
+        // Row 2: FB | WET
+        const int slW2 = avail / 2;
         int bx2 = bx0;
-        const int slW2 = (secX + secW - bx2 - 4) / 2;
-        lblRepFeedback.setBounds(bx2,        row2L, slW2, lbH2);
-        slRepFeedback.setBounds( bx2,        row2C, slW2, ctH2); bx2 += slW2 + 4;
-        lblRepWet.setBounds(     bx2,        row2L, slW2, lbH2);
-        slRepWet.setBounds(      bx2,        row2C, slW2, ctH2);
-        juce::ignoreUnused(bx);
+        lblRepFeedback.setBounds(bx2, r2L, slW2-2, lh3);
+        slRepFeedback.setBounds( bx2, r2C, slW2-2, sh3); bx2 += slW2 + 2;
+        lblRepWet.setBounds(bx2, r2L, slW2-2, lh3);
+        slRepWet.setBounds( bx2, r2C, slW2-2, sh3);
+
+        // Row 3: REV | PAN | STUTTER
+        int bx3 = bx0;
+        btnRepReverse.setBounds(bx3, r3C, 44, sh3); bx3 += 48;
+        const int panW = avail - 48 - cbW - 4;
+        lblRepPan.setBounds(bx3, r3L, panW, lh3);
+        slRepPan.setBounds( bx3, r3C, panW, sh3); bx3 += panW + 4;
+        lblRepStutter.setBounds(bx3, r3L, cbW, lh3);
+        cmbRepStutter.setBounds(bx3, r3C, cbW, sh3);
+        juce::ignoreUnused(bx, r3L);
     };
 
-    auto layoutChopper = [&](int secTop, int secW, int secX) {
-        const int row1L = secTop + 12;
-        const int row1C = row1L + lbH2;
-        const int row2L = row1C + ctH2 + 6;
-        const int row2C = row2L + lbH2;
+    auto layoutCHOP = [&](int secTop, int secW, int secX) {
+        const int r1L = secTop + 10;
+        const int r1C = r1L + lh3;
+        const int r2L = r1C + sh3 + gap3;
+        const int r2C = r2L + lh3;
+        const int r3L = r2C + sh3 + gap3;
+        const int r3C = r3L + lh3;
+        const int avail = secW - 4;
 
+        // Row 1: ON | SYNC | SHAPE | DIV
         int bx = secX;
-        btnChopOn.setBounds(  bx, row1C, 60, ctH2); bx += 64;
-        btnChopSync.setBounds(bx, row1C, 50, ctH2); bx += 54;
-        const int comboW = std::max(76, (secX + secW - bx - 8) / 4);
-        lblChopShape.setBounds(bx, row1L, comboW, lbH2);
-        cmbChopShape.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 4;
-        lblChopDiv.setBounds(  bx, row1L, comboW, lbH2);
-        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH2); bx += comboW + 4;
-        const int slW = (secX + secW - bx - 4) / 2;
-        lblChopRate.setBounds( bx,      row2L, slW, lbH2);
-        slChopRate.setBounds(  bx,      row2C, slW, ctH2); bx += slW + 4;
-        lblChopDepth.setBounds(bx,      row2L, slW, lbH2);
-        slChopDepth.setBounds( bx,      row2C, slW, ctH2);
+        btnChopOn.setBounds(  bx, r1C, 56, sh3); bx += 60;
+        btnChopSync.setBounds(bx, r1C, 48, sh3); bx += 52;
+        const int cbW = std::max(70, (secX + avail - bx - 4) / 2 - 2);
+        lblChopShape.setBounds(bx, r1L, cbW, lh3);
+        cmbChopShape.setBounds(bx, r1C, cbW, sh3); bx += cbW + 4;
+        lblChopDiv.setBounds(  bx, r1L, cbW, lh3);
+        cmbChopDiv.setBounds(  bx, r1C, cbW, sh3);
+
+        // Row 2: RATE | DEPTH
+        const int slW = avail / 2;
+        int bx2 = secX;
+        lblChopRate.setBounds( bx2, r2L, slW-2, lh3);
+        slChopRate.setBounds(  bx2, r2C, slW-2, sh3); bx2 += slW + 2;
+        lblChopDepth.setBounds(bx2, r2L, slW-2, lh3);
+        slChopDepth.setBounds( bx2, r2C, slW-2, sh3);
+
+        // Row 3: ATK | REL | PHASE
+        const int slW3 = avail / 3;
+        int bx3 = secX;
+        lblChopAttack.setBounds( bx3, r3L, slW3-2, lh3);
+        slChopAttack.setBounds(  bx3, r3C, slW3-2, sh3); bx3 += slW3 + 2;
+        lblChopRelease.setBounds(bx3, r3L, slW3-2, lh3);
+        slChopRelease.setBounds( bx3, r3C, slW3-2, sh3); bx3 += slW3 + 2;
+        lblChopPhase.setBounds(  bx3, r3L, slW3-2, lh3);
+        slChopPhase.setBounds(   bx3, r3C, slW3-2, sh3);
+        juce::ignoreUnused(r3L);
     };
 
     if (showVisual) {
-        // ── 1350×760: REP left half | CHOP right half ────────────────────
+        // 1350×780: REP left half | CHOP right half
         const int halfW = TW / 2;
-        layoutSection( 600, halfW - 8,   8, true);
-        layoutChopper( 600, TW - halfW - 8, halfW + 4);
+        layoutREP( 600, halfW - 8,      8, true);
+        layoutCHOP(600, TW - halfW - 8, halfW + 4);
     } else {
-        // ── 690×820: REP top full-width | CHOP bottom full-width ─────────
-        layoutSection( 600, TW - 16,  8, true);
-        layoutChopper( 710, TW - 16,  8);
+        // 690×840: REP top | CHOP bottom
+        const int repH = 10 + rowH * 3 + 10;   // ~146px
+        layoutREP( 600,       TW - 16, 8, true);
+        layoutCHOP(600 + repH + 4, TW - 16, 8);
     }
 
     // HIDE/SHOW VISUAL: bottom-right corner

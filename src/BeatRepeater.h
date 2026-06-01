@@ -13,6 +13,9 @@ public:
     void setWet(float w);
     void setBeatPeriodSamples(int samples);
     void setDensity(float d);
+    void setReverse(bool r)      { reversed    = r; }
+    void setPan(float p)         { pan         = std::max(-1.f, std::min(1.f, p)); }
+    void setStutterMult(int m)   { stutterMult = std::max(1, m); }
 
     void process(juce::AudioBuffer<float>& buffer);
 
@@ -34,4 +37,9 @@ private:
     float density        = 1.0f;
     bool  cycleActive    = true;
     int   samplesIntoLoop = 0;
+    int   loopAnchorReadPos = 0;  // ring read pos at start of current loop
+
+    bool  reversed    = false;
+    float pan         = 0.0f;  // -1=left, 0=center, +1=right
+    int   stutterMult = 1;     // 1/2/4/8
 };

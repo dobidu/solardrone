@@ -46,27 +46,41 @@ void BeatRepeater::process(juce::AudioBuffer<float>& buffer) {
 
     int loopLen = std::min(loopLengthSamples(), bufferSize - 1);
 
+    // Constant-power pan for wet signal
+    const float panNorm  = (pan + 1.0f) * 0.5f;
+    const float panAngle = panNorm * 1.5707963f;  // 0..π/2
+    const float wetPanL  = std::cos(panAngle);
+    const float wetPanR  = std::sin(panAngle);
+
     for (int i = 0; i < n; ++i) {
         // At loop boundary: apply pending loop length + roll density die
         if (samplesIntoLoop >= loopLen) {
-            BeatRepeater::loopLen = pendingLoopLen;  // update member enum (no mid-buffer jump)
+            BeatRepeater::loopLen = pendingLoopLen;
             loopLen         = std::min(loopLengthSamples(), bufferSize - 1);
             samplesIntoLoop = 0;
+            loopAnchorReadPos = (writePos - loopLen + bufferSize) % bufferSize;
             cycleActive = (density >= 0.99f ||
                 juce::Random::getSystemRandom().nextFloat() < density);
         }
 
-        const int readPos = (writePos - loopLen + bufferSize) % bufferSize;
+        // Stutter: read position cycles within shorter sub-segment
+        const int stutterLen = std::max(1, loopLen / stutterMult);
+        const int stutterPhase = samplesIntoLoop % stutterLen;
+        const int readPhase = reversed ? (stutterLen - 1 - stutterPhase) : stutterPhase;
+        const int readPos = (loopAnchorReadPos + readPhase + bufferSize) % bufferSize;
+
         const float loopedL = ringL[(size_t)readPos];
         const float loopedR = ringR[(size_t)readPos];
 
-        ringL[(size_t)writePos] = dryL[i] + loopedL * feedback;
-        ringR[(size_t)writePos] = dryR[i] + loopedR * feedback;
+        // Always write dry + feedback into ring (keeps buffer fresh for next loop)
+        const int fwdRead = (writePos - loopLen + bufferSize) % bufferSize;
+        ringL[(size_t)writePos] = dryL[i] + ringL[(size_t)fwdRead] * feedback;
+        ringR[(size_t)writePos] = dryR[i] + ringR[(size_t)fwdRead] * feedback;
 
         if (enabled) {
             const float effectiveWet = cycleActive ? wet : 0.0f;
-            outL[i] = dryL[i] * (1.0f - effectiveWet) + loopedL * effectiveWet;
-            outR[i] = dryR[i] * (1.0f - effectiveWet) + loopedR * effectiveWet;
+            outL[i] = dryL[i] * (1.0f - effectiveWet) + loopedL * effectiveWet * wetPanL;
+            outR[i] = dryR[i] * (1.0f - effectiveWet) + loopedR * effectiveWet * wetPanR;
         }
 
         writePos = (writePos + 1) % bufferSize;
