@@ -161,7 +161,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
         visualRenderer.setVisible(showVisual);
         sunDisc.setVisible(showVisual);
         btnToggleVisual.setButtonText(showVisual ? "HIDE VISUAL" : "SHOW VISUAL");
-        setSize(showVisual ? 1350 : 690, 760);
+        setSize(showVisual ? 1350 : 690, showVisual ? 760 : 820);
     };
     addAndMakeVisible(btnToggleVisual);
     addAndMakeVisible(resonatorPanel);
@@ -352,60 +352,76 @@ void SolarDroneAudioProcessorEditor::resized() {
     txtOSCPort.setBounds(rx+56,   556, 90, 24);
     btnMIDICC.setBounds( rx+150,  556, 68, 24);
 
-    // ── Bottom strip (160px, y=600-760, dynamic width) ────────────────────
-    const int TW  = getWidth();
-    const int halfW   = TW / 2;
-    const int stripTop= 600;
-    const int lbH2    = 18, ctH2 = 32;
-    const int row1L   = stripTop + 16;
-    const int row1C   = row1L + lbH2;
-    const int row2L   = row1C + ctH2 + 8;
-    const int row2C   = row2L + lbH2;
+    // ── Bottom strip (dynamic layout) ─────────────────────────────────────
+    const int TW    = getWidth();
+    const int TH    = getHeight();
+    const int lbH2  = 16, ctH2 = 28;
 
-    // ProbDial (spans both rows)
-    probDial.setBounds(8, row1L, 108, row2C + ctH2 - row1L);
+    auto layoutSection = [&](int secTop, int secW, int secX,
+                              bool withProbDial) {
+        const int row1L = secTop + 12;
+        const int row1C = row1L + lbH2;
+        const int row2L = row1C + ctH2 + 6;
+        const int row2C = row2L + lbH2;
 
-    // ── REPEATER (left half: x=120 to halfW-8) ───────────────────────────
-    {
-        int bx = 120;
-        btnRepOn.setBounds(bx, row1C, 60, ctH2); bx += 64;
+        int bx0 = secX;
+        if (withProbDial) {
+            probDial.setBounds(bx0, row1L, 96, row2C + ctH2 - row1L);
+            bx0 += 100;
+        }
 
-        const int comboW = 96;
+        // REP row1
+        int bx = bx0;
+        btnRepOn.setBounds(bx, row1C, 56, ctH2); bx += 60;
+        const int comboW = 88;
         lblRepBars.setBounds(bx, row1L, comboW, lbH2);
-        cmbRepBars.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
+        cmbRepBars.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 4;
+        const int bpmW = std::max(80, (secX + secW - bx - 4) / 3 + 10);
+        lblRepBPM.setBounds(bx, row1L, bpmW, lbH2);
+        slRepBPM.setBounds( bx, row1C, bpmW, ctH2);
 
-        const int bpmW = std::max(80, (halfW - bx - 10) / 2);
-        lblRepBPM.setBounds(bx, row1L, bpmW + 40, lbH2);
-        slRepBPM.setBounds( bx, row1C, bpmW + 40, ctH2);
+        // REP row2
+        int bx2 = bx0;
+        const int slW2 = (secX + secW - bx2 - 4) / 2;
+        lblRepFeedback.setBounds(bx2,        row2L, slW2, lbH2);
+        slRepFeedback.setBounds( bx2,        row2C, slW2, ctH2); bx2 += slW2 + 4;
+        lblRepWet.setBounds(     bx2,        row2L, slW2, lbH2);
+        slRepWet.setBounds(      bx2,        row2C, slW2, ctH2);
+        juce::ignoreUnused(bx);
+    };
 
-        // Row 2: FB + Wet
-        int bx2 = 120 + 64 + comboW + 6;
-        const int slW = (halfW - 10 - bx2) / 2;
-        lblRepFeedback.setBounds(bx2,       row2L, slW, lbH2);
-        slRepFeedback.setBounds( bx2,       row2C, slW, ctH2); bx2 += slW + 6;
-        lblRepWet.setBounds(bx2, row2L, slW, lbH2);
-        slRepWet.setBounds( bx2, row2C, slW, ctH2);
-    }
+    auto layoutChopper = [&](int secTop, int secW, int secX) {
+        const int row1L = secTop + 12;
+        const int row1C = row1L + lbH2;
+        const int row2L = row1C + ctH2 + 6;
+        const int row2C = row2L + lbH2;
 
-    // ── CHOPPER (right half: x=halfW+8 to TW-8) ──────────────────────────
-    {
-        int bx = halfW + 8;
-        btnChopOn.setBounds(  bx, row1C, 66, ctH2); bx += 70;
-        btnChopSync.setBounds(bx, row1C, 52, ctH2); bx += 56;
-
-        const int comboW = std::max(80, (TW - bx - 16) / 4);
+        int bx = secX;
+        btnChopOn.setBounds(  bx, row1C, 60, ctH2); bx += 64;
+        btnChopSync.setBounds(bx, row1C, 50, ctH2); bx += 54;
+        const int comboW = std::max(76, (secX + secW - bx - 8) / 4);
         lblChopShape.setBounds(bx, row1L, comboW, lbH2);
-        cmbChopShape.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 6;
+        cmbChopShape.setBounds(bx, row1C, comboW, ctH2); bx += comboW + 4;
         lblChopDiv.setBounds(  bx, row1L, comboW, lbH2);
-        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH2); bx += comboW + 6;
+        cmbChopDiv.setBounds(  bx, row1C, comboW, ctH2); bx += comboW + 4;
+        const int slW = (secX + secW - bx - 4) / 2;
+        lblChopRate.setBounds( bx,      row2L, slW, lbH2);
+        slChopRate.setBounds(  bx,      row2C, slW, ctH2); bx += slW + 4;
+        lblChopDepth.setBounds(bx,      row2L, slW, lbH2);
+        slChopDepth.setBounds( bx,      row2C, slW, ctH2);
+    };
 
-        const int slW = (TW - 8 - bx) / 2;
-        lblChopRate.setBounds( bx,       row2L, slW, lbH2);
-        slChopRate.setBounds(  bx,       row2C, slW, ctH2); bx += slW + 6;
-        lblChopDepth.setBounds(bx,       row2L, slW, lbH2);
-        slChopDepth.setBounds( bx,       row2C, slW, ctH2);
+    if (showVisual) {
+        // ── 1350×760: REP left half | CHOP right half ────────────────────
+        const int halfW = TW / 2;
+        layoutSection( 600, halfW - 8,   8, true);
+        layoutChopper( 600, TW - halfW - 8, halfW + 4);
+    } else {
+        // ── 690×820: REP top full-width | CHOP bottom full-width ─────────
+        layoutSection( 600, TW - 16,  8, true);
+        layoutChopper( 710, TW - 16,  8);
     }
 
-    // HIDE/SHOW VISUAL: bottom-right corner, clear and accessible
-    btnToggleVisual.setBounds(TW - 158, 728, 150, 26);
+    // HIDE/SHOW VISUAL: bottom-right corner
+    btnToggleVisual.setBounds(TW - 158, TH - 32, 150, 26);
 }
