@@ -37,6 +37,18 @@ ResonatorPanel::ResonatorPanel(juce::AudioProcessorValueTreeState& a) : apvts(a)
     setupSlider(slStringsWet, lblStringsWet, "Wet",     this);
     setupSlider(slStringsN,   lblStringsN,   "Strings", this);
 
+    // EQ
+    setupSlider(slEQLow,  lblEQLow,  "Low (dB)",  this);
+    setupSlider(slEQMid,  lblEQMid,  "Mid (dB)",  this);
+    setupSlider(slEQHigh, lblEQHigh, "High (dB)", this);
+    attEQLow  = std::make_unique<SliderAttachment>(apvts, "eq_low",  slEQLow);
+    attEQMid  = std::make_unique<SliderAttachment>(apvts, "eq_mid",  slEQMid);
+    attEQHigh = std::make_unique<SliderAttachment>(apvts, "eq_high", slEQHigh);
+    // Show textbox for EQ so user sees dB value
+    slEQLow.setTextBoxStyle( juce::Slider::TextBoxRight, false, 36, 16);
+    slEQMid.setTextBoxStyle( juce::Slider::TextBoxRight, false, 36, 16);
+    slEQHigh.setTextBoxStyle(juce::Slider::TextBoxRight, false, 36, 16);
+
     // Attachments
     attModalOn   = std::make_unique<ButtonAttachment>(apvts, "res_modal_on",    btnModal);
     attModalWet  = std::make_unique<SliderAttachment>(apvts, "res_modal_wet",   slModalWet);
@@ -96,6 +108,13 @@ void ResonatorPanel::paint(juce::Graphics& g) {
         g.drawText(driversASCII[col], (int)(cx+6), 32, (int)(cw-12), 14,
                    juce::Justification::centred, false);
     }
+
+    // EQ section header
+    g.setFont(11.f);
+    g.setColour(accent.withAlpha(0.45f));
+    g.drawText("OUTPUT EQ", 8, 170, (int)w - 16, 12, juce::Justification::centred, false);
+    g.setColour(accent.withAlpha(0.1f));
+    g.drawHorizontalLine(168, 0.f, w);
 
     // Live data strip
     const float sy = h - stripH;
@@ -164,5 +183,16 @@ void ResonatorPanel::resized() {
     placeCol(btnModal,   slModalWet,   lblModalWet,   slModalDecay, lblModalDecay, 0);
     placeCol(btnFDN,     slFDNWet,     lblFDNWet,     slFDNSize,    lblFDNSize,    1);
     placeCol(btnStrings, slStringsWet, lblStringsWet, slStringsN,   lblStringsN,   2);
+
+    // EQ row: right below resonator controls
+    const int eqY  = 90 + lh + sh + 4 + lh + sh + 14;  // = 90+14+22+4+14+22+14 = 180
+    const int eqW3 = (int)(cw) - pad * 2;
+    for (int col = 0; col < 3; ++col) {
+        const int ex = (int)(cw * col) + pad;
+        juce::Slider* sl  = (col == 0) ? &slEQLow  : (col == 1) ? &slEQMid  : &slEQHigh;
+        juce::Label*  lbl = (col == 0) ? &lblEQLow : (col == 1) ? &lblEQMid : &lblEQHigh;
+        lbl->setBounds(ex, eqY,    eqW3, lh);
+        sl->setBounds( ex, eqY+lh, eqW3, sh);
+    }
     juce::ignoreUnused(ctH);
 }

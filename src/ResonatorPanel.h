@@ -38,6 +38,11 @@ private:
     std::unique_ptr<ButtonAttachment> attStringsOn;
     std::unique_ptr<SliderAttachment> attStringsWet, attStringsN;
 
+    // EQ section
+    juce::Slider slEQLow, slEQMid, slEQHigh;
+    juce::Label  lblEQLow, lblEQMid, lblEQHigh;
+    std::unique_ptr<SliderAttachment> attEQLow, attEQMid, attEQHigh;
+
     juce::AudioProcessorValueTreeState& apvts;
     float currentKp  = 0.f;
     float liveVel    = 450.f, liveTemp = 80000.f;
