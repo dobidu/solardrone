@@ -60,6 +60,18 @@ void SolarTerminal::updateFromSolarData(const SpaceWeatherState& sw,
         addLog(timeTag() + " SEP prt=" + juce::String(sw.proton_flux_10mev, 1) + " pfu", true);
     prevProton = sw.proton_flux_10mev;
 
+    // Resonator on/off changes
+    const int resState = (mo ? 1 : 0) | (fo ? 2 : 0) | (so ? 4 : 0);
+    if (resState != prevResState && prevResState >= 0) {
+        if ((resState & 1) != (prevResState & 1))
+            addLog(timeTag() + " [MODAL] " + (mo ? "ON" : "OFF"));
+        if ((resState & 2) != (prevResState & 2))
+            addLog(timeTag() + " [FDN  ] " + (fo ? "ON" : "OFF"));
+        if ((resState & 4) != (prevResState & 4))
+            addLog(timeTag() + " [STR  ] " + (so ? "ON" : "OFF"));
+    }
+    prevResState = resState;
+
     repaint();
 }
 

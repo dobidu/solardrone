@@ -27,11 +27,13 @@ private:
     bool hasData = false;
     bool cursorOn = true;
 
-    // Change detection
+    // Change detection — solar
     float prevKp      = -99.f;
     float prevDst     =  999.f;
     float prevProton  =   -1.f;
     SpaceWeatherState::Source prevSource = SpaceWeatherState::Source::defaultValue;
+    // Change detection — resonators
+    int prevResState  = -1;  // bitmask: bit0=modal, bit1=fdn, bit2=strings
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SolarTerminal)
 };
