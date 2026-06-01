@@ -347,13 +347,10 @@ void SolarDroneAudioProcessorEditor::resized() {
     // MacroOrb: y=436, 280×116, bottom=552
     macroOrb.setBounds(rx+40, 436, 280, 116);
 
-    // OSC/MIDI: y=554, h=26
-    btnOSC.setBounds(    rx,       554, 52, 26);
-    txtOSCPort.setBounds(rx+56,    554, 90, 26);
-    btnMIDICC.setBounds( rx+150,   554, 68, 26);
-
-    // HIDE/SHOW VISUAL button: bottom of params panel
-    btnToggleVisual.setBounds(rx + 4, 574, rw - 8, 22);
+    // OSC/MIDI
+    btnOSC.setBounds(    rx,      556, 52, 24);
+    txtOSCPort.setBounds(rx+56,   556, 90, 24);
+    btnMIDICC.setBounds( rx+150,  556, 68, 24);
 
     // ── Bottom strip (160px, y=600-760, dynamic width) ────────────────────
     const int TW  = getWidth();
@@ -408,4 +405,7 @@ void SolarDroneAudioProcessorEditor::resized() {
         lblChopDepth.setBounds(bx,       row2L, slW, lbH2);
         slChopDepth.setBounds( bx,       row2C, slW, ctH2);
     }
+
+    // HIDE/SHOW VISUAL: bottom-right corner, clear and accessible
+    btnToggleVisual.setBounds(TW - 158, 728, 150, 26);
 }
