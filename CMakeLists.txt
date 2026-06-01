@@ -47,6 +47,9 @@ target_sources(SolarDrone PRIVATE
     src/ProbDensityDial.cpp
     src/MappingCurveDisplay.cpp
     src/OutputEQ.cpp
+    src/ModalBank.cpp
+    src/FeedbackDelayNetwork.cpp
+    src/SympatheticStrings.cpp
     src/SpatialDisplay.cpp
     src/OSCMIDIBridge.cpp
 )
