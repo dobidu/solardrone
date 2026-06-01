@@ -205,6 +205,11 @@ void SolarDroneAudioProcessorEditor::timerCallback() {
             processorRef.getLatestSpaceWeatherState().temperature,
             processorRef.getLatestSpaceWeatherState().dst_index,
             processorRef.getLatestSpaceWeatherState().proton_flux_10mev);
+        resonatorPanel.updateTerminal(
+            processorRef.getLatestSpaceWeatherState(),
+            *processorRef.apvts.getRawParameterValue("res_modal_on")   > 0.5f,
+            *processorRef.apvts.getRawParameterValue("res_fdn_on")     > 0.5f,
+            *processorRef.apvts.getRawParameterValue("res_strings_on") > 0.5f);
         mappingDisplay.setLive({
             processorRef.getLatestSpaceWeatherState().velocity,
             processorRef.getLatestSpaceWeatherState().bz_gsm,

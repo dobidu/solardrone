@@ -16,6 +16,7 @@ void ResonatorPanel::setupSlider(juce::Slider& s, juce::Label& l,
 }
 
 ResonatorPanel::ResonatorPanel(juce::AudioProcessorValueTreeState& a) : apvts(a) {
+    addAndMakeVisible(terminal);
     // Modal column
     btnModal.setButtonText("MODAL");
     btnModal.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff88aaff));
@@ -63,6 +64,11 @@ ResonatorPanel::ResonatorPanel(juce::AudioProcessorValueTreeState& a) : apvts(a)
 
 void ResonatorPanel::setKp(float k) { currentKp = k; repaint(); }
 
+void ResonatorPanel::updateTerminal(const SpaceWeatherState& sw,
+                                     bool modal, bool fdn, bool str) {
+    terminal.updateFromSolarData(sw, modal, fdn, str);
+}
+
 void ResonatorPanel::setLiveData(float v, float t, float d, float p) {
     liveVel = v; liveTemp = t; liveDst = d; liveProton = p;
     repaint();
@@ -109,12 +115,13 @@ void ResonatorPanel::paint(juce::Graphics& g) {
                    juce::Justification::centred, false);
     }
 
-    // EQ section header
-    g.setFont(11.f);
-    g.setColour(accent.withAlpha(0.45f));
-    g.drawText("OUTPUT EQ", 8, 170, (int)w - 16, 12, juce::Justification::centred, false);
-    g.setColour(accent.withAlpha(0.1f));
-    g.drawHorizontalLine(168, 0.f, w);
+    // EQ section header (drawn just above EQ sliders, below terminal)
+    const float eqLabelY = h - stripH - (float)(14 + 22 + 4) - 14.f;
+    g.setFont(10.f);
+    g.setColour(accent.withAlpha(0.35f));
+    g.drawText("OUTPUT EQ", 8, (int)eqLabelY, (int)w - 16, 12, juce::Justification::centred, false);
+    g.setColour(accent.withAlpha(0.08f));
+    g.drawHorizontalLine((int)eqLabelY - 2, 0.f, w);
 
     // Live data strip
     const float sy = h - stripH;
@@ -184,15 +191,22 @@ void ResonatorPanel::resized() {
     placeCol(btnFDN,     slFDNWet,     lblFDNWet,     slFDNSize,    lblFDNSize,    1);
     placeCol(btnStrings, slStringsWet, lblStringsWet, slStringsN,   lblStringsN,   2);
 
-    // EQ row: right below resonator controls
-    const int eqY  = 90 + lh + sh + 4 + lh + sh + 14;  // = 90+14+22+4+14+22+14 = 180
+    // Terminal: below resonator controls, above EQ
+    const int termY = 170;
+    const int eqBot = (int)(h - stripH) - 4;
+    // EQ sits at bottom of usable area, terminal fills above it
+    const int eqH   = lh + sh + 4;   // label + slider + gap
+    const int eqY2  = eqBot - eqH;
+    terminal.setBounds(4, termY, (int)w - 8, eqY2 - termY - 4);
+
+    // EQ row: anchored above live data strip
     const int eqW3 = (int)(cw) - pad * 2;
     for (int col = 0; col < 3; ++col) {
         const int ex = (int)(cw * col) + pad;
         juce::Slider* sl  = (col == 0) ? &slEQLow  : (col == 1) ? &slEQMid  : &slEQHigh;
         juce::Label*  lbl = (col == 0) ? &lblEQLow : (col == 1) ? &lblEQMid : &lblEQHigh;
-        lbl->setBounds(ex, eqY,    eqW3, lh);
-        sl->setBounds( ex, eqY+lh, eqW3, sh);
+        lbl->setBounds(ex, eqY2,    eqW3, lh);
+        sl->setBounds( ex, eqY2+lh, eqW3, sh);
     }
     juce::ignoreUnused(ctH);
 }

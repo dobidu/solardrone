@@ -1,12 +1,15 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "ColourScheme.h"
+#include "SolarTerminal.h"
+#include "SpaceWeatherState.h"
 
 class ResonatorPanel : public juce::Component {
 public:
     explicit ResonatorPanel(juce::AudioProcessorValueTreeState& apvts);
     void setKp(float kp);
     void setLiveData(float velocity, float temperature, float dst, float protonFlux);
+    void updateTerminal(const SpaceWeatherState& sw, bool modal, bool fdn, bool str);
     void paint(juce::Graphics&) override;
     void resized() override;
 
@@ -37,6 +40,9 @@ private:
     juce::Label        lblStringsWet, lblStringsN;
     std::unique_ptr<ButtonAttachment> attStringsOn;
     std::unique_ptr<SliderAttachment> attStringsWet, attStringsN;
+
+    // Solar terminal
+    SolarTerminal terminal;
 
     // EQ section
     juce::Slider slEQLow, slEQMid, slEQHigh;
