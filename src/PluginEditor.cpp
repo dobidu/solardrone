@@ -182,7 +182,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
         sunDisc.setVisible(showVisual);
         btnFreeze.setVisible(showVisual);
         btnToggleVisual.setButtonText(showVisual ? "HIDE VISUAL" : "SHOW VISUAL");
-        setSize(showVisual ? 1350 : 690, showVisual ? 780 : 840);
+        setSize(showVisual ? 1350 : 690, showVisual ? 780 : 890);
     };
     addAndMakeVisible(btnToggleVisual);
     addAndMakeVisible(resonatorPanel);
@@ -291,7 +291,7 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.fillRect(resx, 0, TW - resx, 600);
 
     // Bottom strip
-    const int stripH = showVisual ? 180 : 240;
+    const int stripH = showVisual ? 180 : 290;
     g.setColour(juce::Colour(0xff060c18));
     g.fillRect(0, 600, TW, stripH);
 
