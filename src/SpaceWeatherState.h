@@ -16,6 +16,11 @@ struct SpaceWeatherState {
     float      x_ray_flux  = 0.0f;              // W/m² GOES 0.1-0.8nm band
     FlareClass flare_class = FlareClass::none;
 
+    // Resonator drivers
+    float temperature        = 80000.0f;  // K, solar wind ion temperature
+    float dst_index          =    0.0f;   // nT, Dst ring-current index (negative = storm)
+    float proton_flux_10mev  =    0.3f;   // pfu, integral proton flux ≥10 MeV
+
     static FlareClass classifyFlux(float flux) {
         if (flux >= 1e-4f) return FlareClass::X;
         if (flux >= 1e-5f) return FlareClass::M;

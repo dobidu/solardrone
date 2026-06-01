@@ -61,6 +61,17 @@ static const char* kMFlareXray = R"json(
 [{"time_tag":"2024-03-24 06:00:00.000","satellite":17,"energy":"0.1-0.8nm","flux":2.0e-5}]
 )json";
 
+static const char* kWindWithTemp = R"json(
+[{"time_tag":"2024-01-15 12:00:00.000","speed":450.0,"density":5.0,"bz_gsm":1.5,"temperature":85000.0}]
+)json";
+static const char* kDstQuiet = R"json(
+[{"time_tag":"2024-01-15 12:00:00.000","dst":-12},{"time_tag":"2024-01-15 11:00:00.000","dst":-8}]
+)json";
+static const char* kProtonQuiet = R"json(
+[{"time_tag":"2024-01-15 12:00:00.000","satellite":18,"energy":">=10 MeV","flux":0.5},
+ {"time_tag":"2024-01-15 12:00:00.000","satellite":18,"energy":">=50 MeV","flux":0.02}]
+)json";
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 class DataFetcherTests : public juce::UnitTest {
@@ -69,6 +80,9 @@ public:
 
     void runTest() override {
         testDefaultState();
+        testParseTemperature();
+        testParseDst();
+        testParseProtonFlux();
         testParseXrayQuiet();
         testParseXrayMFlare();
         testParseQuietDayWind();
@@ -81,6 +95,36 @@ public:
     }
 
 private:
+    void testParseTemperature() {
+        beginTest("Parse solar wind temperature (85000 K)");
+        DataFetcher df; df.setPollIntervalMs(999'000'000);
+        SpaceWeatherState out;
+        bool ok = df.parseSolarWindJson(kWindWithTemp, out);
+        expect(ok, "parse succeeds");
+        expectWithinAbsoluteError(out.temperature, 85000.f, 1.f, "temperature");
+        df.stopThread(1000);
+    }
+
+    void testParseDst() {
+        beginTest("Parse Dst index (-12 nT quiet)");
+        DataFetcher df; df.setPollIntervalMs(999'000'000);
+        SpaceWeatherState out;
+        bool ok = df.parseDstJson(kDstQuiet, out);
+        expect(ok, "parse succeeds");
+        expectWithinAbsoluteError(out.dst_index, -12.f, 0.5f, "dst_index");
+        df.stopThread(1000);
+    }
+
+    void testParseProtonFlux() {
+        beginTest("Parse proton flux >=10 MeV (0.5 pfu)");
+        DataFetcher df; df.setPollIntervalMs(999'000'000);
+        SpaceWeatherState out;
+        bool ok = df.parseProtonFluxJson(kProtonQuiet, out);
+        expect(ok, "parse succeeds");
+        expectWithinAbsoluteError(out.proton_flux_10mev, 0.5f, 0.01f, "proton_flux_10mev");
+        df.stopThread(1000);
+    }
+
     void testParseXrayQuiet() {
         beginTest("Parse quiet X-ray (B class, flux=5e-8)");
         DataFetcher df;

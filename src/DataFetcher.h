@@ -14,6 +14,8 @@ public:
     bool parseSolarWindJson(const juce::String& json, SpaceWeatherState& out);
     bool parseKpJson(const juce::String& json, SpaceWeatherState& out);
     bool parseXrayJson(const juce::String& json, SpaceWeatherState& out);
+    bool parseDstJson(const juce::String& json, SpaceWeatherState& out);
+    bool parseProtonFluxJson(const juce::String& json, SpaceWeatherState& out);
 
 private:
     void run() override;
@@ -29,7 +31,15 @@ private:
 
     int pollIntervalMs = 60000;
 
-    float lastXRayFlux = 0.0f;
+    float lastXRayFlux      = 0.0f;
+    float lastTemperature   = 80000.f;
+    float lastDst           = 0.f;
+    float lastProtonFlux    = 0.3f;
+
+    static constexpr const char* kDstUrl =
+        "https://services.swpc.noaa.gov/products/kyoto-dst.json";
+    static constexpr const char* kProtonUrl =
+        "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json";
 
     static constexpr const char* kWindUrl =
         "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json";
