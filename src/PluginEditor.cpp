@@ -46,7 +46,7 @@ SolarDroneAudioProcessorEditor::SolarDroneAudioProcessorEditor(
 
     // ── Repeater strip ────────────────────────────────────────────────────
     mkSlider(slRepBPM,      lblRepBPM,      "BPM",  this);
-    slRepBPM.setTextBoxStyle(juce::Slider::TextBoxRight, false, 38, 16);
+    slRepBPM.setTextBoxStyle(juce::Slider::TextBoxRight, false, 56, 16);
     slRepBPM.setColour(juce::Slider::textBoxTextColourId,
                        juce::Colours::white);
     slRepBPM.setColour(juce::Slider::textBoxOutlineColourId,
@@ -429,14 +429,14 @@ void SolarDroneAudioProcessorEditor::resized() {
         lblRepWet.setBounds(bx2, r2L, slW2-2, lh3);
         slRepWet.setBounds( bx2, r2C, slW2-2, sh3);
 
-        // Row 3: REV | PAN | STUTTER
+        // Row 3: REV | STUTTER | PAN (PAN fills remaining — stutter kept left)
         int bx3 = bx0;
-        btnRepReverse.setBounds(bx3, r3C, 56, sh3); bx3 += 60;
-        const int panW = avail - 48 - cbW - 4;
-        lblRepPan.setBounds(bx3, r3L, panW, lh3);
-        slRepPan.setBounds( bx3, r3C, panW, sh3); bx3 += panW + 4;
+        btnRepReverse.setBounds(bx3, r3C, 52, sh3); bx3 += 56;
         lblRepStutter.setBounds(bx3, r3L, cbW, lh3);
-        cmbRepStutter.setBounds(bx3, r3C, cbW, sh3);
+        cmbRepStutter.setBounds(bx3, r3C, cbW, sh3); bx3 += cbW + 6;
+        const int panW = secX + secW - bx3 - 10;
+        lblRepPan.setBounds(bx3, r3L, panW, lh3);
+        slRepPan.setBounds( bx3, r3C, panW, sh3);
         juce::ignoreUnused(bx, r3L);
     };
 

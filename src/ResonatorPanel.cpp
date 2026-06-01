@@ -105,13 +105,13 @@ void ResonatorPanel::paint(juce::Graphics& g) {
     };
     for (int col = 0; col < 3; ++col) {
         const float cx = cw * col;
-        g.setFont(13.f);
+        g.setFont(10.f);
         g.setColour(accent.withAlpha(0.85f));
-        g.drawText(headersASCII[col], (int)(cx+8), 10, (int)(cw-16), 18,
+        g.drawText(headersASCII[col], (int)(cx+4), 10, (int)(cw-8), 16,
                    juce::Justification::centred, false);
         g.setFont(9.f);
         g.setColour(accent.withAlpha(0.42f));
-        g.drawText(driversASCII[col], (int)(cx+6), 32, (int)(cw-12), 14,
+        g.drawText(driversASCII[col], (int)(cx+4), 28, (int)(cw-8), 14,
                    juce::Justification::centred, false);
     }
 
