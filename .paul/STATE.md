@@ -60,10 +60,10 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 ## Session Continuity
 
-Last session: 2026-05-29
-Stopped at: Phase 1 complete, loop closed, transitioned to Phase 2
-Next action: `/paul:plan 8` — Docs + Release
-Resume context: DESIGN.md = architecture for contributors. git tag v1.0.0 + Release build. Demo recording instructions (user needs audio device). GitHub release steps.
+Last session: 2026-06-01
+Stopped at: v2.8.4 approved — Resonator Engine UI complete
+Next action: create v2.8.0 GitHub release tag
+Resume context: All resonator phases (v2.8.1–v2.8.4) done. Layout 1350×760 full / 690×820 compact with HIDE VISUAL toggle. 20/20 tests pass.
 
 ---
 *STATE.md — Updated after every significant action*
