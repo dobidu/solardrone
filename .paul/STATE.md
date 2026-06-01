@@ -61,17 +61,16 @@ PLAN ──▶ APPLY ──▶ UNIFY
 ## Session Continuity
 
 Last session: 2026-06-01
-Stopped at: v2.9.1 released — terminal live update fix
-Next action: Preset System (v2.10) — save/load named APVTS patches
+Stopped at: v2.9.1 released + docs updated, session fully closed
+Next action: Preset System (v2.10) — save/load named APVTS patches with UI
 Resume file: .paul/HANDOFF-2026-06-01.md
 Resume context:
-- v2.9.1 on GitHub as latest (terminal fix: updateTerminal outside Kp gate)
-- Window: 1350×780 full / 690×890 compact
-- SolarTerminal updates at 10fps always; resonator toggles appear in event log
-- 6 new DSP params: repeater_reverse/pan/stutter + chopper_attack/release/phase
-- ScopedNoDenormals in processBlock + ResonatorEngine::process (critical for Windows)
-- Resonators default OFF (prevents IIR instability on first launch)
-- No blockers — roadmap complete through v2.9
+- v2.9.1 latest on GitHub; README + ROADMAP up to date
+- SolarTerminal: updateTerminal() ungated, runs 10fps always; resonator events logged
+- Window: 1350×780 full / 690×890 compact; strip 180px/290px
+- ScopedNoDenormals in processBlock + ResonatorEngine (CRITICAL — Windows silence fix)
+- Resonators default OFF; ModalBank IIR Q-capped; NaN guard in sum
+- No blockers — all v2.x roadmap complete
 
 ---
 *STATE.md — Updated after every significant action*
