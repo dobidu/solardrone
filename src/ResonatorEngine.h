@@ -40,9 +40,9 @@ private:
     // Pre-allocated temp buffers (one per resonator)
     juce::AudioBuffer<float> modalBuf, fdnBuf, stringBuf;
 
-    bool  modalEnabled   = true;
-    bool  fdnEnabled     = true;
-    bool  stringsEnabled = true;
+    bool  modalEnabled   = false;
+    bool  fdnEnabled     = false;
+    bool  stringsEnabled = false;
     float modalWet       = 0.10f;
     float fdnWet         = 0.08f;
     float stringsWet     = 0.10f;

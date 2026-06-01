@@ -60,6 +60,7 @@ void ResonatorEngine::updateFromSolarData(const SpaceWeatherState& sw, float l1H
 }
 
 void ResonatorEngine::process(juce::AudioBuffer<float>& buffer) {
+    juce::ScopedNoDenormals noDenormals;
     if (!isEnabled()) return;
 
     const int n  = buffer.getNumSamples();

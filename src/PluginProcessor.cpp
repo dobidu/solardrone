@@ -63,19 +63,19 @@ SolarDroneAudioProcessor::createParameterLayout() {
         "freeze_on",     "Freeze",        false));
     // Resonators
     params.push_back(std::make_unique<juce::AudioParameterBool>(
-        "res_modal_on",    "Modal On",      true));
+        "res_modal_on",    "Modal On",      false));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "res_modal_wet",   "Modal Wet",     0.f, 1.f, 0.10f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "res_modal_decay", "Modal Decay",   0.1f, 8.f, 2.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
-        "res_fdn_on",      "FDN On",        true));
+        "res_fdn_on",      "FDN On",        false));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "res_fdn_wet",     "FDN Wet",       0.f, 1.f, 0.08f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "res_fdn_size",    "FDN Size",      0.f, 1.f, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(
-        "res_strings_on",  "Strings On",    true));
+        "res_strings_on",  "Strings On",    false));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "res_strings_wet", "Strings Wet",   0.f, 1.f, 0.10f));
     params.push_back(std::make_unique<juce::AudioParameterInt>(
@@ -154,6 +154,7 @@ void SolarDroneAudioProcessor::releaseResources() {}
 void SolarDroneAudioProcessor::processBlock(
     juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
+    juce::ScopedNoDenormals noDenormals;
     // Smoothed critical params (eliminates crackling on rapid slider movement)
     smoothedVolume.setTargetValue(*apvts.getRawParameterValue("volume"));
     smoothedBalance.setTargetValue(*apvts.getRawParameterValue("layer_balance"));
