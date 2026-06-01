@@ -265,21 +265,30 @@ void SolarDroneAudioProcessorEditor::paint(juce::Graphics& g) {
     g.fillRect(resx, 0, TW - resx, 600);
 
     // Bottom strip
+    const int stripH = showVisual ? 160 : 220;
     g.setColour(juce::Colour(0xff060c18));
-    g.fillRect(0, 600, TW, 160);
+    g.fillRect(0, 600, TW, stripH);
 
     // Dividers
     g.setColour(accent.withAlpha(0.18f));
     if (showVisual) g.drawVerticalLine(659, 0.f, 601.f);
     g.drawVerticalLine(rx + 360, 0.f, 601.f);
     g.drawHorizontalLine(599, 0.f, (float)TW);
-    g.drawVerticalLine(chopX, 600.f, 760.f);
 
-    // Section labels
+    // Section labels + divider (layout-dependent)
     g.setFont(12.0f);
     g.setColour(accent.withAlpha(0.65f));
-    g.drawText("REPEATER", 8,          602, 110, 14, juce::Justification::left, false);
-    g.drawText("CHOPPER",  chopX + 8,  602, 90,  14, juce::Justification::left, false);
+    if (showVisual) {
+        // wide: vertical divider, labels side by side
+        g.drawVerticalLine(chopX, 600.f, (float)(600 + stripH));
+        g.drawText("REPEATER", 8,         602, 110, 14, juce::Justification::left, false);
+        g.drawText("CHOPPER",  chopX + 8, 602, 90,  14, juce::Justification::left, false);
+    } else {
+        // compact: horizontal divider, labels stacked
+        g.drawHorizontalLine(710, 0.f, (float)TW);
+        g.drawText("REPEATER", 8, 602, 110, 14, juce::Justification::left, false);
+        g.drawText("CHOPPER",  8, 712, 90,  14, juce::Justification::left, false);
+    }
 
     // Column titles
     g.setFont(11.0f);
