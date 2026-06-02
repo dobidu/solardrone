@@ -1,4 +1,34 @@
-# SolarDrone
+<p align="center">
+  <img src="https://em-content.zobj.net/source/apple/391/sun_2600-fe0f.png" width="120" />
+</p>
+
+<h1 align="center">SolarDrone</h1>
+
+<p align="center">
+  <strong>real-time space weather → sound</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/dobidu/solardrone/releases/latest"><img src="https://img.shields.io/github/v/release/dobidu/solardrone?style=flat&color=orange" alt="Release"></a>
+  <a href="https://github.com/dobidu/solardrone/commits/main"><img src="https://img.shields.io/github/last-commit/dobidu/solardrone?style=flat" alt="Last Commit"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/dobidu/solardrone?style=flat" alt="License"></a>
+</p>
+
+<p align="center">
+  <a href="#what-it-does">What it does</a> •
+  <a href="#build">Build</a> •
+  <a href="#controls">Controls</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#release-history">Releases</a>
+</p>
+
+---
+
+<p align="center">
+  <img src="screenshot.png" alt="SolarDrone screenshot" width="900" />
+</p>
+
+---
 
 A standalone app and JUCE plugin (VST3, AU) that sonifies real-time space weather data from NOAA SWPC as a two-layer additive drone with animated visual and resonator engine.
 
