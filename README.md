@@ -204,7 +204,7 @@ Outputs are sent every 100ms (10fps) on the message thread.
 DataFetcher (5 NOAA feeds, 60s poll)
     │
     ▼
-SpaceWeatherState  ──────────────────────────────────────────────┐
+SpaceWeatherState  ───────────────────────────────────────────────┐
     │                                                             │
     ▼                                                             ▼
 SynthParamMapper                                         ResonatorEngine
